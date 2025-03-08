@@ -2,6 +2,12 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
@@ -9,7 +15,6 @@
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.elevation.hpp"
-#include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
 #include "../../fem/global.unphysical.hpp"
@@ -23,8 +28,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: (3D) degree elevation commutes with exterior derivative" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial3D M = StandardCube3D();

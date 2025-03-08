@@ -2,6 +2,8 @@
 
 /**/
 
+#include <cmath>
+
 #include "../../basic.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../dense/factorization.hpp"
@@ -11,9 +13,7 @@
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/global.whitneyincl.hpp"
-#include "../../fem/utilities.hpp"
 #include "../../solver/iterativesolver.hpp"
-#include "../../utility/convergencetable.hpp"
 
 
 using namespace std;

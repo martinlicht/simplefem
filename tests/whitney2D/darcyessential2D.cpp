@@ -2,6 +2,11 @@
 
 /**/
 
+#include <cmath>
+
+#include <fstream>
+#include <functional>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
@@ -10,10 +15,6 @@
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../solver/iterativesolver.hpp"
-// #include "../../solver/crm.hpp"
-// #include "../../solver/minres.hpp"
-// #include "../../solver/herzogsoodhalter.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -32,8 +33,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: 2D Darcy Problem" << nl;
     
-    // LOG << std::setprecision(10);
-
     if(true){
 
         LOG << "Initial mesh..." << nl;

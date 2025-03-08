@@ -2,13 +2,16 @@
 
 /**/
 
+#include <cmath>
+
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../fem/global.massmatrix.hpp"
-#include "../../fem/global.elevation.hpp"
-#include "../../fem/utilities.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/global.flags.hpp"
 #include "../../utility/convergencetable.hpp"
@@ -119,7 +122,7 @@ int main( int argc, char *argv[] )
                 if( error_mass >= desired_closeness )
                 {
                     LOG << included - inclusion * averaged << nl;
-                    exit(1);
+                    return 1;
                 }
 
                 // Last secure commit: 0ba56fe0cf92ab656d303b3fde331cb4f9b0d578

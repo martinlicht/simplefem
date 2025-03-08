@@ -1,6 +1,10 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"

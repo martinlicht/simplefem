@@ -2,6 +2,12 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
@@ -20,8 +26,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: (1D) degree elevation commutes with exterior derivative" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial1D M = StandardInterval1D();

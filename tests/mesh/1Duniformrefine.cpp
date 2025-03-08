@@ -1,6 +1,5 @@
 
 #include "../../basic.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"
 

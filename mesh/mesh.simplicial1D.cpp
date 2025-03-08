@@ -3,19 +3,16 @@
 
 #include <algorithm>
 #include <array>
-#include <map>
 #include <sstream>
 #include <string>
 #include <type_traits>
-#include <utility>
 #include <vector>
 
 
 #include "../basic.hpp"
-#include "../utility/sorthack.hpp"
+// #include "../utility/sorthack.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"
 #include "coordinates.hpp"
 #include "mesh.hpp"
@@ -71,7 +68,7 @@ MeshSimplicial1D::MeshSimplicial1D(
     
     
     /* 2. Count vertices, allocate memory */
-    counter_vertices = 0;
+    assert( counter_vertices == 0 );
     for( const auto& duple : data_edge_vertices )
     for( const int& vertex : duple )
       counter_vertices = counter_vertices < vertex ? vertex : counter_vertices; 

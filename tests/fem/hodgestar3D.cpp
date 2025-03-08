@@ -2,12 +2,15 @@
 
 /**/
 
+#include <cmath>
+
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.hodgestarmatrix.hpp"
-#include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"
 
 
@@ -18,8 +21,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: (3D) Hodge star behaves as intended" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial3D M = UnitCube3D();

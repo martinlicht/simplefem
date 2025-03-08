@@ -2,6 +2,11 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+#include <limits>
+
 #include "../../basic.hpp"
 #include "../../fem/finitediff.hpp"
 

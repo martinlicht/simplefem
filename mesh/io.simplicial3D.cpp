@@ -1,22 +1,13 @@
 
-#include <algorithm>
 #include <array>
 #include <fstream>
 #include <ios>
 #include <istream>
-#include <map>
 #include <ostream>
-#include <string>
-#include <utility>
 #include <vector>
 
 
-
 #include "../basic.hpp"
-#include "../combinatorics/indexrange.hpp"
-#include "../combinatorics/indexmap.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
-#include "../operators/floatvector.hpp"
 #include "mesh.simplicial3D.hpp"
 #include "io.simplicial3D.hpp"
 #include "coordinates.hpp"

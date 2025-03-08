@@ -8,7 +8,7 @@
 
 #include "../basic.hpp"
 #include "../utility/random.hpp"
-#include "../combinatorics/generateindexmaps.hpp"
+#include "../combinatorics/indexmap.hpp"
 #include "../dense/factorization.hpp"
 #include "../dense/simplesolver.hpp"
 #include "mesh.hpp"

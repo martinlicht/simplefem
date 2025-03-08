@@ -1,4 +1,6 @@
 
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../combinatorics/generatemultiindices.hpp"
 

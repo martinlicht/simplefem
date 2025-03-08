@@ -2,11 +2,15 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
-#include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
-#include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.veewedgehodge.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../utility/convergencetable.hpp"

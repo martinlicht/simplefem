@@ -2,24 +2,17 @@
 
 /**/
 
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
-#include "../../sparse/matcsr.hpp"
-#include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
 
 
-using namespace std;
-
-extern const char* TestName;
-#define TESTNAME( cstr ) const char* TestName = cstr
-
-TESTNAME( "Solve SPD system: CGM, CRM, MINRES, HerzogSoodhalter" );
-
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test: " << TestName << nl;
+    LOG << "Unit Test: Solve SPD system using CGM, CRM, MINRES, HerzogSoodhalter" << nl;
     
     // LOG << std::setprecision(5);
 
@@ -303,7 +296,7 @@ int main( int argc, char *argv[] )
     
     
     
-    LOG << "Finished Unit Test: " << TestName << nl;
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
     return 0;
 }

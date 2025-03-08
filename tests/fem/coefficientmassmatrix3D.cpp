@@ -2,13 +2,16 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+
 #include "../../basic.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.coefficientmassmatrix.hpp"
-#include "../../fem/utilities.hpp"
 
 
 using namespace std;

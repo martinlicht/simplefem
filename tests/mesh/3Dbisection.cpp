@@ -1,7 +1,6 @@
 
 #include "../../basic.hpp"
 #include "../../utility/random.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 

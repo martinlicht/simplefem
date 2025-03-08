@@ -2,6 +2,12 @@
 
 /**/
 
+#include <cmath>
+
+#include <functional>
+#include <vector>
+#include <string>
+
 #include "../../basic.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
@@ -17,8 +23,6 @@ int main( int argc, char *argv[] )
     
     LOG << "Unit Test: (3D) masses are correctly approximated: precomputed mass" << nl;
     
-    // LOG << std::setprecision(10);
-
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial3D M = UnitCube3D();

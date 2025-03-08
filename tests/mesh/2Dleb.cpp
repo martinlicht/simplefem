@@ -4,7 +4,6 @@
 #include "../../basic.hpp"
 #include "../../utility/random.hpp"
 #include "../../utility/stl.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 

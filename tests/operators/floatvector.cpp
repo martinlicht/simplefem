@@ -1,4 +1,8 @@
 
+#include <cmath>
+
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../operators/floatvector.hpp"
 

@@ -3,8 +3,6 @@
 
 #include "../../basic.hpp"
 #include "../../combinatorics/generateindexmaps.hpp"
-#include "../../utility/stl.hpp"
-#include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 

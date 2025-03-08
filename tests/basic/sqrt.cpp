@@ -51,7 +51,7 @@ struct SqrtTest
         { 
             LOG << "SQRT: very big integer" << nl;
             numerical_container u;
-            u.f = std::numeric_limits<unsigned int>::max() >> 4;
+            u.f = std::numeric_limits<unsigned int>::max() >> 6;
             // LOG << u.i << ' ' << (double)u.f << nl;
             auto result = calculate_sqrts( u.f );
             LOGPRINTF( "epsilon x=%.30e cpp=%.10e fem=%.10e \n", 
@@ -167,7 +167,7 @@ struct ThirdRootTest
         { 
             LOG << "3RD: very big integer" << nl;
             numerical_container u;
-            u.f = std::numeric_limits<unsigned int>::max() >> 4;
+            u.f = std::numeric_limits<unsigned int>::max() >> 6;
             // LOG << u.i << ' ' << (double)u.f << nl;
             auto result = calculate_thirdroots( u.f );
             LOGPRINTF( "epsilon x=%.30e cpp=%.10e fem=%.10e \n", 

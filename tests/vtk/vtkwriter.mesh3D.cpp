@@ -5,7 +5,6 @@
 #include "../../basic.hpp"
 #include "../../utility/stl.hpp"
 #include "../../mesh/examples3D.hpp"
-#include "../../vtk/vtkwriter.hpp"
 
 
 using namespace std;

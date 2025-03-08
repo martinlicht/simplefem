@@ -69,6 +69,21 @@ void terminal_mode_restore()
     tcsetattr( STDIN_FILENO, TCSAFLUSH, &original_terminal_settings );
 }
 
+
+
+/**
+ * @brief Waits for the specified number of seconds.
+ * 
+ * @param (double): number of seconds.
+ */
+void busy_sleep( double seconds )
+{
+    clock_t start_time = clock();
+    while( (double)(clock() - start_time) / CLOCKS_PER_SEC < seconds );
+}
+
+
+
 /**
  * @brief Reads keyboard input in a separate thread.
  * 
@@ -124,7 +139,7 @@ void* process_printer( void* /*unused*/ )
     
     while( not process_reading_is_finished and (clock() - t_start) < 10 * CLOCKS_PER_SEC ) 
     { 
-        sleep(1);
+        busy_sleep(1.); //sleep(1);
         LOG << "Time: " << (clock() - t_start) << nl;
     }
 

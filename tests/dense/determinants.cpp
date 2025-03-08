@@ -1,5 +1,7 @@
 
 
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../dense/factorization.hpp"
 #include "../../dense/functions.hpp"

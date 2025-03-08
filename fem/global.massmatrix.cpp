@@ -209,7 +209,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
             
             const DenseMatrix Aux2 = SubdeterminantMatrix( Aux1, k );
 
-            const DenseMatrix foo = formMM;
+            const DenseMatrix foo = formMM.clone();
 
             {
                 auto D = QRIteration( foo );
@@ -254,7 +254,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
             
             const DenseMatrix Aux2 = MatrixTensorProduct( IdentityMatrix(polyMM.getdimin()), SubdeterminantMatrix( Aux1, k ) );
 
-            const DenseMatrix foo = fullMM;
+            const DenseMatrix foo = fullMM.clone();
 
             // fullMM = Transpose(Aux2) * fullMM * Aux2;
 

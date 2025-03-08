@@ -2,9 +2,16 @@
 
 /**/
 
+#include <cmath>
+
+#include <algorithm>
+#include <limits>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
-#include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
@@ -14,17 +21,13 @@
 #include "../../mesh/spanning.hpp"
 #include "../../mesh/shelling.hpp"
 #include "../../mesh/shelling2.hpp"
-#include "../../solver/iterativesolver.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsolver.hpp"
-#include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/global.avgsullivan.hpp"
-#include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/global.sullivanincl.hpp"
 #include "../../fem/utilities.hpp"
-#include "../../vtk/vtkwriter.hpp"
 
 
 using namespace std;
@@ -237,18 +240,8 @@ int main( int argc, char *argv[] )
 
                         auto residual = sol;
                         
-                        // ConjugateResidualSolverCSR( 
-                        //     sol.getdimension(), 
-                        //     sol.raw(), 
-                        //     rhs_sol.raw(), 
-                        //     A.getA(), A.getC(), A.getV(),
-                        //     residual.raw(),
-                        //     desired_precision,
-                        //     -1
-                        // );
-
                         {
-                            DenseMatrix Bt( A.getdimout(), 1, 1. );
+                            DenseMatrix Bt( A.getdimout(), 1, 1. ); // TODO: should be embedding of interpolation of constant function, not the unit vector 
                             DenseMatrix B = Transpose(Bt);
                             DenseMatrix C(1,1,0.);
                             

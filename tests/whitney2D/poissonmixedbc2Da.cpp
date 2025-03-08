@@ -2,7 +2,10 @@
 
 /**/
 
+#include <cmath>
+
 #include <fstream>
+#include <functional>
 
 #include "../../basic.hpp"
 #include "../../utility/convergencetable.hpp"
@@ -167,6 +170,12 @@ int main( int argc, char *argv[] )
                     
 
                     timestamp start = timestampnow();
+
+                    if(false)
+                    {
+                        ConjugateGradientMethod CGM( stiffness_csr ); 
+                        CGM.solve( sol, rhs );
+                    }
 
                     {
                         FloatVector residual( rhs );

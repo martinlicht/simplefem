@@ -1,4 +1,6 @@
 
+#include <cmath>
+
 #include "../../basic.hpp"
 #include "../../utility/random.hpp"
 
