@@ -17,7 +17,7 @@
 [ ] make sure that self-assignment is handled _explicitly_ whenever assignment operators are defined
 [ ] move constructors and assignment operators should be marked noexcept 
 
-[ ] lshaped maxwell: correct stuff 
+[ ] lshaped maxwell: correct the computation  
 [ ] neumann estimate 
 [ ] make sure that allone vectors are not used for constant functions. That only works if r=1. Name: constant_one
 [ ] add Neumann BC to mixed FEM for Poisson
@@ -60,13 +60,13 @@
 
 [x] correct the computation in the nullspace test 
 [x] tests output into logs 
-  [x] create a silent option for each run in the makefile 
-  [x] make sure the tests only output into stdout 
-  [x] adapt makefile to create a log  		
+    - [x] create a silent option for each run in the makefile 
+    - [x] make sure the tests only output into stdout 
+    - [x] adapt makefile to create a log  		
 [x] Zum laufen bringen auf SCITAS 
-  [x] login SCITAS shell 
-  [x] git repo transferieren 
-  [x] job framework aufsetzen 
+    - [x] login SCITAS shell 
+    - [x] git repo transferieren 
+    - [x] job framework aufsetzen 
   
 
 
@@ -79,8 +79,8 @@
 [ ] include links to the manual in the makefiles for quicker reference 
 
 [ ] makefile structure 
-  [x] common.recipe -> common.compile.mk
-  [x] vtkclean -> outputclean 
+    - [x] common.recipe -> common.compile.mk
+    - [x] vtkclean -> outputclean 
 
 [ ] Die automatische dependency generation funktioniert noch nicht. Werden alte dependency angaben erased?
 
@@ -91,39 +91,39 @@
 
 [x] Jede (bedeutende) Klasse soll eine Log-Funktion verwenden:
   
-  ```
-  void lg() const { LOG << *this << std::endl; } 
-  ```
+    ```
+    void lg() const { LOG << *this << std::endl; } 
+    ```
 
 [x] Jede Klasse soll das Shift interface implementieren 
   
-  ```
-  ostream& operator<<( T t, ostream& os )
-  {
-    t.print( os );
-  }
-  ```
+    ```
+    ostream& operator<<( T t, ostream& os )
+    {
+      t.print( os );
+    }
+    ```
 
 [x] Print soll genau das tun: 
   
-  ```
-  virtual std::string text() const override; 
-  
-  void print( ostream& os ) const
-  {
-    os << text() << nl;
-  }
-  ```
+    ```
+    virtual std::string text() const override; 
+    
+    void print( ostream& os ) const
+    {
+      os << text() << nl;
+    }
+    ```
 
 [ ] text() method 
     The text() shall only emit 'shallow' data,
-  so that no content of vectors and matrices is shown
-  If such content is to be shown, one can use a method 
-  such as 
-  ```
-  std::string fulltext() const;
-  ```
-  Many of your unit tests will need to be rewritten 
+    so that no content of vectors and matrices is shown
+    If such content is to be shown, one can use a method 
+    such as 
+    ```
+    std::string fulltext() const;
+    ```
+    Many of your unit tests will need to be rewritten 
 
 [ ] Retire die erweiterten print methoden (etwa ausgabe) 
 
@@ -186,29 +186,28 @@ Funktionen sind:
 
 [ ] Multiplicative Schwarz / Gauss-Seidel algorithms 
 
-  [ ] DOF partitioning
+[ ] DOF partitioning
     Schreibe einen Algorithmus welcher zu gegebener CSR-Matrix 
     die DOF partitioniert. Das ist eine Instanz des graph coloring problem.
     Die max. Zahl der Farben kann man nach oben abschaetzen durch die Anzahl
     der DOF, aber allgemein genuegt es, greedy vorzugehen.
     We can restrict to symmetric matrices 
-    
-  [ ] Schreibe einen solver, welcher das Faerbung verwendet 
+  
+[ ] Schreibe einen solver, welcher das Faerbung verwendet 
     vielleicht mit einer Gauss-Seidel methode,
     fuer eine multiplicative Schwarz methode.
-    
-  [ ] Teste das for the mass matrix 
+  
+[ ] Teste das for the mass matrix 
 
 [ ] verstehe die stopping criteria for iterative solvers etwas besser 
 [ ] was ist die richtige variante von CG? (E-Mail Meurant?)
-  
+
 [ ] Chebyshev iteration:
-  Der Solver scheint zu funktionieren. 
-  Als naechstes den mittleren Versuch erasen, 
-  dann den externen archivieren. 
-  
-[ ] Verstehe den Chebyshev solver von theoretischer Seite 
-  und auch die verschiedenen Arten ihn aufzuschreiben
+    Der Solver scheint zu funktionieren. 
+    Als naechstes den mittleren Versuch erasen, 
+    dann den externen archivieren. 
+
+[ ] Verstehe den Chebyshev solver von theoretischer Seite und auch die verschiedenen Arten ihn aufzuschreiben
   
 
 
@@ -216,8 +215,8 @@ Funktionen sind:
 
 [ ] Rekapituliere das interface der composed operators,
     und weswegen es diese make-pointer methoden gibt. 
-  Lassen sich diese moeglicherweise ueberladen,
-  so dass du sie nur einmal definieren brauchst?
+    Lassen sich diese moeglicherweise ueberladen,
+    so dass du sie nur einmal definieren brauchst?
 
 
 
@@ -227,21 +226,17 @@ Funktionen sind:
 
 [x] Die Tests spiegeln nicht unbedingt den source tree wieder 
 
-[ ] rename basic.hpp in the main folder,
-	move to basic subfolder,
-	and have all exec.s include it
+[ ] rename basic.hpp in the main folder, move to basic subfolder, and have all exec.s include it
 
-[ ] rename 'basic' module 
-	e.g. common, base, ....
+[ ] rename 'basic' module: e.g. common, base, ....
 
-[ ] Pseudo unit tests umordnen nach woanders 
-	basic/ benchmark helloworld leak logging
+[ ] Pseudo unit tests umordnen nach woanders:	basic/ benchmark helloworld leak logging
 	
 [ ] In MFEM gibt es die Option entweder eine shared oder static library zu builden.
-	That should be used in this project as well.
+  	That should be used in this project as well.
 	
 [ ] Generally speaking, go over the unreal engine and harvest good ideas
-	[x] unreachable, specialized for virtual functions 
+[x] unreachable, specialized for virtual functions 
 
 Upvote: https://stackoverflow.com/questions/10865957/printf-with-stdstring
 
@@ -254,60 +249,38 @@ Upvote: https://stackoverflow.com/questions/10865957/printf-with-stdstring
 
 [ ] Rewrite unit tests as follows:
     - use meaningful names for the tests 
-  - introduce unit test names as a special variable in each test
-  - once that is done, externalize the tests 
-  - create a single header file that includes all the setup / teardown code 
+    - introduce unit test names as a special variable in each test
+    - once that is done, externalize the tests 
+    - create a single header file that includes all the setup / teardown code 
 
 [ ] new unit test: solver 
-  Erstelle eine 08/15 FD matrix (square, laplace, Dirichlet) 
-  Solve that SPD matrix using all available solvers 
+    Erstelle eine 08/15 FD matrix (square, laplace, Dirichlet) 
+    Solve that SPD matrix using all available solvers 
   
 [ ] new unit test: solver 
-  Erstelle eine 08/15 FD matrix (square, laplace, periodisch) 
-  Solve that SPD matrix using all available solvers 
+    Erstelle eine 08/15 FD matrix (square, laplace, periodisch) 
+    Solve that SPD matrix using all available solvers 
 
 [x] Rewrite unit tests:
     - die namen der tests als variable 
     - nachpruefen dass die namen auch sinn ergeben
   
-[ ] SIGINT handler einbauen:
-      im falle eines abbruchs geben den namen des tests aus 
+[ ] SIGINT handler einbauen: im falle eines abbruchs geben den namen des tests aus 
     
 [ ] Have a look at the following unit test frameworks:
-
-  - http://unitpp.sourceforge.net/
-  - https://github.com/burner/sweet.hpp/blob/master/options.hpp
-  - https://github.com/burner/sweet.hpp/blob/master/filesystemtest/filesystemtest.cpp
-  - https://github.com/burner/sweet.hpp/blob/master/fector.hpp
-  - https://github.com/ccosmin/tinytest/blob/master/examples/code1.c
-  - https://github.com/greg-white/sTest
+- http://unitpp.sourceforge.net/
+- https://github.com/burner/sweet.hpp/blob/master/options.hpp
+- https://github.com/burner/sweet.hpp/blob/master/filesystemtest/filesystemtest.cpp
+- https://github.com/burner/sweet.hpp/blob/master/fector.hpp
+- https://github.com/ccosmin/tinytest/blob/master/examples/code1.c
+- https://github.com/greg-white/sTest
   
 
 [ ] verstehe die command line options von catch2
 
-[ ] Wie kann man unit tests verwenden, 
-    welche eine exception werfen? Vielleicht im Catch2 forum anfragen.
+[ ] Wie kann man unit tests verwenden, welche eine exception werfen? Vielleicht im Catch2 forum anfragen.
 
-  ------------------------------------------------------------------------------
-  TimeOfWonder
   
-  Hello,
-  I have been working with some handwritten unit tests for a C++ project and would like to refactor those into using catch2 as an alternative. 
-  
-  Most of my tests work with `assert` macros or by throwing exceptions. If a test fails, the corresponding program just crashes. In principle, the unit tests look as follows:
-  
-  ```
-  #include "mylib.hpp"
-  int main(){
-    do_stuff_just_pass_on_success_and_crash_on_fail();
-  }
-  ```
-  
-  I am wondering how to convert those into catch2 unit tests in a minimally invasive way, so I don't have to refactor the entire library (at once).
-  
-  What is a your recommendation?
-  ------------------------------------------------------------------------------
-	
 	
 
 
@@ -324,24 +297,24 @@ Better make operators non-member
 #--------------- Layout & Comment --------------
 
 [ ] Layout of class declarations 
-  Which constructors are declared and in which order?
-  What is the order of the different methods?
-  Which should be explicitly deleted or defaulted?
-  
-  This concerns the classes in 
-  - combinatorics
-  - meshes 
-  - operators, dense, sparse
+    Which constructors are declared and in which order?
+    What is the order of the different methods?
+    Which should be explicitly deleted or defaulted?
+    
+    This concerns the classes in 
+    - combinatorics
+    - meshes 
+    - operators, dense, sparse
   
 [ ] Gehe allen Klassen durch und kommentiere das grundlegende Interface:
-  - custom constructors 
-  - the standard six
-  - your personal standard interface 
-  - everything else 
-  Dabei beobachtest du auch die copy und move semantics,
-  und lieferst eventuell implementierung nach.
-  Falls Abweichungen auftauchen, fuegst du kommentare ein 
-  oder behebst die Abweichungen, insb. Move semantics 
+    - custom constructors 
+    - the standard six
+    - your personal standard interface 
+    - everything else 
+    Dabei beobachtest du auch die copy und move semantics,
+    und lieferst eventuell implementierung nach.
+    Falls Abweichungen auftauchen, fuegst du kommentare ein 
+    oder behebst die Abweichungen, insb. Move semantics 
 
 
 [ ] Kommentiere die Combinatorics-Klassen 
@@ -354,11 +327,9 @@ Better make operators non-member
 
 [ ] Kommentiere FloatVector und LinearOperator
 
-[ ] Kommentiere die verschiedenen einfachen Operatoren 
-  und den flag operator 
+[ ] Kommentiere die verschiedenen einfachen Operatoren und den flag operator 
 
-[ ] Kommentiere die composed operators soweit es geht,
-  und lasse eventuell das komplizierte pointer zeugs vorest aus 
+[ ] Kommentiere die composed operators soweit es geht, und lasse eventuell das komplizierte pointer zeugs vorest aus 
 
 
 
@@ -377,13 +348,11 @@ Better make operators non-member
   
 [ ] replace 'assert' by 'Assert'
 
-[ ] Custom Strings library 
-  Custom Output library 
+[ ] Custom Strings library, Custom Output library 
 
 [x] Remove iomanip in each test module 
 
-[ ] Change to makefile to save a few seconds and make it more reasonable:
-  as in the test folder, use inclusions 
+[ ] Change to makefile to save a few seconds and make it more reasonable: as in the test folder, use inclusions 
 
 
 
@@ -741,6 +710,7 @@ and be written in the C-conforming subset of C++.
 The project comes with unit tests whose behavior can be controlled via commandline.
 Generally, there should only be a few commands to describe what is happening.
 
+```
     --help
     Display a few helpful lines 
     
@@ -758,6 +728,7 @@ Generally, there should only be a few commands to describe what is happening.
     
     --outfile
     specify the file were the output should be directed to
+```
 
 
 # (LOW) Iterative Methods to implement
@@ -825,7 +796,9 @@ Replace any occurence of 'int' by a user-defined type 'Index'.
 That type should be large enough for your purposes 
 and compatible with the STL standard library.
 For example,
+```
     typedef std::size_t Index;
+```
 
 # (LOW) Smart Pointers
 
@@ -852,8 +825,8 @@ Should smart pointers be employed throughout the library to make it more robust 
 // TODO: Cholesky with Pivoting 
 
 
- // QR repeated 
- // LQ repeated 
+// QR repeated 
+// LQ repeated 
 
 // void QRFactorizationRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R, unsigned int t );
 // void LQFactorizationRepeated( const DenseMatrix& A, DenseMatrix& Q, DenseMatrix& R, unsigned int t );

@@ -40,6 +40,7 @@ Checks: "portability*,\
         google-runtime-operator,\
         llvm-header-guard,\
         llvm-include-order,\
+        mpi*,\
         openmp*,\
         performance*,\
         -performance-inefficient-string-concatenation,\
