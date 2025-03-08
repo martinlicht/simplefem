@@ -78,7 +78,7 @@ that uses an actual internal container for the storage.
     
     FloatVector
     - interne daten umstellen auf C-style arrays 
-      C++ vector nur noch als kopie zurückgeben
+      C++ vector nur noch als kopie zurueckgeben
     - high accuracy scalar product (assembler)
     - high speed scalar product (assembler)
     - getInternalPointer 

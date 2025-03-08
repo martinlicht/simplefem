@@ -10,32 +10,32 @@ Generally speaking, it should be a transversable container.
 The mesh module provides an abstract base class for the management of meshes
 and several implementations 
 
-  - Mesh
-    - manifold 2D
-    - manifold 3D
-    - allgemeine manifold
-    - allgemeines mesh
-  - uniform refinement:
-      zuerst verstehen, dann implementieren
-  - bisection refinement:
-      zuerst verstehen, dann implementieren
-  - Ein eigenes Ausgabeformat ist notwendig
-      Unterscheidung nach Spezialklassen
-      I/O in andere Formate ist zweitrangig
-  
-  
-  
+- Mesh
+  - manifold 2D
+  - manifold 3D
+  - allgemeine manifold
+  - allgemeines mesh
+- uniform refinement:
+    zuerst verstehen, dann implementieren
+- bisection refinement:
+    zuerst verstehen, dann implementieren
+- Ein eigenes Ausgabeformat ist notwendig
+    Unterscheidung nach Spezialklassen
+    I/O in andere Formate ist zweitrangig
 
 
-  o Coordinates 
+
+
+
+[ ] Coordinates 
     - check 
     - robusten 
-    
-  o Abstract Mesh Class
+  
+[ ] Abstract Mesh Class
     - simplify the interface and the access to super simplices 
     - move the coordinates member somewhere different 
-    
-  o Mesh 2D Triangulation 
+  
+[ ] Mesh 2D Triangulation 
     - clean up the naming of variables
       (temporarily copy the class declaration into the cpp file, edit, copy back)
     - develop vertex-parent lists as local data.
