@@ -16,7 +16,7 @@
 #include "../../fem/global.cechmatrix.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -70,7 +70,7 @@ int main( int argc, char *argv[] )
 
         // return 0;
 
-        std::vector<SparseMatrix> cech_massmatrix; cech_massmatrix.reserve(4); // TODO: wierd behavior, calls copy constructor
+        std::vector<SparseMatrix> cech_massmatrix; cech_massmatrix.reserve(4); // TODO(martinlicht): wierd behavior, calls copy constructor
         for( int k = 0; k <= n; k++ ) cech_massmatrix.push_back( FEECCechMassMatrix( M, M.getinnerdimension(), k, 0 ) );
 
         std::vector<SparseMatrix> cech_diffmatrix; cech_diffmatrix.reserve(3);
@@ -128,7 +128,7 @@ int main( int argc, char *argv[] )
             
             if( i != 3 ) 
                 // Diffver(i,j) = std::sqrt( n * supsimplex_size[i] );
-                Diffver(i,j) = std::sqrt( n * (n-i) ); // TODO: full proof in the manuscript
+                Diffver(i,j) = std::sqrt( n * (n-i) ); // TODO(martinlicht): full proof in the manuscript
         }
 
 

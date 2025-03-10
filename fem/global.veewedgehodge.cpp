@@ -327,7 +327,7 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
 
     assert( wedge_matrix.is_square() );
 
-    const DenseMatrix wedge_matrix_inv = Inverse( wedge_matrix ); // TODO: This inversion can be made much simpler ... 
+    const DenseMatrix wedge_matrix_inv = Inverse( wedge_matrix ); // TODO(martinlicht): This inversion can be made much simpler ... 
 
     assert( ( wedge_matrix_inv * wedge_matrix - IdentityMatrix( wedge_matrix.getdimin() ) ).is_numerically_small() );
 

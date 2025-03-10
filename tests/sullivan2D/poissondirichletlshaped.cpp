@@ -51,7 +51,7 @@ FloatVector IncreaseResolution( const MeshSimplicial2D& mesh, const FloatVector&
 
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -293,7 +293,7 @@ int main( int argc, char *argv[] )
 
                 
                 {
-                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                    std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
                     
                     assert( r == 1 );

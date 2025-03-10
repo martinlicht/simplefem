@@ -220,7 +220,7 @@ void generateShellings(
 
         // We have determined whether node is compatible. If not, then continue with the next one
 
-        // is_compatible = true; // TODO
+        // is_compatible = true; // TODO(martinlicht)
 
         if( not is_compatible ) {
             LOG << "reject" << nl;
@@ -496,7 +496,7 @@ void generate_ranked_shelling(
 
         // We have determined whether node is compatible. If not, then continue with the next one
 
-        // is_compatible = true; // TODO
+        // is_compatible = true; // TODO(martinlicht)
 
         if( not is_compatible ) {
             LOG << "reject" << nl;

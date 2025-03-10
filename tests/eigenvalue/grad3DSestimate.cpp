@@ -31,7 +31,7 @@
 
 
 
-// TODO: can this be a local lambda?
+// TODO(martinlicht): can this be a local lambda?
 // Comparator for the priority queue (min-heap, based on weights)
 struct Compare {
     bool operator()(const std::pair<int, Float>& p1, const std::pair<int, Float>& p2) {
@@ -49,7 +49,7 @@ struct Compare {
 
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -81,22 +81,22 @@ int main( int argc, char *argv[] )
         
         if( argc > 1 )
         {
-            // Parse using strtol
-            char* end = nullptr;
-            long val = std::strtol(argv[1], &end, 10);
+            const char* end = nullptr;
+            bool has_overflown;
+            int value = string_to_integer( argv[1], &end, 10, has_overflown );
 
             // Check if the entire argument was parsed and within int range
             if( *end != '\0' ) {
 
                 LOG << "Error: The provided argument is not a valid integer:" << argv[1] << "\n";
 
-            } else if( val != static_cast<int>(val) ) {
+            } else if( value != static_cast<int>(value) ) {
 
                 LOG << "Error: The provided argument is out of 'int' range.\n";
 
             } else {
                 
-                int number = static_cast<int>(val);
+                int number = static_cast<int>(value);
                 LOG << "Command-line argument provided: " << number << nl;
 
                 first_bc_face = number;
@@ -427,7 +427,7 @@ int main( int argc, char *argv[] )
             std::vector<array_cost> arrays_of_cost( num_cells, array_cost(num_cells, std::numeric_limits<Float>::infinity()) );
 
             // keep the minimal costs among the trees
-            Float minimal_cost_of_tree = numeric_limits<Float>::infinity();
+            Float minimal_cost_of_tree = std::numeric_limits<Float>::infinity();
             
             // iterate over all the possible roots 
             for( int curr_root = 0; curr_root < num_cells; curr_root++ )

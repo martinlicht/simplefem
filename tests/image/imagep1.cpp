@@ -15,7 +15,7 @@
 #include "../../mesh/examples2D.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -73,7 +73,7 @@ int main( int argc, char *argv[] )
             FloatVector sample_G(K);
             FloatVector sample_B(K);
 
-            // points = IdentityMatrix(3); // TODO 
+            // points = IdentityMatrix(3); // TODO(martinlicht) 
             
             for( int k = 0; k < K; k++ )
             {
@@ -83,7 +83,7 @@ int main( int argc, char *argv[] )
                 
                 auto P = M.getPointFromBarycentric( 2, t, barycoords );
 
-                points.setrow( k, barycoords ); // TODO
+                points.setrow( k, barycoords ); // TODO(martinlicht)
                 sample_R[k] = red(   P[0], P[1] );
                 sample_G[k] = green( P[0], P[1] );
                 sample_B[k] = blue(  P[0], P[1] );
@@ -107,7 +107,7 @@ int main( int argc, char *argv[] )
         }
 
 
-        fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
+        std::fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
         fs << M.outputLinearSVG( interpol_red, interpol_green, interpol_blue, 0.000, "array", "none" );
         fs.close();
 
@@ -118,7 +118,7 @@ int main( int argc, char *argv[] )
         ///////////////////////////////////////////////////////////
 
         // container for all the weights 
-        vector<pair<int,Float>> weights( 
+        std::vector<std::pair<int,Float>> weights( 
                 num_volumes, std::pair<int,Float>(0,0.)
         );
         
@@ -151,12 +151,12 @@ int main( int argc, char *argv[] )
                            + samples_B.lpnorm(2.,measure) / K;
             // Float weight = flip_coin(0.9);
             
-            weights[t] = pair<int,Float>( t, weight );
+            weights[t] = std::pair<int,Float>( t, weight );
         }
 
         // sort descending by weight
         std::sort( weights.begin(), weights.end(), 
-            []( const pair<int,Float>& a, const pair<int,Float>& b )
+            []( const std::pair<int,Float>& a, const std::pair<int,Float>& b )
             { return a.second > b.second; }
         );
         

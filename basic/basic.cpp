@@ -1,9 +1,10 @@
 
 #include <cstdio>
 #include <cstdarg>
-
 #include <chrono>
 #include <cctype>
+
+#include <limits>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -42,10 +43,146 @@ std::string tab_each_line( std::string str )
     str.insert( 0, 1, '\t' );
     for( int c = str.size(); c > 0; c-- ) {
         if( str[c-1] == '\n' )
-            str.insert(c, 1, '\t');
+            str.insert(c, 1, '\t' );
     }
     return str;
 } 
+
+
+int string_to_integer( const char* s, const char* __restrict__ *endptr, unsigned int base, bool& has_overflown ) {
+    
+    assert( s != nullptr );
+    assert( ( 2 <= base and base <= 36 ) or ( base == 0 ) );
+
+    unsigned int result = 0;
+    
+    int sign = 1;
+
+    has_overflown = false;
+    
+    // Skip leading whitespace
+    while( std::isspace( (unsigned char)*s ) ) { s++; }
+
+    if( *s == '\0' ) {
+        // printf("Only white space\n");
+        return 0;
+    } 
+        
+    // Handle optional sign
+    if( *s == '-' ) { 
+        sign = -1;
+        s++;
+    } else if( *s == '+' ) {
+        s++;
+    }
+
+    if( *s == '\0' ) { 
+        // printf("Only signs\n");
+        return 0;
+    }
+        
+    // Auto-detect if base equals zero 
+    if( base == 0 ) {
+        
+        // printf("Auto-detect base\n");
+        
+        base = 10;
+
+        if( *s == '0' ) { 
+            
+            base = 8;
+            s++;
+        
+            if( *s == '\0' ) return 0;
+            
+            if( *s == 'x' || *s == 'X' ) {
+                base = 16; 
+                s++;
+            }
+
+        }
+    }
+
+    // Convert digits
+    while( *s ) {
+        
+        int digit;
+        
+        // Find digits within the correct range 
+        if( *s >= '0' && *s <= '9' ) {
+            digit = *s - '0';
+        } else if( *s >= 'a' && *s <= 'z' ) {
+            digit = *s - 'a' + 10;
+        } else if( *s >= 'A' && *s <= 'Z' ) {
+            digit = *s - 'A' + 10;
+        } else {
+            break;
+        }
+
+        // printf("Digit detected: %u\n", digit );
+
+        if( digit >= base ) break;
+
+        if( not has_overflown and result > ( std::numeric_limits<int>::max() - digit) / base) {
+            // printf("Overflowing... %u %u\n", result, digit );
+            has_overflown = true;
+        } else {
+            result = result * base + (unsigned int)digit;
+        }
+
+        s++;
+    }
+
+    // Store pointer one past the last digit 
+    if( endptr != nullptr ) 
+    {
+        *endptr = s;
+    }
+
+    // Assuming two's complement (C++20 and C23)
+    if( sign == -1 and result > 1u + (unsigned int)(std::numeric_limits<int>::max()) ) has_overflown = true;
+    
+    if( has_overflown ) 
+    {
+        // printf("Overflown\n");
+        return ( sign == 1 ) ? ( std::numeric_limits<int>::max() ) : ( std::numeric_limits<int>::min() );
+    }
+
+    return sign * result;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -94,7 +231,7 @@ std::string printf_into_string( const char* formatstring, ... )
 
 
 
-// TODO: move to utility 
+// TODO(martinlicht): move to utility 
 
 static_assert( std::is_integral< decltype( std::chrono::time_point_cast< std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
 

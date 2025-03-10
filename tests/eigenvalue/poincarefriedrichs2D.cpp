@@ -30,7 +30,7 @@
 #include "../../fem/utilities.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -241,7 +241,7 @@ int main( int argc, char *argv[] )
                         auto residual = sol;
                         
                         {
-                            DenseMatrix Bt( A.getdimout(), 1, 1. ); // TODO: should be embedding of interpolation of constant function, not the unit vector 
+                            DenseMatrix Bt( A.getdimout(), 1, 1. ); // TODO(martinlicht): should be embedding of interpolation of constant function, not the unit vector 
                             DenseMatrix B = Transpose(Bt);
                             DenseMatrix C(1,1,0.);
                             
@@ -426,7 +426,7 @@ int main( int argc, char *argv[] )
                 
                 auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
                 
-                // TODO: develop preconditioners 
+                // TODO(martinlicht): develop preconditioners 
                 // auto PA = IdentityMatrix( A.getdimin() );
                 // auto PC = IdentityMatrix( C.getdimin() );
 

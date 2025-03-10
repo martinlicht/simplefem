@@ -22,7 +22,7 @@
 #include "../../fem/global.sullivanincl.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -48,22 +48,22 @@ int main( int argc, char *argv[] )
         
         if( argc > 1 )
         {
-            // Parse using strtol
-            char* end = nullptr;
-            long val = std::strtol(argv[1], &end, 10);
+            const char* end = nullptr;
+            bool has_overflown;
+            int value = string_to_integer( argv[1], &end, 10, has_overflown );
 
             // Check if the entire argument was parsed and within int range
             if( *end != '\0' ) {
 
                 LOG << "Error: The provided argument is not a valid integer:" << argv[1] << "\n";
 
-            } else if( val != static_cast<int>(val) ) {
+            } else if( value != static_cast<int>(value) ) {
 
                 LOG << "Error: The provided argument is out of 'int' range.\n";
 
             } else {
                 
-                int number = static_cast<int>(val);
+                int number = static_cast<int>(value);
                 LOG << "Command-line argument provided: " << number << nl;
 
                 first_bc_face = number;
@@ -168,7 +168,7 @@ int main( int argc, char *argv[] )
             
             auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
             
-            // TODO: develop preconditioners 
+            // TODO(martinlicht): develop preconditioners 
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
 

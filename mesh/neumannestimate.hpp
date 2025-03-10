@@ -28,17 +28,6 @@
 
 
 
-// TODO: can this be a local lambda?
-// TODO: Double check correctness
-// Comparator for the priority queue (min-heap, based on weights). Use > to prioritize the pair with the smaller weight
-struct Compare {
-    bool operator()(const std::pair<int, Float>& p1, const std::pair<int, Float>& p2) {
-        return p1.second > p2.second;
-    }
-};
-
-
-
 Float NeumannEstimate( const Mesh& M ) {
 
     // estimate the Neumann eigenvalue using one of the recursive estimates 
@@ -111,6 +100,15 @@ Float NeumannEstimate( const Mesh& M ) {
         
         // we will construct the tree coming from that root 
         
+        // TODO(martinlicht): Double check correctness
+        // Comparator for the priority queue (min-heap, based on weights). 
+        // Use > to prioritize the pair with the smaller weight
+        struct Compare {
+            bool operator()(const std::pair<int, Float>& p1, const std::pair<int, Float>& p2) {
+                return p1.second > p2.second;
+            }
+        };
+
         // Priority queue to store {cell, distance} pairs, sorted by distance
         std::priority_queue<std::pair<int, Float>, std::vector<std::pair<int, Float>>, Compare> pq;
 

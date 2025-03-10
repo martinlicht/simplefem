@@ -16,9 +16,9 @@
 #include "../../solver/iterativesolver.hpp"
 
 
-using namespace std;
+// using namespace std;
 
-// TODO: replace by pivoted row and column elimination
+// TODO(martinlicht): replace by pivoted row and column elimination
 
 static Float lowest( const FloatVector& vec, Float threshold )
 {

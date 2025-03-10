@@ -15,16 +15,16 @@ int main( int argc, char *argv[] )
         LOG << "testing random integer generation...\n";
         seed_random_integer();
         
-        unsigned int max_value = random_integer_maximum();
+        unsigned int max_value =  get_random_integer_modulo();
         
-        // Ensure `random_integer_maximum()` returns a non-zero maximum
+        // Ensure ` get_random_integer_modulo()` returns a non-zero maximum
         
         // Ensure `random_integer` returns values within a reasonable range
-        assert( max_value > 0 && "random_integer_maximum() should be greater than 0" );
+        assert( max_value > 0 && " get_random_integer_modulo() should be greater than 0" );
 
         for( int t = 0; t < 10; t++ ) {
             unsigned int value = random_integer();
-            unsigned int max   = random_integer_maximum();
+            unsigned int max   =  get_random_integer_modulo();
             assert( max == max_value );
             assert( value <= max_value && "random_integer() out of range" );
         }

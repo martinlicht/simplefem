@@ -6,7 +6,7 @@
 #include "../../mesh/examples2D.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 
 #include "vtk.testsnippet.cxx"
@@ -91,7 +91,7 @@ int main( int argc, char *argv[] )
             }    
 
             {
-                fstream fs( string("./rounddisk.svg"), std::fstream::out );
+                std::fstream fs( std::string("./rounddisk.svg"), std::fstream::out );
                 // fs << M.outputTikZ();
                 fs << M.outputSVG();
                 fs.close();

@@ -205,7 +205,7 @@ FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector&
 
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -399,7 +399,7 @@ int main( int argc, char *argv[] )
                 LOG << "time:      " << Float( solver_time ) << nl;
                 
                 
-                LOG << "...update saved old solutions:" << nl; // TODO: remove std::move and replace it with std::transform
+                LOG << "...update saved old solutions:" << nl; // TODO(martinlicht): remove std::move and replace it with std::transform
                 if( l > min_l )
                 {
                     std::vector<FloatVector> new_solutions; new_solutions.reserve( solutions.size() );
@@ -476,7 +476,7 @@ int main( int argc, char *argv[] )
                 
                 if( true and r == 1 )
                 {
-                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                    std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
                     
                     vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );

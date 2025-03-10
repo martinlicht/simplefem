@@ -21,7 +21,7 @@
 #include "../../fem/global.sullivanincl.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -127,7 +127,7 @@ int main( int argc, char *argv[] )
             
             auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
             
-            // TODO: develop preconditioners 
+            // TODO(martinlicht): develop preconditioners 
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
 

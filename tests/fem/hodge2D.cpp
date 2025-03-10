@@ -17,7 +17,7 @@
 #include "../../utility/convergencetable.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
                 
                 const auto error_mass = absolute( mass_primal - mass_dual );
 
-                assert( isfinite(error_mass) );
+                assert( std::isfinite(error_mass) );
 
                 // LOG << mass_primal << space << mass_dual << space << mass_dual / mass_primal << space << error_mass << nl;
                 

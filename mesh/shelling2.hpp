@@ -404,7 +404,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
                 assert( 0 <= sub_index and sub_index < binomial_integer(dim+1,level+1) );
                 assert( 0 <= sub_index and sub_index < binomial_integer(dim+1,dim) );
                     
-                int face = mesh.get_subsimplex( dim, dim-1, i, sub_index ); // TODO: Debug 
+                int face = mesh.get_subsimplex( dim, dim-1, i, sub_index ); // TODO(martinlicht): Debug 
 
                 assert( 0 <= face and face < counts[dim-1] );
 
@@ -722,7 +722,7 @@ void generate_shellings2(
     // unless we are at the start: 
     // delete all the non-reachable nodes, that is, those without active faces 
     
-    // TODO:
+    // TODO(martinlicht):
     // All the candidate nodes have the property that their intersection with the prefix nodes is a collection of faces. 
     // That is the case if and only if all subsimplices shared with a prefix node are contained in one the active faces.
     // Otherwise, there is a subsimplex shared with a prefix node but not within one of the active faces.
@@ -1045,7 +1045,7 @@ void generate_shellings2(
             weight_for_node_reflect[i] = new_coefficients.l2norm();
 
             weight_for_node_morphin[i] = ( m != dim ? info.C7[current_node][form_degree][m][sub_index] * info.C8[current_node][form_degree+1][m][sub_index] : 1. / Constants::pi * info.diameters[current_node] ); 
-            // TODO: which form degree?
+            // TODO(martinlicht): which form degree?
 
         }
     

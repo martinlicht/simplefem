@@ -464,7 +464,7 @@ std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
 
     
 
-    // TODO : interleave these. Right now, it's a list of choices
+    // TODO(martinlicht) : interleave these. Right now, it's a list of choices
     std::vector<std::vector<int>> results;
     
     results = interleaveLists( top_sorts_of_succs );

@@ -115,7 +115,7 @@ void MeshSimplicial3D::midpoint_refinement( int t )
 //     int vn = counter_vertices;
 //     
 //     
-//     /* fill in: downward */ // TODO
+//     /* fill in: downward */ // TODO(martinlicht)
 //     data_tetrahedron_vertices[ t0 ][0] = vn;
 //     data_tetrahedron_vertices[ t0 ][1] = t_v0;
 //     data_tetrahedron_vertices[ t0 ][2] = t_v1;

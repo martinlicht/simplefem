@@ -16,7 +16,9 @@ static              std::default_random_engine random_engine(0);
 #endif
 static thread_local std::uniform_int_distribution<unsigned int> distribution(0, std::numeric_limits<unsigned int>::max());
 
-const constexpr unsigned int maximum_random_integer = std::numeric_limits<unsigned int>::max() - 10; // magic number
+const constexpr unsigned int random_integer_modulo = std::numeric_limits<unsigned int>::max() - 10; // magic number
+
+// TODO(martin): This is technically not the maximum...
 
 void seed_random_integer()
 {
@@ -31,15 +33,15 @@ unsigned int random_integer()
     
     Assert( 0 <= ret and ret <= std::numeric_limits<unsigned int>::max() );
     
-    ret = ret % random_integer_maximum();
+    ret = ret % get_random_integer_modulo();
     
     return ret;
 }
 
-unsigned int random_integer_maximum()
+unsigned int get_random_integer_modulo()
 {
-    assert( maximum_random_integer > 0 );
-    return maximum_random_integer;
+    static_assert( random_integer_modulo > 0 , "Maximum random integer must be positive" );
+    return random_integer_modulo;
 }
 
 
@@ -53,7 +55,7 @@ unsigned int flip_coin( Float prob_zero )
 Float random_uniform()
 {
     // Float ret = static_cast<Float>( rand() ) / static_cast<Float>( RAND_MAX );
-    Float ret = static_cast<Float>( random_integer() ) / random_integer_maximum();
+    Float ret = static_cast<Float>( random_integer() ) / get_random_integer_modulo();
     Assert( 0. <= ret and ret <= 1. );
     return ret;
 }
@@ -69,7 +71,7 @@ inline Float gaussrand_1()
     Float x = 0;
     
     for( int i = 0; i < n; i++ ) 
-        x += random_integer() / static_cast<Float>(random_integer_maximum());
+        x += random_integer() / static_cast<Float>(get_random_integer_modulo());
     
     x -= n / 2.0;
     x /= std::sqrt( n / 12.0 );
@@ -87,8 +89,8 @@ inline Float gaussrand_2()
     if( phase ) {
         z = std::sqrt( -2. * std::log(u) ) * std::cos( 2. * pi * v );
     } else {
-        u = ( random_integer() + 1. ) / ( random_integer_maximum() + 2. );
-        v = random_integer() / ( random_integer_maximum() + 1. );
+        u = ( random_integer() + 1. ) / ( get_random_integer_modulo() + 2. );
+        v = random_integer() / ( get_random_integer_modulo() + 1. );
         z = std::sqrt( -2. * std::log(u) ) * std::sin( 2. * pi * v );
     }
         
@@ -102,7 +104,7 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 {
     Assert( std_dev > machine_epsilon );
 
-    Float x = random_integer() / (random_integer_maximum() + 1.0);   /* 0.0 <= x < 1.0 */
+    Float x = random_integer() / (get_random_integer_modulo() + 1.0);   /* 0.0 <= x < 1.0 */
     
     bool x_is_large = (x >= 0.5);
     
@@ -115,8 +117,8 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
 inline Float gaussrand_4()
 {
     const Float pi = 3.14159265358979323846;
-    Float u = ( random_integer() + 1. ) / ( random_integer_maximum() + 2. );
-    Float v = ( random_integer()      ) / ( random_integer_maximum() + 1. );
+    Float u = ( random_integer() + 1. ) / ( get_random_integer_modulo() + 2. );
+    Float v = ( random_integer()      ) / ( get_random_integer_modulo() + 1. );
 
     Float result = std::sqrt( -2. * std::log(u) ) * std::sin( 2. * pi * v );
 

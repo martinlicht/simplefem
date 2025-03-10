@@ -95,7 +95,7 @@ SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r )
     const std::vector<MultiIndex> multis_out = generateMultiIndices( IndexRange( 0, n ), r );
     const std::vector<IndexMap>   sigmas_out = generateSigmas( IndexRange( 1, n-k ), IndexRange( 0, n ) );
     
-    // TODO: complete code 
+    // TODO(martinlicht): complete code 
     // assert( multis_dest.size() * sigmas_dest.size() == multis_src.size()  * sigmas_src.size() );
     assert( dim_out == dim_in );
     
@@ -142,7 +142,7 @@ SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r )
 
         // create local Hodge product matrix 
         
-        DenseMatrix formHM(0); // TODO: wierd ...
+        DenseMatrix formHM(0); // TODO(martinlicht): wierd ...
 
         DenseMatrix fullHM = MatrixTensorProduct( polyMM, formHM ) * measure;
 

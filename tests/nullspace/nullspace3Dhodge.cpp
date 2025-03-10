@@ -22,7 +22,7 @@
 #include "../../fem/global.interpol.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 const Float mass_threshold_for_small_vectors = 1e-6;
 
@@ -307,7 +307,7 @@ int main( int argc, char *argv[] )
                 for( const auto& nullvector : nullvectorgallery )
                 {
             
-                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                    std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
         
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
 

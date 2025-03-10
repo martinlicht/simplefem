@@ -150,7 +150,7 @@ DenseMatrix LagrangePolynomialCoefficients( int n, int r )
 // Size of output matrix:
 // [ J.dimin()+1 x J.dimout() ]
 // 
-// TODO: Remove this function 
+// TODO(martinlicht): Remove this function 
 // 
 
 // DenseMatrix BarycentricProjectionMatrix( const DenseMatrix& J )
@@ -229,7 +229,7 @@ DenseMatrix EvaluateField(
 
 
 
-// TODO:
+// TODO(martinlicht):
 // 
 // Given a function in ambient space, giving forms in Euclidean coordinates
 // 
@@ -314,7 +314,7 @@ FloatVector Interpolation(
         const auto P = SubdeterminantMatrix( bpm, k );
         
         
-        // TODO: complete remove the following two lines 
+        // TODO(martinlicht): complete remove the following two lines 
         // const auto Jac = m.getTransformationJacobian( dim, s );
         // const auto bpm_ = BarycentricProjectionMatrix( Jac );
         // assert( ( bpm - bpm_ ).norm() == 0. );
@@ -394,7 +394,7 @@ FloatVector Interpolation(
         
 //     const auto Minv = Inverse( M );
     
-//     // TODO
+//     // TODO(martinlicht)
     
 //     // return ret;
 // }
