@@ -71,9 +71,9 @@ class MeshSimplicial3D
         
         MeshSimplicial3D( const MeshSimplicial3D& ) = default;
         MeshSimplicial3D& operator=( const MeshSimplicial3D& ) = default;
-        MeshSimplicial3D( MeshSimplicial3D&& ) = default;
-        MeshSimplicial3D& operator=( MeshSimplicial3D&& ) = default;
-        virtual ~MeshSimplicial3D() noexcept;
+        MeshSimplicial3D( MeshSimplicial3D&& ) noexcept = default;
+        MeshSimplicial3D& operator=( MeshSimplicial3D&& ) noexcept = default;
+        virtual ~MeshSimplicial3D() noexcept = default;
         
         /* standard methods for operators */
         

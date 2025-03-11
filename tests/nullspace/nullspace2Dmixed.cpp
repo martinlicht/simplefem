@@ -178,7 +178,7 @@ int main( int argc, char *argv[] )
                         for( int t = 0; t < max_number_of_purifications; t++ )
                         {
                             
-                            if(false)
+                            if( false )
                             {
 
                                 auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )

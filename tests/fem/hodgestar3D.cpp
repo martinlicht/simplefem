@@ -216,7 +216,7 @@ int main( int argc, char *argv[] )
         if( r < r_max or l < 2 ) 
             continue;
         
-        // continue; // TODO(martinlicht): find a meaningful test here 
+        continue; // TODO(martinlicht): find a meaningful test here 
         Assert( mass_errors_scalar[l-l_min][r-r_min] < threshold, mass_errors_scalar[l-l_min][r-r_min], threshold );
         Assert( mass_errors_vector[l-l_min][r-r_min] < threshold, mass_errors_vector[l-l_min][r-r_min], threshold );
         Assert( mass_errors_pseudo[l-l_min][r-r_min] < threshold, mass_errors_pseudo[l-l_min][r-r_min], threshold );

@@ -16,16 +16,13 @@
 
 # ----------- HOT FIXES & MINOR FIXES -------------
 
-- [ ] <https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-destructor.html>
-- [ ] <https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-move-constructor.html>
-- [ ] ensure that self-assignment is handled _explicitly_ whenever assignment operators are defined
-- [ ] move constructors and assignment operators should be marked noexcept
 - [ ] check whether the << and >> and bitwise operations are executed on signed integral types
-
+- [ ] FEM tests that depend on convergence are not easy to measure but we can at least test for finiteness
+- [ ] Disabled code should be marked accordingly 
 - [ ] Align different Frobenius norms of vectors and dense matrices
-- [ ] Write unit tests to check for sparse matrix sorting and compression. Test those sparse matrix routines with random input.
+- [ ] Unit tests to check for sparse matrix sorting and compression. Test those sparse matrix routines with random input.
 - [ ] lshaped maxwell: correct the computation
-- [ ] neumann estimate
+- [ ] Neumann estimate
 - [ ] ensure that all-one vectors are not used for constant functions. That only works if r=1. Name: constant_one
 - [ ] add Neumann BC to mixed FEM for Poisson
 - [ ] Make the second Hodge star work as intended
@@ -34,10 +31,16 @@
 - [ ] non-uniform interpolation of fields
 - [ ] augmented integration for error checks
 - [ ] augmented integration for rhs? First, understand integration better.
-- [ ] within tests that involve solvers, the convergence tables should indicate the current solver
-- [ ] print modulo shall always print 1/20 of the max iteration
-- [ ] print modulo should always be a 1/20th of the current max iteration
+- [ ] within tests that involve solvers, the output should indicate the current solver
+- [ ] print modulo should always be 1/20th of the current max iteration
 
+- [x] ensure that self-assignment is handled _explicitly_ whenever assignment operators are defined
+- [x] all destructors noexcept 
+      <https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-destructor.html>
+- [x] move constructors and assignments noexcept 
+      <https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-move-constructor.html>
+- [x] all destructors virtual or class is final without parents
+- [x] destructors do not check (possible moved-from state)
 - [x] Implement power method iteration to get largest eigenvalue
 - [x] Does diffinterpol2D/3D still have strange output?
 - [?] what is the numerically stable way to compute the determinant?
@@ -57,15 +60,15 @@
     __attribute__((unused))
     ```
 
-- [x] convergence tables should handle different precisions, one way or the other: best to internally use long double. Requires settling the printf issue
+- [x] convergence tables should handle different precisions, one way or the other:
+      best to internally use long double. Requires settling the printf issue
 - [x] Clean the printing methods of the convergence tables.
 - [x] Check debug.hpp for errors
 - [x] cpp file which contains the logging
 - [x] fix the vee product; make the tests run in 2D and 3D
 - [x] integrate volume forms and scalar fields
-- [x] Use custom printf implementation for that handles long doubles
-    #define __USE_MINGW_ANSI_STDIO 1
-    The above macro enables the MinGW Printf implementation
+- [x] Enable the MinGW Printf implementation via: `#define __USE_MINGW_ANSI_STDIO 1`
+    
 - [x] std::exp and the like: single precision versions
 
 - [x] correct the computation in the nullspace test
@@ -646,12 +649,9 @@ Many of the methods in the float vector class are openMP parallelizable.
 ## (INACTIVE) Rewrite core float vector class
 
 Write it up in a manner that is close to the STL vector class.
-Perhaps even make it a descendant of `std::vector<Float>` and wrap it only thinly.
+Notably, you cannot inherit from STL classes:
 <https://stackoverflow.com/questions/2034916/is-it-okay-to-inherit-implementation-from-stl-containers-rather-than-delegate>
-There seem to be complications, so it should be delayed until further notice.
-There is rather a speed-up if we replace it by generic C++ memory allocation.
-In particular, it does not really mesh with later efforts of parallelization.
-Furthermore, it is better to entirely hide the implementation from the user.
+Using raw pointers seems faster than using the STL for the FloatVector
 
 ## (INACTIVE) Implement vector slices
 
@@ -663,7 +663,6 @@ Best approach would be to introduce an abstract class
 for vectors that captures the interface.
 Then fork off the original class of vectors
 and the new slice implementation.
-SEE ALSO Implement lambda-based vectors
 
 ## (INACTIVE) Implement lambda-based vectors
 
@@ -768,7 +767,16 @@ There is only one cleaning command for the entire build directory.
 
 ## (INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
 
-Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'.
+Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names 
+
+- base 
+- common 
+- commons
+- core 
+- general
+- global
+- shared
+- std
 
 Make a survey of a few important projects to get a sense of what name you should use for this one.
 That will give you a sense of what you should do.
@@ -779,6 +787,7 @@ That will give you a sense of what you should do.
 - Lifev:    core
 - ngsolve:  std
 - Fenics:   common
+- ??!!!!:   base 
 - Hermes:   common
 - concepts: ...
 - <https://en.wikipedia.org/wiki/List_of_finite_element_software_packages>
@@ -1065,6 +1074,8 @@ TODO: write an email to the mailing list about the static analyzer.
 [ ] replace 'assert' by 'Assert's
 
 [ ] Custom Strings library, Custom Output library
+
+[ ] Use custom printf implementation for that handles long doubles
 
 [ ] Change to makefile to save a few seconds and make it more reasonable: as in the test folder, use inclusions
 
@@ -1586,32 +1597,22 @@ mdl todo.md -r ~MD009,~MD012,~MD013,~MD026,~MD032,~MD034
 ``` 
 
 
-Configuration file completely ignored 
-
-echo "   * Test   " > deleteme.md
-echo "exclude_rule 'MD006' > .mdlrc 
-cat deleteme.md
-cat .mdlrc
-mdl deleteme.md -c .mdlrc
-mdl deleteme.md
-mdl deleteme.md -c .mdlrc ~MD006
-mdl deleteme.md -c .mdlrc ~MD006    
-
-
 
 
 1. Some extensions to the solver component:
 
-- [ ] **high** sparse solvers: implement restart and print modulos, crm with only one abort criterion
-- [ ] **medium** Rewrite the German wikipedia MINRES method in C-style code.
-- [ ] **medium** Find another pseudocode for the MINRES method.
+   * [ ] **high** sparse solvers: implement restart and print modulos, crm with only one abort criterion
+   * [ ] **medium** Rewrite the German wikipedia MINRES method in C-style code.
+   * [ ] **medium** Find another pseudocode for the MINRES method.
 
 
 2. Some reading:
 
-- [ ] **read** The solution of Laplacian problems over L-shaped domains with a singular boundary integral method.
-- [ ] **read** ON ERROR ESTIMATION IN THE CONJUGATE GRADIENT METHOD AND WHY IT WORKS IN FINITE PRECISION COMPUTATIONS
-- [ ] **read** Give another reading to https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf as a refresher and then check whether you improve the CGM or CRM a little bit more (by using only one single loop)
+   * [ ] The solution of Laplacian problems over L-shaped domains with a singular boundary integral method.
+   * [ ] ON ERROR ESTIMATION IN THE CONJUGATE GRADIENT METHOD AND WHY IT WORKS IN FINITE PRECISION COMPUTATIONS
+   * [ ] Give another reading to 
+         <https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf> 
+         Check whether you improve the CGM or CRM a little bit more (by using only one single loop)
 
 
 The SSOR preconditioner gives a massive advantage for the CGM and stiffness matrix of the Poisson problem (magnitudes) with a simple choice of SSOR parameter equal 1. Does that carry over to the CRM?

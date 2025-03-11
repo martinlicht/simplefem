@@ -540,10 +540,10 @@ MeshSimplicial3D::MeshSimplicial3D(
 }
 
 
-MeshSimplicial3D::~MeshSimplicial3D() noexcept
-{
-    MeshSimplicial3D::check();
-}
+// MeshSimplicial3D::~MeshSimplicial3D() noexcept
+// {
+//     MeshSimplicial3D::check();
+// }
 
 bool MeshSimplicial3D::is_equal_to( const MeshSimplicial3D& mesh ) const 
 {

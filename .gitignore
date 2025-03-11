@@ -1,5 +1,6 @@
 
 OVERWRITE.COMPILE.mk
+node_modules/
 .stuff/
 .CUDA/
 .private/

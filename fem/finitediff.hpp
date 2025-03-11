@@ -17,7 +17,7 @@
 
 
 
-class AlternatingForm
+class AlternatingForm final
 {
     
     private:
@@ -34,9 +34,9 @@ class AlternatingForm
         }   
         
         AlternatingForm( const AlternatingForm& ) = default;
-        AlternatingForm( AlternatingForm&& ) = default;
+        AlternatingForm( AlternatingForm&& ) noexcept = default;
 
-        virtual ~AlternatingForm() noexcept = default;
+        ~AlternatingForm() noexcept = default;
         
         void check()
         {

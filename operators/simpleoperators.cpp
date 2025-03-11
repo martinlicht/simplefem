@@ -18,10 +18,10 @@ IdentityOperator::IdentityOperator( int dimension )
     IdentityOperator::check();
 }
 
-IdentityOperator::~IdentityOperator() noexcept
-{
-    IdentityOperator::check();
-}
+// IdentityOperator::~IdentityOperator() noexcept
+// {
+//     IdentityOperator::check();
+// }
 
 void IdentityOperator::check() const  
 {
@@ -73,10 +73,10 @@ ZeroOperator::ZeroOperator( int dimout, int dimin )
     ZeroOperator::check();
 }
 
-ZeroOperator::~ZeroOperator() noexcept
-{
-    ZeroOperator::check();
-}
+// ZeroOperator::~ZeroOperator() noexcept
+// {
+//     ZeroOperator::check();
+// }
 
 void ZeroOperator::check() const  
 {
@@ -120,10 +120,10 @@ ScalingOperator::ScalingOperator( int dimension, Float s )
     ScalingOperator::check();
 }
 
-ScalingOperator::~ScalingOperator() noexcept
-{
-    ScalingOperator::check();
-}
+// ScalingOperator::~ScalingOperator() noexcept
+// {
+//     ScalingOperator::check();
+// }
 
 void ScalingOperator::check() const  
 {
@@ -210,10 +210,10 @@ DiagonalOperator::DiagonalOperator( int dimension, const std::function<Float(int
 }
         
 
-DiagonalOperator::~DiagonalOperator() noexcept
-{
-    LinearOperator::check();
-}
+// DiagonalOperator::~DiagonalOperator() noexcept
+// {
+//     LinearOperator::check();
+// }
 
 void DiagonalOperator::check() const  
 {
@@ -295,10 +295,10 @@ LambdaOperator::LambdaOperator( int dimout, int dimin, const std::function<Float
     LambdaOperator::check();
 }
 
-LambdaOperator::~LambdaOperator() noexcept
-{
-    LambdaOperator::check();
-}
+// LambdaOperator::~LambdaOperator() noexcept
+// {
+//     LambdaOperator::check();
+// }
 
 void LambdaOperator::check() const  
 {

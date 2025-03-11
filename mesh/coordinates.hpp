@@ -29,21 +29,21 @@
 
 
 
-class Coordinates
+class Coordinates final
 {
 
     public:
 
         Coordinates( const Coordinates& ) = default;
         Coordinates& operator=( const Coordinates& ) = default;
-        Coordinates( Coordinates&& ) = default;
-        Coordinates& operator=( Coordinates&& ) = default;
+        Coordinates( Coordinates&& ) noexcept = default;
+        Coordinates& operator=( Coordinates&& ) noexcept = default;
 
         
         
         Coordinates( int dimension, int number );
         Coordinates( int dimension, int number, const std::vector<Float>& );
-        virtual ~Coordinates() noexcept;
+        ~Coordinates() noexcept = default;
         
         void check() const;
         // void print( std::ostream& ) const;

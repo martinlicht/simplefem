@@ -59,9 +59,9 @@ class DenseMatrix final
         
         DenseMatrix() = delete;
         DenseMatrix( const DenseMatrix& );
-        DenseMatrix( DenseMatrix&& );
+        DenseMatrix( DenseMatrix&& ) noexcept;
         DenseMatrix& operator=( const DenseMatrix& );
-        DenseMatrix& operator=( DenseMatrix&& );
+        DenseMatrix& operator=( DenseMatrix&& ) noexcept;
         virtual ~DenseMatrix() noexcept;
         
         /* standard methods for operators */

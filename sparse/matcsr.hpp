@@ -49,9 +49,9 @@ public LinearOperator /* every matrix is a linear operator */
         MatrixCSR() = delete;
         MatrixCSR( const MatrixCSR& );
         MatrixCSR& operator=( const MatrixCSR& );
-        MatrixCSR( MatrixCSR&& );
-        MatrixCSR& operator=( MatrixCSR&& );
-        virtual ~MatrixCSR( ) noexcept;
+        MatrixCSR( MatrixCSR&& ) noexcept;
+        MatrixCSR& operator=( MatrixCSR&& ) noexcept;
+        virtual ~MatrixCSR( ) noexcept = default;
 
         
         /* standard methods for operators */

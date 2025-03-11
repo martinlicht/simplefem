@@ -97,10 +97,10 @@ MatrixCSR::MatrixCSR( int rows, int columns )
 
 
 
-MatrixCSR::~MatrixCSR() noexcept
-{
-    MatrixCSR::check();
-}
+// MatrixCSR::~MatrixCSR() noexcept
+// {
+//     MatrixCSR::check();
+// }
 
 
 
@@ -132,12 +132,12 @@ MatrixCSR& MatrixCSR::operator=( const MatrixCSR& mat )
         this->A = mat.A;
         this->C = mat.C;
         this->V = mat.V;
-        check();
     }
+    check();
     return *this;
 }
 
-MatrixCSR::MatrixCSR( MatrixCSR&& mat )
+MatrixCSR::MatrixCSR( MatrixCSR&& mat ) noexcept
 : LinearOperator( mat.getdimout(), mat.getdimin() ),
   A( std::move(mat.A) ),
   C( std::move(mat.C) ),
@@ -146,7 +146,7 @@ MatrixCSR::MatrixCSR( MatrixCSR&& mat )
     MatrixCSR::check();
 }
 
-MatrixCSR& MatrixCSR::operator=( MatrixCSR&& mat )
+MatrixCSR& MatrixCSR::operator=( MatrixCSR&& mat ) noexcept
 {
     assert( getdimin() == mat.getdimin() );
     assert( getdimout() == mat.getdimout() );
@@ -155,8 +155,8 @@ MatrixCSR& MatrixCSR::operator=( MatrixCSR&& mat )
         this->A = std::move( mat.A );
         this->C = std::move( mat.C );
         this->V = std::move( mat.V );
-        check();
     }
+    check();
     return *this;
 }
 

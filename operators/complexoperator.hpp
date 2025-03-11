@@ -77,7 +77,7 @@ class ComplexOperator final
             op.part_imag = nullptr; op.managing_imag = false;
         }
 
-        ComplexOperator& operator=( ComplexOperator&& op ) = delete;
+        ComplexOperator& operator=( ComplexOperator&& op ) noexcept = delete;
         // {
         //     part_real = op.part_real; managing_part_real = op.managing_part_real; op.part_real = nullptr; op.managing_part_real = false;
         //     part_imag = op.part_imag; managing_part_imag = op.managing_part_imag; op.part_imag = nullptr; op.managing_part_imag = false;

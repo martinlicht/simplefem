@@ -22,7 +22,7 @@
 
 
 DenseMatrix::DenseMatrix( const DenseMatrix& mat )
-: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( new (std::nothrow) Float[ mat.getdimout() * mat.getdimin() ] ) // wierd
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( new (std::nothrow) Float[ mat.getdimout() * mat.getdimin() ] ) 
 {
     assert( entries != nullptr );
     for( int r = 0; r < getdimout(); r++ )
@@ -31,11 +31,11 @@ DenseMatrix::DenseMatrix( const DenseMatrix& mat )
     DenseMatrix::check();
 }
         
-DenseMatrix::DenseMatrix( DenseMatrix&& mat )
+DenseMatrix::DenseMatrix( DenseMatrix&& mat ) noexcept
 : LinearOperator( mat.getdimout(), mat.getdimin() ), entries( std::move(mat.entries) )
 {
-    assert( entries != nullptr );
     mat.entries = nullptr;
+    assert( entries != nullptr );
     DenseMatrix::check();
 }
         
@@ -47,6 +47,7 @@ DenseMatrix& DenseMatrix::operator=( const DenseMatrix& mat )
     assert( getdimout() == mat.getdimout() );
     
     if( this != &mat ) {
+        assert( mat.entries != nullptr );
         for( int r = 0; r < getdimout(); r++ )
         for( int c = 0; c < getdimin(); c++ )
             (*this)(r,c) = mat(r,c);
@@ -56,9 +57,8 @@ DenseMatrix& DenseMatrix::operator=( const DenseMatrix& mat )
     return *this;
 }
         
-DenseMatrix& DenseMatrix::operator=( DenseMatrix&& mat ) 
+DenseMatrix& DenseMatrix::operator=( DenseMatrix&& mat ) noexcept
 {
-//     assert( entries     != nullptr );
     assert( mat.entries != nullptr );
     assert( getdimin()  == mat.getdimin()  );
     assert( getdimout() == mat.getdimout() );
@@ -225,9 +225,8 @@ DenseMatrix::DenseMatrix( DenseMatrix&& mat, Float scaling )
         
 DenseMatrix::~DenseMatrix() noexcept
 {
-    // DenseMatrix::check(); // explicitly disabled, might be in moved-from state 
-    
     if( entries != nullptr ){
+        DenseMatrix::check();    
         delete[] entries;
     }
 

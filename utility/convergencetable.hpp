@@ -8,7 +8,7 @@
 #include "../basic.hpp"
 
 
-class ConvergenceTable
+class ConvergenceTable final
 {
     typedef long double EntryType; 
     
@@ -31,9 +31,9 @@ class ConvergenceTable
         explicit ConvergenceTable( const std::string& table_name = "---------- Default Table Name ----------" );
 
         ConvergenceTable( const ConvergenceTable& ) = default;
-        ConvergenceTable( ConvergenceTable&& ) = default;
+        ConvergenceTable( ConvergenceTable&& ) noexcept = default;
         ConvergenceTable& operator=( const ConvergenceTable& ) = default;
-        ConvergenceTable& operator=( ConvergenceTable&& ) = default;
+        ConvergenceTable& operator=( ConvergenceTable&& ) noexcept = default;
         
         
         void insert_numerical_entry( EntryType entry );

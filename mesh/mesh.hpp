@@ -67,9 +67,9 @@ class Mesh
         
         Mesh( const Mesh& ) = default;
         Mesh& operator=( const Mesh& ) = default;
-        Mesh( Mesh&& ) = default;
-        Mesh& operator=( Mesh&& ) = default;
-        virtual ~Mesh() noexcept;
+        Mesh( Mesh&& ) noexcept = default;
+        Mesh& operator=( Mesh&& ) noexcept = default;
+        virtual ~Mesh() noexcept = default;
         
         
         /* standard methods for operators */
