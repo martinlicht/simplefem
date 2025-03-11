@@ -304,10 +304,10 @@ MeshSimplicial2D::MeshSimplicial2D(
 }
 
 
-MeshSimplicial2D::~MeshSimplicial2D() noexcept
-{
-    MeshSimplicial2D::check();
-}
+// MeshSimplicial2D::~MeshSimplicial2D() noexcept
+// {
+//     MeshSimplicial2D::check();
+// }
 
 
 bool MeshSimplicial2D::is_equal_to( const MeshSimplicial2D& mesh ) const 

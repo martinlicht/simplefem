@@ -57,7 +57,7 @@ class RepeatedDiagonalBlockOperator final
             op.internal = nullptr; op.managing_internal = false;
         }
 
-        RepeatedDiagonalBlockOperator& operator=( RepeatedDiagonalBlockOperator&& op ) = delete;
+        RepeatedDiagonalBlockOperator& operator=( RepeatedDiagonalBlockOperator&& op ) noexcept = delete;
         // {
         //     internal = op.internal; managing_internal = op.managing_internal; op.internal = nullptr; op.managing_internal = false;
         //     repetition = op.repetition;
@@ -188,7 +188,7 @@ class ComposedOperator
             op.right = nullptr; op.managing_right = false;
         }
 
-        ComposedOperator& operator=( ComposedOperator&& op ) = delete;
+        ComposedOperator& operator=( ComposedOperator&& op ) noexcept = delete;
         // {
         //     left  = op.left;  managing_left  = op.managing_left;  op.left = nullptr;  op.managing_left  = false;
         //     right = op.right; managing_right = op.managing_right; op.right = nullptr; op.managing_right = false;
@@ -257,7 +257,7 @@ class ProduktOperator final
         ProduktOperator& operator=( const ProduktOperator& op ) = delete;
         
         ProduktOperator( ProduktOperator&& )                    = default;
-        ProduktOperator& operator=( ProduktOperator&& op )      = default; 
+        ProduktOperator& operator=( ProduktOperator&& op )      noexcept = default; 
 
         virtual ProduktOperator* pointer_to_heir() && override
         {
@@ -367,7 +367,7 @@ class SummOperator final
         SummOperator& operator=( const SummOperator& op ) = delete;
         
         SummOperator( SummOperator&& )                    = default;
-        SummOperator& operator=( SummOperator&& op )      = default;  
+        SummOperator& operator=( SummOperator&& op )      noexcept = default;  
 
         virtual SummOperator* pointer_to_heir() && override
         {
@@ -450,7 +450,7 @@ class DiffOperator final
         DiffOperator& operator=( const DiffOperator& op ) = delete;
         
         DiffOperator( DiffOperator&& )                    = default;
-        DiffOperator& operator=( DiffOperator&& op )      = default; 
+        DiffOperator& operator=( DiffOperator&& op )      noexcept = default; 
 
         virtual DiffOperator* pointer_to_heir() && override
         {
@@ -569,7 +569,7 @@ class Block2x2Operator
             op.lowerright = nullptr; op.managing_lowerright = false;
         }
 
-        Block2x2Operator& operator=( Block2x2Operator&& op ) = delete;
+        Block2x2Operator& operator=( Block2x2Operator&& op ) noexcept = delete;
         // {
         //     upperleft  = op.upperleft;  managing_upperleft  = op.managing_upperleft;  op.upperleft = nullptr;  op.managing_upperleft  = false;
         //     upperright = op.upperright; managing_upperright = op.managing_upperright; op.upperright = nullptr; op.managing_upperright = false;

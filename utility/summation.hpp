@@ -17,7 +17,7 @@ public:
     NaiveSum() : sum(0.0) {}
 
     // Add a value to the sum
-    void add(NumericalType value) {
+    void add( NumericalType value ) {
         sum += value; // Simply add the value to the running total
     }
 
@@ -33,7 +33,8 @@ public:
 
     NumericalType operator+=( NumericalType value )
     {
-        add( value ); return getSum();
+        add( value ); 
+        return getSum();
     }
 
     operator NumericalType() const 
@@ -56,7 +57,7 @@ public:
     KahanSum() : sum(0.0), compensation(0.0) {}
 
     // Add a value to the sum
-    void add(NumericalType value) {
+    void add( NumericalType value ) {
         NumericalType y = value - compensation;       // Correct the value by removing the compensation
         NumericalType t = sum + y;                    // Add the corrected value to the running total
         compensation = (t - sum) - y;          // Update the compensation for the next step
@@ -76,7 +77,8 @@ public:
 
     NumericalType operator+=( NumericalType value )
     {
-        add( value ); return getSum();
+        add( value ); 
+        return getSum();
     }
 
     operator NumericalType() const 
@@ -100,9 +102,9 @@ public:
     NeumaierSum() : sum(0.0), compensation(0.0) {}
 
     // Add a value to the sum
-    void add(NumericalType value) {
+    void add( NumericalType value ) {
         NumericalType t = sum + value;                // Add the value to the running total
-        if (std::abs(sum) >= std::abs(value)) {
+        if( std::abs(sum) >= std::abs(value) ) {
             compensation += (sum - t) + value; // Update compensation if sum is larger
         } else {
             compensation += (value - t) + sum; // Update compensation if value is larger
@@ -123,7 +125,8 @@ public:
 
     NumericalType operator+=( NumericalType value )
     {
-        add( value ); return getSum();
+        add( value ); 
+        return getSum();
     }
 
     operator NumericalType() const 

@@ -36,12 +36,12 @@ class LinearOperator
 
         /* standard methods for operators */
         
-                 LinearOperator()                             = delete;
-        explicit LinearOperator( const LinearOperator& )      = default;
-        explicit LinearOperator( LinearOperator&& )           = default;
+        LinearOperator()                             = delete;
+        LinearOperator( const LinearOperator& )      = default;
+        LinearOperator( LinearOperator&& )           = default;
         LinearOperator& operator=( const LinearOperator& op ) = default;
-        LinearOperator& operator=( LinearOperator&& op )      = default;
-        virtual ~LinearOperator() noexcept;
+        LinearOperator& operator=( LinearOperator&& op )      noexcept = default;
+        virtual ~LinearOperator()                             noexcept = default;
 
         /* standard interface */
         

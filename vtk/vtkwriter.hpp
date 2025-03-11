@@ -16,7 +16,7 @@
 ****  
 *******************/
 
-class VTKWriter
+class VTKWriter final
 {
     
     public:

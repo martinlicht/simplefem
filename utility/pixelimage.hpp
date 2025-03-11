@@ -31,7 +31,7 @@ struct PixelColor
     }
 };
 
-class PixelImage
+class PixelImage final
 {
     typedef int indextype;
 
@@ -47,7 +47,7 @@ class PixelImage
         {}
         
         PixelImage( const PixelImage& ) = default;
-        PixelImage( PixelImage&& ) = default;
+        PixelImage( PixelImage&& ) noexcept = default;
         
         ~PixelImage()  noexcept = default;
 

@@ -18,7 +18,7 @@ class LinearOperator;
 **********************/
 
 
-class FloatVector
+class FloatVector final
 {
     
     public:
@@ -42,11 +42,11 @@ class FloatVector
         
         FloatVector() = delete;
         FloatVector( const FloatVector& );
-        FloatVector( FloatVector&& );
+        FloatVector( FloatVector&& ) noexcept;
         FloatVector& operator=( const FloatVector& vec );
-        FloatVector& operator=( FloatVector&& vec );
+        FloatVector& operator=( FloatVector&& vec ) noexcept;
 
-        virtual ~FloatVector() noexcept;
+        ~FloatVector() noexcept;
         
         
         

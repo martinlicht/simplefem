@@ -26,11 +26,11 @@ class IndexRange final
         
         IndexRange( int from, int to );
         
-        IndexRange( const IndexRange& )             = default;
-        IndexRange& operator =( const IndexRange& ) = default;
-        IndexRange( IndexRange&& )                  = default;
-        IndexRange& operator =( IndexRange&& )      = default;
-        ~IndexRange() noexcept                      = default;
+        IndexRange( const IndexRange& )            = default;
+        IndexRange& operator=( const IndexRange& ) = default;
+        IndexRange( IndexRange&& )                 noexcept = default;
+        IndexRange& operator=( IndexRange&& )      noexcept = default;
+        ~IndexRange()                              noexcept = default;
         
         /* standard methods */
 
@@ -136,12 +136,12 @@ inline Stream& operator<<( Stream&& os, const IndexRange& ir )
     return os;
 }
 
-inline bool operator== ( const IndexRange& ir1, const IndexRange& ir2 )
+inline bool operator==( const IndexRange& ir1, const IndexRange& ir2 )
 {
     return ir1.is_equal( ir2 );
 }
 
-inline bool operator!= ( const IndexRange& ir1, const IndexRange& ir2 )
+inline bool operator!=( const IndexRange& ir1, const IndexRange& ir2 )
 {
     return !( ir1 == ir2 );
 }

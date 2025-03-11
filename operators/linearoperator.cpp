@@ -16,10 +16,10 @@ LinearOperator::LinearOperator( int dim )
     LinearOperator::check();
 }
 
-LinearOperator::~LinearOperator() noexcept
-{
-    LinearOperator::check();
-}
+// LinearOperator::~LinearOperator() noexcept
+// {
+//     LinearOperator::check();
+// }
 
 int LinearOperator::getdimout() const
 {

@@ -178,7 +178,7 @@ ifeq ($(FLAG_CXX),GCC)
   
 else ifeq ($(FLAG_CXX),CLANG)
 
-  CXX := clang++ 
+  CXX := clang++ -stdlib=libstdc++
   # -ftime-trace
   # -stdlib=libstdc++ 
 
@@ -198,7 +198,8 @@ endif
 #                                             #
 ###############################################
 
-CXXFLAGS_LANG := -std=c++14 -pedantic -fno-rtti -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
+CXXFLAGS_LANG := -std=c++14 -pedantic -fno-rtti 
+# -D_LIBCPP_REMOVE_TRANSITIVE_INCLUDES 
 
 ifeq ($(FLAG_NO_EXCEPTIONS),yes)
 	CXXFLAGS_LANG += -fno-exceptions

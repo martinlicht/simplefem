@@ -100,10 +100,10 @@ SparseMatrix::SparseMatrix( const DenseMatrix& matrix )
     SparseMatrix::check();    
 }
 
-SparseMatrix::~SparseMatrix() noexcept
-{
-    SparseMatrix::check();    
-}
+// SparseMatrix::~SparseMatrix() noexcept
+// {
+//     SparseMatrix::check();    
+// }
 
 
 
@@ -132,27 +132,26 @@ SparseMatrix& SparseMatrix::operator=( const SparseMatrix& mat )
     if( this != &mat ) 
     {
         this->entries = mat.entries;
-        check();
     }
+    check();
     return *this;
 }
 
-SparseMatrix::SparseMatrix( SparseMatrix&& mat )
-: LinearOperator( mat.getdimout(), mat.getdimin() ),
-  entries( std::move(mat.entries) )
+SparseMatrix::SparseMatrix( SparseMatrix&& mat ) noexcept
+: LinearOperator( mat.getdimout(), mat.getdimin() ), entries( std::move(mat.entries) )
 {
     SparseMatrix::check();
 }
 
-SparseMatrix& SparseMatrix::operator=( SparseMatrix&& mat )
+SparseMatrix& SparseMatrix::operator=( SparseMatrix&& mat ) noexcept
 {
     assert( getdimin() == mat.getdimin() );
     assert( getdimout() == mat.getdimout() );
     if( this != &mat ) 
     {
         this->entries = std::move( mat.entries );
-        check();
     }
+    check();
     return *this;
 }
 

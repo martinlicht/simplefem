@@ -26,7 +26,7 @@ class InverseOperator
         InverseOperator( const InverseOperator& )                  = default;
         InverseOperator& operator=( const InverseOperator& invop ) = default;
         InverseOperator( InverseOperator&& )                       = default;
-        InverseOperator& operator=( InverseOperator&& invop )      = default; 
+        InverseOperator& operator=( InverseOperator&& invop )      noexcept = default; 
 
         
         explicit InverseOperator( const Operator& op, Float tolerance, int print_modulo = -1 )
@@ -85,7 +85,7 @@ class PseudoInverseOperator final
         PseudoInverseOperator( const PseudoInverseOperator& )                  = default;
         PseudoInverseOperator& operator=( const PseudoInverseOperator& invop ) = default;
         PseudoInverseOperator( PseudoInverseOperator&& )                       = default;
-        PseudoInverseOperator& operator=( PseudoInverseOperator&& invop )      = default; 
+        PseudoInverseOperator& operator=( PseudoInverseOperator&& invop )      noexcept = default; 
 
         
         explicit PseudoInverseOperator( const LinearOperator& op, Float tolerance, int print_modulo = -1 )

@@ -36,12 +36,11 @@ class MultiIndex final
         
         /* standard interface */ 
         
-        MultiIndex( const MultiIndex& )             = default;
-        MultiIndex& operator =( const MultiIndex& ) = default;
-        MultiIndex( MultiIndex&& )                  = default;
-        MultiIndex& operator =( MultiIndex&& )      = default;
-        
-        virtual ~MultiIndex() noexcept = default;
+        MultiIndex( const MultiIndex& )            = default;
+        MultiIndex& operator=( const MultiIndex& ) = default;
+        MultiIndex( MultiIndex&& )                 noexcept = default;
+        MultiIndex& operator=( MultiIndex&& )      noexcept = default;
+        virtual ~MultiIndex()                      noexcept = default;
         
         /* standard methods */
         

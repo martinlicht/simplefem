@@ -22,7 +22,7 @@ extern bool log_has_a_fresh_line;
 
 // This variable has an instance in every translation unit 
 // It is not global for the entire program 
-class Logger //: public std::ostringstream
+class Logger final
 {
     private:
         
@@ -338,7 +338,7 @@ class Logger //: public std::ostringstream
 
 // #ifdef _OPENMP
 
-struct System_Reporter
+struct System_Reporter final
 {
     System_Reporter() noexcept;
     ~System_Reporter() noexcept;

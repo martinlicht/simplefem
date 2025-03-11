@@ -44,9 +44,8 @@ struct IterativeSolver
     IterativeSolver( const IterativeSolver& )            = default;
     IterativeSolver( IterativeSolver&& )                 = default;
     IterativeSolver& operator=( const IterativeSolver& ) = delete;
-    IterativeSolver& operator=( IterativeSolver&& )      = delete;
-
-    virtual ~IterativeSolver() noexcept = default;
+    IterativeSolver& operator=( IterativeSolver&& )      noexcept = delete;
+    virtual ~IterativeSolver()                           noexcept = default;
 
     virtual void check() const
     {

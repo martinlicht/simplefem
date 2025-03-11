@@ -51,10 +51,10 @@ Mesh::Mesh( int inner, int outer )
   
 }
 
-Mesh::~Mesh() noexcept
-{
-  Mesh::check();
-}
+// Mesh::~Mesh() noexcept
+// {
+//   Mesh::check();
+// }
 
 
 int Mesh::getinnerdimension() const

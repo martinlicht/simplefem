@@ -28,10 +28,10 @@ Coordinates::Coordinates( int dimension, int number, const std::vector<Float>& d
     Coordinates::check();
 }
 
-Coordinates::~Coordinates() noexcept
-{
-    Coordinates::check();
-}
+// Coordinates::~Coordinates() noexcept
+// {
+//     Coordinates::check();
+// }
 
 void Coordinates::check() const
 {

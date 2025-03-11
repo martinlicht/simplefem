@@ -27,10 +27,10 @@ class IdentityOperator final
         
         IdentityOperator()                                        = delete;
         IdentityOperator( const IdentityOperator& )               = default;
-        IdentityOperator( IdentityOperator&& )                    = default;
+        IdentityOperator( IdentityOperator&& )                    noexcept = default;
         IdentityOperator& operator=( const IdentityOperator& op ) = default;
-        IdentityOperator& operator=( IdentityOperator&& op )      = default; 
-        virtual ~IdentityOperator() noexcept;
+        IdentityOperator& operator=( IdentityOperator&& op )      noexcept = default; 
+        virtual ~IdentityOperator()                               noexcept = default;
 
         /* standard methods for operators */
         
@@ -86,10 +86,10 @@ class ZeroOperator final
         
         ZeroOperator()                                    = delete;
         ZeroOperator( const ZeroOperator& )               = default;
-        ZeroOperator( ZeroOperator&& )                    = default;
+        ZeroOperator( ZeroOperator&& )                    noexcept = default;
         ZeroOperator& operator=( const ZeroOperator& op ) = default;
-        ZeroOperator& operator=( ZeroOperator&& op )      = default; 
-        virtual ~ZeroOperator() noexcept;
+        ZeroOperator& operator=( ZeroOperator&& op )      noexcept = default; 
+        virtual ~ZeroOperator()                           noexcept = default;
 
         /* standard methods for operators */
         
@@ -134,14 +134,14 @@ class ScalingOperator final
         /* Constructors */
         
         explicit ScalingOperator( int, Float s );
-        virtual ~ScalingOperator() noexcept;
-
         /* standard methods for operators */
         ScalingOperator()                                       = delete;
         ScalingOperator( const ScalingOperator& )               = default;
-        ScalingOperator( ScalingOperator&& )                    = default;
+        ScalingOperator( ScalingOperator&& )                    noexcept = default;
         ScalingOperator& operator=( const ScalingOperator& op ) = default;
-        ScalingOperator& operator=( ScalingOperator&& op )      = default; 
+        ScalingOperator& operator=( ScalingOperator&& op )      noexcept = default; 
+        virtual ~ScalingOperator()                              noexcept = default;
+
         
         /* standard interface */
         
@@ -208,11 +208,10 @@ class DiagonalOperator final
         
         DiagonalOperator()                                        = delete;
         DiagonalOperator( const DiagonalOperator& )               = default;
-        DiagonalOperator( DiagonalOperator&& )                    = default;
+        DiagonalOperator( DiagonalOperator&& )                    noexcept = default;
         DiagonalOperator& operator=( const DiagonalOperator& op ) = default;
-        DiagonalOperator& operator=( DiagonalOperator&& op )      = default; 
-
-        virtual ~DiagonalOperator() noexcept;
+        DiagonalOperator& operator=( DiagonalOperator&& op )      noexcept = default; 
+        virtual ~DiagonalOperator()                               noexcept = default;
         
         /* standard interface */
         
@@ -296,10 +295,10 @@ class LambdaOperator final
         
         LambdaOperator()                                      = delete;
         LambdaOperator( const LambdaOperator& )               = default;
-        LambdaOperator( LambdaOperator&& )                    = default;
+        LambdaOperator( LambdaOperator&& )                    noexcept = default;
         LambdaOperator& operator=( const LambdaOperator& op ) = delete;
-        LambdaOperator& operator=( LambdaOperator&& op )      = delete; 
-        virtual ~LambdaOperator() noexcept;
+        LambdaOperator& operator=( LambdaOperator&& op )      noexcept = delete; 
+        virtual ~LambdaOperator()                             noexcept = default;
 
         /* standard methods for operators */
         

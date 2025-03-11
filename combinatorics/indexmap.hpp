@@ -41,12 +41,12 @@ class IndexMap
         
         /* standard interface */ 
         
-        IndexMap()                              = delete;
-        IndexMap( const IndexMap& )             = default;
-        IndexMap& operator =( const IndexMap& ) = default;
-        IndexMap( IndexMap&& )                  = default;
-        IndexMap& operator =( IndexMap&& )      = default;
-        virtual ~IndexMap() noexcept            = default; // dtor virtualization is a bit shady here
+        IndexMap()                             = delete;
+        IndexMap( const IndexMap& )            = default;
+        IndexMap& operator=( const IndexMap& ) = default;
+        IndexMap( IndexMap&& )                 noexcept = default;
+        IndexMap& operator=( IndexMap&& )      noexcept = default;
+        virtual ~IndexMap()                    noexcept = default; // dtor virtualization is a bit shady here
         
         /* standard methods */
         

@@ -7,7 +7,7 @@
 
 #include "../basic.hpp"
 
-class SectionProfiler
+class SectionProfiler final
 {
     private:
     
@@ -24,11 +24,11 @@ class SectionProfiler
         }
 
         SectionProfiler( const SectionProfiler& ) = delete;
-        SectionProfiler( const SectionProfiler&& ) = delete;
+        SectionProfiler( const SectionProfiler&& ) noexcept = delete;
         SectionProfiler& operator=( const SectionProfiler& ) = delete;
-        SectionProfiler& operator=( const SectionProfiler&& ) = delete;
+        SectionProfiler& operator=( const SectionProfiler&& ) noexcept = delete;
         
-        virtual ~SectionProfiler() noexcept {
+        ~SectionProfiler() noexcept {
 
             ping("FINISH");
 
@@ -58,7 +58,7 @@ class SectionProfiler
 
 
 
-class StopWatch {
+class StopWatch final {
 
     private:
 
@@ -73,7 +73,12 @@ class StopWatch {
         : start_time(std::chrono::steady_clock::now()), text(text) 
         {}
 
-        ~StopWatch() {
+        StopWatch( const StopWatch& ) = delete;
+        StopWatch( const StopWatch&& ) noexcept = delete;
+        StopWatch& operator=( const StopWatch& ) = delete;
+        StopWatch& operator=( const StopWatch&& ) noexcept = delete;
+        
+        ~StopWatch() noexcept {
             
             const time_type end_time = std::chrono::steady_clock::now();
             

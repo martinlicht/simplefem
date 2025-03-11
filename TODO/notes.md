@@ -83,3 +83,109 @@ Using prefixes such as `get`, `set`, `find`, `count`, `compute`, and `calculate`
 - hidden friend idiom: affects argument-dependent lookup because member friends are not in the global namespace
 - DRY Principle: Implement non-mutating operators (e.g., +) in terms of mutating members (e.g., +=).
 Tell me more about the custom comparison / hashing and the member functions?
+
+
+
+## Exception policy
+
+The entire code adheres to a fail-fast philosophy: any error should lead to an immediate program termination. 
+For that reason, the compilation is generally compiled with the flag `-fno-exceptions`, disabling all exception handling.
+Nevertheless, some methods should always be marked as `noexcept` to accommodate style conventions and silence linters. 
+The following methods are always declared `noexcept`:
+
+- move constructor
+- move assignment operator
+- destructor
+
+## Virtual destructor policy
+
+The destructors of all classes shall be virtual unless the class meets the following conditions:
+
+- The class is declared final
+- The class has no parent class
+
+As a rationale, we recall that virtual destructors are mandatory if the class is part of a inheritance hierarchy,
+so the conditions describe exactly when a destructor is permitted to be non-virtual. 
+A non-virtual destructor will generally have slightly better performance.
+
+## Final keyword
+
+Classes that are not part of a class hierarchy should be declared `final`.
+Rationale: the classes are currently only used within the code,
+and any class being part of a hierarchy, should be a conscious decision.
+This avoids the vtable in some cases.
+
+
+## Rule of Five
+
+We adhere to the following rule of Five. If a class features one of the following methods
+
+- Copy constructor
+- Move constructor
+- Copy assignment operator
+- Move assignment operator
+- Destructor
+
+then it must provide all of these five methods. 
+This can be via implementation or via `default` or `delete`.
+
+
+# General guidelines on resources managed by objects 
+
+We want to provide general guidelines for the copy and move operations and destructors. 
+The objects in this library manage resources that can be categorized very broadly into the following:
+
+- plain data 
+- STL classes
+- raw pointers to single objects and arrays
+
+While the handling of plain data and STL classes is canonical, we discuss some policies for raw pointers:
+
+- raw pointers are used to improve performance, even when optimization is disabled 
+- after the constructor, raw pointers are non-null
+- raw pointers are nullptr if the object is in the moved-from state 
+- operations with nullpointers (except object destruction) may lead to program termination at any time 
+
+This last item contrasts with the STL. It allows us to improve performance while assuming that moves happen at the end of an object's practical lifetime.
+
+These are general guidelines that suit our particular situation. 
+
+# Copy constructor guidelines
+
+- The copy constructor will perform copy construction on all plain data members and members with copy constructor, except for pointers to resources
+- pointers will be initialized in accordance with the properties of the source
+- They will be initialized as nullptr if the above is too complicated or the original pointer was nulltpr
+- Any copy operations take place in the body 
+- The copy constructor finishes with a check and with `return *this`
+
+# Move constructor guidelines
+
+- The move constructor will perform move construction on all plain data members and members with copy constructor, including pointers to resources
+- source pointers are set to zero
+- The move constructor finishes with a check and with `return *this`
+
+# Copy assignment operator guidelines 
+
+- The operator finishes with a check and with `return *this`
+- The operator checks for self-assignment and performs anything else only then
+- Plain data members and members with copy assignment operator experience copy assignment
+- Pointers to resources are checked for nullptr; then the data are copied manually
+
+# Move assignment operator guidelines 
+
+- The operator finishes with a check and with `return *this`
+- The operator checks for self-assignment and performs anything else only then
+- Plain data members and members with move assignment operator move copy assignment
+- Pointers to resources are checked for nulltpr; then the pointer is moved to the destination and the source gets a nullptr
+
+# Destructor guideline
+
+- If the object is not a moved-from state, then optionally check at the beginning 
+- If pointers to resources are not nullptr, then delete them
+
+# Explicit keyword
+
+All constructors with arguments, except for the copy and move constructors, are declared `explicit`.
+This is irrespective of the number of arguments that these constructors take.
+
+

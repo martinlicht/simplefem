@@ -27,11 +27,11 @@ FloatVector::FloatVector( const FloatVector& src )
     FloatVector::check();
 }
 
-FloatVector::FloatVector( FloatVector&& src )
-: dimension( src.dimension ), pointer( src.pointer )
+FloatVector::FloatVector( FloatVector&& src ) noexcept
+: dimension( std::move(src.dimension) ), pointer( std::move(src.pointer) )
 {
-    assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
     src.pointer = nullptr;
+    assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
     FloatVector::check();
 }
 
@@ -40,6 +40,7 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
     assert( dimension == vec.dimension );
     
     if( this != &vec ) {
+        assert( vec.pointer != nullptr );
         for( int p = 0; p < dimension; p++ ) pointer[p] = vec.pointer[p];
     }
     
@@ -47,15 +48,15 @@ FloatVector& FloatVector::operator=( const FloatVector& vec )
     return *this;
 }
 
-FloatVector& FloatVector::operator=( FloatVector&& vec )
+FloatVector& FloatVector::operator=( FloatVector&& vec ) noexcept
 {
     assert( dimension == vec.dimension );
     
     if( this != &vec ) {
-        std::swap( this->pointer, vec.pointer );
-        // delete[] this->pointer;
-        // this->pointer = vec.pointer;
-        // vec.pointer = nullptr;
+        // std::swap( this->pointer, vec.pointer );
+        delete[] this->pointer;
+        this->pointer = vec.pointer;
+        vec.pointer = nullptr;
     }
     
     check();
@@ -64,8 +65,8 @@ FloatVector& FloatVector::operator=( FloatVector&& vec )
 
 FloatVector::~FloatVector() noexcept
 {
-    FloatVector::check();
     if( pointer != nullptr ){
+        FloatVector::check();
         delete[] pointer;
     }
 }
