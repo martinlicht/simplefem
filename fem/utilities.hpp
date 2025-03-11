@@ -76,7 +76,7 @@ DenseMatrix PointValuesOfMonomials( int r, const DenseMatrix& bcs );
 // - column indices correspond to the evaluation points 
 // - each entry is the coefficient of the corresponding multindex 
 //   for the Lagrange polynomial associated to the evaluation point 
-//   TODO: fix whether that should be transposed.
+//   TODO(martinlicht): fix whether that should be transposed.
 // 
 // Size of returned matrix:
 // [ n+r choose r ] x [ n+r choose r ]
@@ -114,7 +114,7 @@ DenseMatrix EvaluateField(
 
 
 
-// TODO:
+// TODO(martinlicht):
 // 
 // Given a function in ambient space, giving forms in Euclidean coordinates
 // 

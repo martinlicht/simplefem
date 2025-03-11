@@ -13,10 +13,9 @@
 // the function f() does some time-consuming work
 UNUSED static void f()
 {
-    volatile double d = 0;
+    static volatile double d = 0;
     for(int n=0; n<10000; n++ )
-       for(int m=0; m<10000; m++ )
-           d = d + d*n*m;
+        d = 3.9 * d * ( 1 - d );
 }
 
 static volatile long double foo;

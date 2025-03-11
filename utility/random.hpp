@@ -8,7 +8,7 @@ void seed_random_integer();
 
 unsigned int random_integer();
 
-unsigned int random_integer_maximum();
+unsigned int get_random_integer_modulo();
 
 unsigned int flip_coin( Float prob_zero = 0.5 );
 

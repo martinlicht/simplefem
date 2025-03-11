@@ -11,13 +11,13 @@
 #include "../../fem/finitediff.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
     LOG << "Unit Test for Fields and Finite Differences" << nl;
     
-    //TODO: Brush up these tests
+    //TODO(martinlicht): Brush up these tests
     
     {
         

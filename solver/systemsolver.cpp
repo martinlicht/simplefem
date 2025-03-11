@@ -97,7 +97,7 @@ int BlockHerzogSoodhalterMethod(
     int max_iteration_count = dimension_A + dimension_C;
     int recent_iteration_count = 0;
 
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d) START Block Herzog-Soodhalter CSR\n", max_iteration_count );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     START Block Herzog-Soodhalter CSR\n", recent_iteration_count, max_iteration_count );
 
     while( recent_iteration_count < max_iteration_count ){
         

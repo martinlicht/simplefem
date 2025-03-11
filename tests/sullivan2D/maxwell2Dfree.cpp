@@ -27,7 +27,7 @@
 #include "../../vtk/vtkwriter.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -259,7 +259,7 @@ int main( int argc, char *argv[] )
                             PAinv, PCinv
                         );
                         
-                        if(false){ // TODO: fix 
+                        if(false){ // TODO(martinlicht): fix 
                     
                             FloatVector res = sol;
                             
@@ -334,7 +334,7 @@ int main( int argc, char *argv[] )
                     contable.lg();
 
                     {
-                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                         VTKWriter vtk( M, fs, getbasename(__FILE__) );
 
                         {

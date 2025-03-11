@@ -110,9 +110,9 @@ void Mesh::check() const
      *   
      */
   
-  // TODO: Implement 
+  // TODO(martinlicht): Implement 
   
-  // TODO: Develop indexing rules 
+  // TODO(martinlicht): Develop indexing rules 
   
 }
 
@@ -1024,13 +1024,13 @@ DenseMatrix Mesh::getGradientProductMatrixRightFactor( int dim, int index ) cons
     
     // D^-1 D^-t = ( D^t D )^-1
     DenseMatrix Jac    = getTransformationJacobian( dim, index );
-    DenseMatrix middle = Inverse( Transpose(Jac) * Jac ); //Transpose(Jac) * Jac; //TODO: Understand
+    DenseMatrix middle = Inverse( Transpose(Jac) * Jac ); //Transpose(Jac) * Jac; //TODO(martinlicht): Understand
     
     DenseMatrix middle_rightfactor = Transpose( CholeskyDecomposition( middle ) ); 
 
     assert( ( middle - Transpose(middle_rightfactor) * middle_rightfactor ).is_numerically_small() );
     
-    return middle_rightfactor * multiplier; //TODO Probelesen
+    return middle_rightfactor * multiplier; //TODO(martinlicht) Probelesen
 }
 
 

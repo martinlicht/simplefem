@@ -9,7 +9,7 @@
 
 
 
-using namespace std;
+// using namespace std;
 
 #include "vtk.testsnippet.cxx"
 

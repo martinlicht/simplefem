@@ -24,7 +24,7 @@
 #include "../../fem/utilities.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -96,7 +96,7 @@ int main( int argc, char *argv[] )
                 Float l2sq = vec.norm_sq();
                 return FloatVector( { 
                         vec[0] * ( 3. / ( std::log((Float)2) * l2sq ) - 8. ) / 16., 
-                        vec[1] * ( 3. / ( std::log((Float)2) * l2sq ) - 8. ) / 16. // TODO: actual solution gradient
+                        vec[1] * ( 3. / ( std::log((Float)2) * l2sq ) - 8. ) / 16. // TODO(martinlicht): actual solution gradient
                     });
             };
         
@@ -290,7 +290,7 @@ int main( int argc, char *argv[] )
                         
                         FloatVector low_interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, 0,   function_sol  );
                         
-                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                         VTKWriter vtk( M, fs, getbasename(__FILE__) );
                         
                         vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );

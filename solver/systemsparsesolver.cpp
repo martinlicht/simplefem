@@ -130,15 +130,15 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     Float Md_r  = notanumber;
     Float Md_Md = notanumber;
     
-    int k = 0;
+    int K = 0;
     
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d) START Hodge Conjugate Residual (diag) CSR\n", N );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     START Hodge Conjugate Residual (diag) CSR\n", K, N );
 
-    while( k < N ){
+    while( K < N ){
         
-        bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
+        bool restart_condition = ( K == 0 ) or ( csrsys_restart_on_full_dimension and K % N == 0 );
         
-        bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < tolerance*tolerance;
+        bool residualenergy_seems_small = ( K != 0 ) and absolute(Md_r) < tolerance*tolerance;
         // bool residualenergy_seems_small = false;
 
         if( restart_condition or ( residualenergy_seems_small and csrsys_restart_before_finish ) ) UNLIKELY {
@@ -232,14 +232,14 @@ int HodgeConjugateResidualSolverCSR_diagonal(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
 
         }
         
         /* Print information */
         
-        if( print_modulo > 0 and k % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
         
         /* Check whether res is small */
         
@@ -247,7 +247,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         bool residualenergy_is_small = absolute(Md_r) < tolerance*tolerance;
         
         if( residualenergy_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9le\n", k, N, (double)(safedouble)Md_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Md_r );
             break;
         }
 
@@ -260,13 +260,13 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         bool denominator_is_small    = std::sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", k, N, (double)(safedouble)Md_Md );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Md_Md );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
-            LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", k, N, (double)(safedouble)Md_Md );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+            LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", K, N, (double)(safedouble)Md_Md );
             break;
         }
 
@@ -351,12 +351,12 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         
         Md_r = new_Mr_r;
         
-        k++;
+        K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -371,7 +371,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     
     delete[] ( precon );
 
-    return k;
+    return K;
 
 }
  
@@ -484,15 +484,15 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     Float Md_r  = notanumber;
     Float Md_Md = notanumber;
     
-    int k = 0;
+    int K = 0;
     
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d) START Hodge Conjugate Residual (SSOR) CSR\n", N );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)    START Hodge Conjugate Residual (SSOR) CSR\n", K, N );
 
-    while( k < N ){
+    while( K < N ){
         
-        bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
+        bool restart_condition = ( K == 0 ) or ( csrsys_restart_on_full_dimension and K % N == 0 );
         
-        bool residualenergy_seems_small = ( k != 0 ) and absolute(Md_r) < tolerance*tolerance;
+        bool residualenergy_seems_small = ( K != 0 ) and absolute(Md_r) < tolerance*tolerance;
         // bool residualenergy_seems_small = false;
 
         if( restart_condition or ( residualenergy_seems_small and csrsys_restart_before_finish ) ) UNLIKELY {
@@ -586,21 +586,21 @@ int HodgeConjugateResidualSolverCSR_SSOR(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
 
         }
         
         /* Print information */
         
-        if( print_modulo > 0 and k % print_modulo == 0 ) UNLIKELY 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+        if( print_modulo > 0 and K % print_modulo == 0 ) UNLIKELY 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
         
         /* Check whether res is small */
                 
         bool residualenergy_is_unreasonable = not std::isfinite(Md_r) or Md_r < 0.;
 
         if( residualenergy_is_unreasonable ) UNLIKELY {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9le\n", k, N, (double)(safedouble)Md_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Md_r );
             break;
         }
 
@@ -615,13 +615,13 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         bool denominator_is_small    = std::sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) UNLIKELY {
-            LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", k, N, (double)(safedouble)Md_Md );
+            LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Md_Md );
             break;
         }
         
         if( denominator_is_small ) UNLIKELY {
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
-            LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", k, N, (double)(safedouble)Md_Md );
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+            LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", K, N, (double)(safedouble)Md_Md );
             break;
         }
 
@@ -707,12 +707,12 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         Md_r = new_Mr_r;
         
         
-        k++;
+        K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -727,7 +727,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     
     delete[] ( diagonal );
 
-    return k;
+    return K;
 
 }
  
@@ -820,15 +820,15 @@ int HodgeConjugateResidualSolverCSR_textbook(
     Float Mr_r  = notanumber;
     Float Md_Md = notanumber;
     
-    int k = 0;
+    int K = 0;
     
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d) START Hodge Conjugate Residual (textbook) CSR\n", N );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     START Hodge Conjugate Residual (textbook) CSR\n", K, N );
 
-    while( k < N ){
+    while( K < N ){
         
-        bool restart_condition = ( k == 0 ) or ( csrsys_restart_on_full_dimension and k % N == 0 );
+        bool restart_condition = ( K == 0 ) or ( csrsys_restart_on_full_dimension and K % N == 0 );
         
-        bool residualenergy_seems_small = ( k != 0 ) and absolute(Mr_r) < tolerance*tolerance;
+        bool residualenergy_seems_small = ( K != 0 ) and absolute(Mr_r) < tolerance*tolerance;
 
         if( restart_condition or ( residualenergy_seems_small and csrsys_restart_before_finish ) ) {
             
@@ -919,21 +919,21 @@ int HodgeConjugateResidualSolverCSR_textbook(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
             
         }
         
         /* Print information */
         
-        if( print_modulo > 0 and k % print_modulo == 0 ) 
-            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
+        if( print_modulo > 0 and K % print_modulo == 0 ) 
+            LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
         
         /* Check whether res is small */
                 
         bool residualenergy_is_unreasonable = not std::isfinite(Mr_r) or Mr_r < 0.;
         
         if( residualenergy_is_unreasonable ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9le\n", k, N, (double)(safedouble)Mr_r );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Residual energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Mr_r );
             break;
         }
 
@@ -948,13 +948,13 @@ int HodgeConjugateResidualSolverCSR_textbook(
         bool denominator_is_small    = std::sqrt(absolute(Md_Md)) < machine_epsilon;
         
         if( denominator_is_unreasonable ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", k, N, (double)(safedouble)Md_Md );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", K, N, (double)(safedouble)Md_Md );
             break;
         }
         
         if( denominator_is_small ) {
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
-            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", k, N, (double)(safedouble)Md_Md );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   INTERIM: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
+            if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", K, N, (double)(safedouble)Md_Md );
             break;
         }
 
@@ -1039,12 +1039,12 @@ int HodgeConjugateResidualSolverCSR_textbook(
         Mr_r = new_Mr_r;
         
         
-        k++;
+        K++;
         
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", k, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -1057,7 +1057,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     
     delete[] ( vil );
 
-    return k;
+    return K;
 
 }
 
@@ -1173,7 +1173,7 @@ int HodgeHerzogSoodhalterMethod(
         assert( PCvalues );
     }
     
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d) START Hodge Herzog-Soodhalter CSR\n", max_iteration_count );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     START Hodge Herzog-Soodhalter CSR\n", recent_iteration_count, max_iteration_count );
     
     if( precon_A_available ) LOGPRINTF("      Preconditioner for A detected\n");
     if( precon_C_available ) LOGPRINTF("      Preconditioner for C detected\n");

@@ -27,7 +27,7 @@
 #include "../../vtk/vtkwriter.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -170,7 +170,7 @@ int main( int argc, char *argv[] )
             
             auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
             
-            // TODO: develop preconditioners 
+            // TODO(martinlicht): develop preconditioners 
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
             auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
@@ -205,7 +205,7 @@ int main( int argc, char *argv[] )
 
             timestamp start = timestampnow();
 
-            //TODO: set up operator preconditioner
+            //TODO(martinlicht): set up operator preconditioner
             // { 
             //     auto X = Block2x2Operator( A.getdimout() + B.getdimout(), A.getdimin() + Bt.getdimin(), A, Bt, B, C );    
             //     //
@@ -239,7 +239,7 @@ int main( int argc, char *argv[] )
                 );
 
                 
-                if(false){ // TODO: fix 
+                if(false){ // TODO(martinlicht): fix 
             
                     FloatVector res = sol;
                     
@@ -300,7 +300,7 @@ int main( int argc, char *argv[] )
 
 
             {
-                fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                 VTKWriter vtk( M, fs, getbasename(__FILE__) );
 
                 {

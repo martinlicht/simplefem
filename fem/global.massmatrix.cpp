@@ -121,7 +121,7 @@ SparseMatrix FEECBrokenMassMatrix( const Mesh& mesh, int n, int k, int r )
                 multiplier(i,  0) = -1.;
             }
 
-            if(false) // TODO: this leads to failure ...
+            if(false) // TODO(martinlicht): this leads to failure ...
             {
                 const DenseMatrix middle = Inverse( Transpose(Jac) * Jac );
 

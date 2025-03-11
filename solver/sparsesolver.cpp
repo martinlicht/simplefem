@@ -53,7 +53,7 @@ int ConjugateGradientSolverCSR(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START Conjugate Gradient CSR\n", N );
+        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR\n", K, N );
 
     while( K < N ){
         
@@ -232,7 +232,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START Conjugate Gradient CSR (Diag)\n", N );
+        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (Diag)\n", K, N );
 
     while( K < N ){
         
@@ -443,7 +443,7 @@ int ConjugateGradientSolverCSR_SSOR(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START Conjugate Gradient CSR (SSOR)\n", N );
+        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (SSOR)\n", K, N );
 
     while( K < N ){
         
@@ -707,7 +707,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START Conjugate Gradient CSR (SSOR-Eisenstat)\n", N );
+        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (SSOR-Eisenstat)\n", K, N );
 
     while( K < N ){
         
@@ -965,7 +965,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START Conjugate Gradient CSR (SSOR-Rainbow)\n", N );
+        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (SSOR-Rainbow)\n", K, N );
 
     while( K < N ){
         
@@ -1284,7 +1284,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START Conjugate Gradient CSR (SSOR-Rainbow-Eisenstat)\n", N );
+        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (SSOR-Rainbow-Eisenstat)\n", K, N );
 
     while( K < N ){
         
@@ -1387,7 +1387,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         // NOTE: Rainbow-ing of CSR matrix used here 
         for( int color = num_colors - 1; color >= 0; color-- ) {
         
-            // Float z_r_new_local = 0.; // TODO: understand whether that variable is needed or whether it is a relic
+            // Float z_r_new_local = 0.; // TODO(martinlicht): understand whether that variable is needed or whether it is a relic
 
             #if defined(_OPENMP)
             // #pragma omp parallel for reduction( + : z_r_new_local ) 
@@ -1601,7 +1601,7 @@ int ConjugateResidualSolverCSR(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START Conjugate Residual CSR\n", N );
+        LOGPRINTF( "(%d/%d)     START Conjugate Residual CSR\n", K, N );
 
     while( K < N ){
         
@@ -1814,7 +1814,7 @@ int ConjugateResidualSolverCSR_textbook(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START Conjugate Residual CSR (textbook)\n", N );
+        LOGPRINTF( "(%d/%d)     START Conjugate Residual CSR (textbook)\n", K, N );
 
     while( K < N ){
         
@@ -2048,7 +2048,7 @@ int MINRESCSR(
     int K = 0;
 
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START MINRES CSR\n", N );
+        LOGPRINTF( "(%d/%d)     START MINRES CSR\n", K, N );
 
     while( K < N ){
         
@@ -2305,7 +2305,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d) START Chebyshev (Diag) CSR\n", N );
+        LOGPRINTF( "(%d/%d)     START Chebyshev (Diag) CSR\n", K, N );
 
     while( K < N ){
         

@@ -2542,7 +2542,7 @@ void MeshSimplicial2D::uniformrefinement()
 //     }
     
     
-    // TODO: Check code until here.
+    // TODO(martinlicht): Check code until here.
     /**** Triangle -- Edge Relation ****/
     
     /* for each old edge, set the new first parent triangle */

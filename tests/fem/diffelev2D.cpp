@@ -20,7 +20,7 @@
 #include "../../fem/global.unphysical.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -61,7 +61,7 @@ int main( int argc, char *argv[] )
     
     const int l_min = 0;
     
-    const int l_max = 3; // TODO set this value back to 4
+    const int l_max = 3; // TODO(martinlicht) set this value back to 4
     
     const int r_plus_max = 2;
         
@@ -204,7 +204,7 @@ int main( int argc, char *argv[] )
     for( int i      =     0; i < M.getinnerdimension(); i++      ) 
     {
         Assert( errors[i][l-l_min][r-r_min][r_plus] < desired_closeness_for_sqrt, errors[i][l-l_min][r-r_min][r_plus], desired_closeness_for_sqrt );
-    } // TODO: clear up the error estimate here.
+    } // TODO(martinlicht): clear up the error estimate here.
         
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;

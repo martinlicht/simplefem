@@ -3,7 +3,7 @@
 #include "../../utility/random.hpp"
 #include "../../utility/pixelimage.hpp"
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char** argv ) 
 {    

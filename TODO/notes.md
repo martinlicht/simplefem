@@ -1,12 +1,14 @@
 2D pullback:
-k=1	max		| PF |             = max                          = max 
+
+```
+k=1	max		| PF |             = max                          = max
 k=2	max * min       | PF |  max        = max * min / min              = max
 
 3D pullback:
 k=1	max 		| PF |             = max 			  = max 
 k=2	max * mid       | PF |  max 	   = max * mid / min 		  = max/min * mid 
 k=3	max * mid * min | PF |  max * mid  = max * mid * min / min * mid  = max 
-
+```
 
 --- PRODUCT NAME:
 
@@ -36,7 +38,7 @@ k=3	max * mid * min | PF |  max * mid  = max * mid * min / min * mid  = max
 
 
 
-# Prefixes for code readability 
+## Prefixes for code readability
 
 Using prefixes such as `get`, `set`, `find`, `count`, `compute`, and `calculate` should improve the readability of the code. Possible convention:
 
@@ -63,3 +65,21 @@ Using prefixes such as `get`, `set`, `find`, `count`, `compute`, and `calculate`
 11. `find` for searching for a particular element or condition within a collection or range and returning its position or a reference/pointer to it. It might return a special value or indicator (like end iterator, null pointer) if the search is unsuccessful. **Example**: `findValue( std::vector<int>, int )` 
 
 
+
+
+## NOTES Scott Meyers book
+
+- 7: declare destructors virtual in polymorphic base classes OK
+- 9: never call virtual functions during construction or destruction OK
+- 10: have assignments return reference to *this OK
+- 11: handle self-assignment in operator=	 OK
+
+
+### Better make operators non-member
+
+- https://www.reddit.com/r/cpp_questions/comments/1cjgvfe/overloading_operators_from_outside_a_class_as/
+- some mandatory member operators 
+- other operators should be non-members
+- hidden friend idiom: affects argument-dependent lookup because member friends are not in the global namespace
+- DRY Principle: Implement non-mutating operators (e.g., +) in terms of mutating members (e.g., +=).
+Tell me more about the custom comparison / hashing and the member functions?

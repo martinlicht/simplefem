@@ -12,7 +12,7 @@
 #include "../../mesh/examples2D.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
     {
         LOG << "TikZ output..." << nl;
 
-        fstream fs( experimentfile( getbasename(__FILE__), "tex" ), std::fstream::out );
+        std::fstream fs( experimentfile( getbasename(__FILE__), "tex" ), std::fstream::out );
         
         fs << M.outputTikZ();
 
@@ -90,7 +90,7 @@ int main( int argc, char *argv[] )
     {
         LOG << "SVG output..." << nl;
 
-        fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
+        std::fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
         int num_tets = M.count_triangles();
         FloatVector red( num_tets, 128 ), green( num_tets, 240 ), blue( num_tets, 38 );
         red.random_within_range(0.,255.); green.random_within_range(0.,255.); blue.random_within_range(0.,255.);

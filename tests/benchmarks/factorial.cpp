@@ -7,11 +7,11 @@
 #include "../basic.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
-    cout << "Unit Test and Benchmark for Factorials and Binomials" << nl;
+    std::cout << "Unit Test and Benchmark for Factorials and Binomials" << nl;
     
     /* survey factorials */
 
@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
     std::cout << "Numerical, Loop method, elapsed time:  " << elapsed_seconds_n_loop.count()  << "s\n";
     std::cout << "Numerical, Table method, elapsed time: " << elapsed_seconds_n_table.count() << "s\n";    
     
-    cout << "Finished Unit Test" << nl;
+    std::cout << "Finished Unit Test" << nl;
     
     return 0;
 }

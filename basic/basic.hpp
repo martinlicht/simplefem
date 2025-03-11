@@ -772,7 +772,7 @@ typedef uintmax_t timestamp;
 
 timestamp timestampnow();
 
-// TODO: move to utility 
+// TODO(martinlicht): move to utility 
 
 std::string timestamp2measurement( const timestamp& t );
 
@@ -803,18 +803,25 @@ std::string digitalcodenow();
 //                                             //
 /////////////////////////////////////////////////
 
+// TODO(martinlicht): Move to utilities 
+
 /******************************************************/
 /*      count the white space within STL string       */
 /******************************************************/
 
-int count_white_space( const std::string& str ); // TODO: Move to utilities 
+int count_white_space( const std::string& str ); 
 
 /******************************************************/
 /*          insert tabs before each line              */
 /******************************************************/
 
-std::string tab_each_line( std::string str ); // TODO: Move to utilities 
+std::string tab_each_line( std::string str );
 
+/******************************************************/
+/*        convert a C string to an integer            */
+/******************************************************/
+
+int string_to_integer( const char* s, const char* __restrict__ *endptr, unsigned int base, bool& has_overflown );
 
 
 
@@ -884,7 +891,7 @@ __attribute__ (( format (printf,1,2) ));
 //     return operator<< <Stream,const char*>( stream, container.c_str() ); 
 // }
 
-// // TODO: Move into separate include file 
+// // TODO(martinlicht): Move into separate include file 
 // template <typename StreamType, typename T, size_t N>
 // inline StreamType& operator<<( StreamType& stream, const std::array<T, N>& v)
 // // Define a helper structure template to check for to_text existence
@@ -912,7 +919,7 @@ __attribute__ (( format (printf,1,2) ));
 //     return stream;
 // }
 
-// // TODO: Move into separate include file 
+// // TODO(martinlicht): Move into separate include file 
 // template <typename StreamType, typename T, size_t N>
 // inline StreamType& operator<<( StreamType&& stream, const std::array<T, N>& v)
 // {

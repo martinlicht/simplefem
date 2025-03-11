@@ -27,7 +27,7 @@
 #include "../fem/utilities.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -226,7 +226,7 @@ int main( int argc, char *argv[] )
                     
                     
                     if( true ){
-                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
 
                         FloatVector z_values( M.count_vertices() );
 

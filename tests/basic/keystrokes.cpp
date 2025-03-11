@@ -22,6 +22,7 @@ static termios original_terminal_settings;
 // Function prototypes
 void terminal_mode_into_raw();
 void terminal_mode_restore();
+void busy_sleep( double seconds );
 void* process_keyboard_reader( void* /*unused*/ );
 void* process_printer( void* /*unused*/ );
 
@@ -45,7 +46,7 @@ void terminal_mode_into_raw()
     atexit( &terminal_mode_restore );
 
     // Disable echo (ECHO) and canonical mode (ICANON)
-    raw.c_lflag &= ~(ECHO | ICANON); 
+    raw.c_lflag &= ~(ECHO | ICANON); // TODO(martin): double check whether this is well-defined
 
     // Configure non-blocking read behavior
     raw.c_cc[VMIN]  = 1;  // Minimum number of characters to read

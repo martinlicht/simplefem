@@ -30,7 +30,7 @@
 #include "../../fem/utilities.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -167,7 +167,7 @@ int main( int argc, char *argv[] )
                 auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                 LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
 
-                // auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. ); // TODO: clean up
+                // auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. ); // TODO(martinlicht): clean up
                 // // auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
                 // LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
 
@@ -273,7 +273,7 @@ int main( int argc, char *argv[] )
 
                 {
                     
-                    fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                    std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                     VTKWriter vtk( M, fs, getbasename(__FILE__) );
                     
                     

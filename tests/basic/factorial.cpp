@@ -4,7 +4,7 @@
 #include "../../basic.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -146,7 +146,6 @@ int main( int argc, char *argv[] )
         }
     }
     
-    LOG << "\nAll tests passed successfully!" << nl;
-    
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     return 0;
 }

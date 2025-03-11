@@ -16,7 +16,7 @@
 #include "../../utility/convergencetable.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -150,7 +150,7 @@ int main( int argc, char *argv[] )
 
                 auto error = absolute( interpol_integral - experiments_scalar_value[i] );
                 
-                assert( isfinite(error) );
+                assert( std::isfinite(error) );
 
                 errors_scalar[l-l_min][r-r_min] = maximum( errors_scalar[l-l_min][r-r_min], error );   
             }
@@ -169,7 +169,7 @@ int main( int argc, char *argv[] )
 
                 auto error = absolute( interpol_integral - experiments_volume_value[i] );
                 
-                assert( isfinite(error) );
+                assert( std::isfinite(error) );
 
                 errors_volume[l-l_min][r-r_min] = maximum( errors_volume[l-l_min][r-r_min], error );   
             }

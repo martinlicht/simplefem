@@ -368,7 +368,7 @@ void System_Reporter::output()
     #if true and defined(_WIN32)
     LOGPRINTF("###\tFlushing subnormal numbers\n");
     _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); // Flush denormals, both operands and results, to zero 
-    #elif false and defined(__SSE__) // TODO: fix this stuff in gcc
+    #elif false and defined(__SSE__) // TODO(martinlicht): fix this stuff in gcc
     LOGPRINTF("###\tFlushing subnormal numbers\n"); // ??? xmmintrin.h
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);

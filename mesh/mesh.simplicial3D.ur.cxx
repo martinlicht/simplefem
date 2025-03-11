@@ -129,7 +129,7 @@ void MeshSimplicial3D::uniformrefinement( int levels )
 
 
 
-// TODO: Debug the uniform refinement method 
+// TODO(martinlicht): Debug the uniform refinement method 
 
 void MeshSimplicial3D::uniformrefinement()
 {

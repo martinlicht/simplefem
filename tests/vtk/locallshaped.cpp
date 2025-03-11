@@ -12,7 +12,7 @@
 #include "../../mesh/examples2D.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -28,7 +28,7 @@ int main( int argc, char *argv[] )
         LOG << "Print VTK-type file" << nl;
         LOG << "T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
-        fstream fs( string("./locallshaped") + std::to_string(l) + string(".vtk"), std::fstream::out );
+        std::fstream fs( std::string("./locallshaped") + std::to_string(l) + std::string(".vtk"), std::fstream::out );
 
         VTKWriter vtk( M, fs, "L-Shaped Domain" );
         // vtk.write_coordinate_block();

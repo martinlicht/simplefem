@@ -123,7 +123,8 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
 
     // Float sigma_min_sq = b * ( A * b ) / (b*b);
     
-    if( verbosity >= VerbosityLevel::startandfinish ) LOG << "(" << max_iteration_count << ")  START Conjugate Gradient iteration" << nl;
+    if( verbosity >= VerbosityLevel::startandfinish ) 
+        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Gradient iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -233,7 +234,8 @@ void PreconditionedConjugateGradientMethod::solve( FloatVector& x, const FloatVe
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::startandfinish ) LOG << "(" << max_iteration_count << ")  START Preconditioned Conjugate Gradient iteration" << nl;
+    if( verbosity >= VerbosityLevel::startandfinish ) 
+        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Preconditioned Conjugate Gradient iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -455,7 +457,8 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::startandfinish ) LOG << "(" << max_iteration_count << ")  START Conjugate Residual (explicit) iteration" << nl;
+    if( verbosity >= VerbosityLevel::startandfinish ) 
+        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Residual (explicit) iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -589,7 +592,8 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::startandfinish ) LOG << "(" << max_iteration_count << ")  START Conjugate Residual (robust) iteration" << nl;
+    if( verbosity >= VerbosityLevel::startandfinish ) 
+        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Residual (robust) iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -697,7 +701,8 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     
     Float Ar_r = notanumber;
     
-    if( verbosity >= VerbosityLevel::startandfinish ) LOG << "(" << max_iteration_count << ")  START Conjugate Residual (fast) iteration" << nl;
+    if( verbosity >= VerbosityLevel::startandfinish ) 
+        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Residual (fast) iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -937,7 +942,8 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
         
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::startandfinish ) LOG << "(" << max_iteration_count << ")  START Preconditioned Conjugate Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::startandfinish ) 
+        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Preconditioned Conjugate Residual iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -1111,8 +1117,9 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     
 //     Float recent_alpha = notanumber;
     
-    if( verbosity >= VerbosityLevel::startandfinish ) LOG << "(" << max_iteration_count << ")  START Minimal Residual iteration" << nl;
-        
+    if( verbosity >= VerbosityLevel::startandfinish ) 
+    LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Minimal Residual iteration" );
+
     while( recent_iteration_count < max_iteration_count )
     {
         
@@ -1398,7 +1405,8 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     recent_iteration_count = 0;
     
-    if( verbosity >= VerbosityLevel::startandfinish ) LOG << "(" << max_iteration_count << ")  START Residual iteration" << nl;
+    if( verbosity >= VerbosityLevel::startandfinish ) 
+        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Residual Descent iteration" );
                 
     while( recent_iteration_count < max_iteration_count )
     {
@@ -1549,7 +1557,9 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     
     recent_iteration_count = 0;
 
-    if( verbosity >= VerbosityLevel::startandfinish ) LOG << "(" << max_iteration_count << ")  START Herzog-Soodhalter iteration" << nl;
+    if( verbosity >= VerbosityLevel::startandfinish ) 
+        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Herzog-Soodhalter iteration" );
+
                 
     while( recent_iteration_count < max_iteration_count ){
         

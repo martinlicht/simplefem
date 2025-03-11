@@ -6,7 +6,7 @@
 #include "../../mesh/examples1D.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 #include "vtk.testsnippet.cxx"
 
@@ -16,7 +16,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        MeshSimplicial1D Mx = StandardInterval1D(); string meshname = string("One-dimensional Test Mesh: ") + getbasename(__FILE__);
+        MeshSimplicial1D Mx = StandardInterval1D(); std::string meshname = std::string("One-dimensional Test Mesh: ") + getbasename(__FILE__);
         
         internal_print( Mx, meshname );
         

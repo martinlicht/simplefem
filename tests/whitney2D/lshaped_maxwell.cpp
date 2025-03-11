@@ -26,7 +26,7 @@
 #include "../../fem/utilities.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {
@@ -93,7 +93,7 @@ int main( int argc, char *argv[] )
                 LOG << "... assemble matrices" << nl;
         
                 
-                    // TODO: correct the degrees, perhaps via degree elevation
+                    // TODO(martinlicht): correct the degrees, perhaps via degree elevation
                 
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
@@ -235,7 +235,7 @@ int main( int argc, char *argv[] )
                     auto computed_sol = vector_incmatrix * sol;
                     
                     {
-                        fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
                         VTKWriter vtk( M, fs, getbasename(__FILE__) );
                     
                         // auto converter = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );

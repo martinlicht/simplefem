@@ -8,7 +8,7 @@
 #include "../../mesh/io.coordinates.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 int main( int argc, char *argv[] )
 {

@@ -7,7 +7,7 @@
 #include "../../mesh/examples3D.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 #include "vtk.testsnippet.cxx"
 
