@@ -28,6 +28,13 @@ No character in the entire source code must be a tab.
 
 
 
+Indentation
+-----------
+
+Generally, indentation of blocks uses four spaces though exceptions may apply.
+
+
+
 
 Assertions and checks
 ---------------------
@@ -35,18 +42,17 @@ Assertions and checks
 Make extensive use of the assert macro. 
 All asserts must be `const` to their arguments, no side effects should occur.
 
-At the beginning of every function,
-call the check() method of that class except for
+At the beginning of every function, call the check() method of that class except for
+
 - the check method itself
 - methods that avoid check for good reason, see below.
+
 Likewise, all object arguments need to be checked at the beginning of the function.
 
-At the end of a method, all non-const object arguments need to be checked,
-and the this pointer of any non-const method as well.
+At the end of a method, all non-const object arguments need to be checked, and the this pointer of any non-const method as well.
 
 
 There are circumstances when a check is not performed.
-
 
 If a check is not supposed to be called for semantic reasons,
 instead of check there should be a comment like 
@@ -66,8 +72,4 @@ then comment out the check and add an explanation:
 
 
 
-Indentation
------------
-
-Generally, indentation of blocks uses four spaces though exceptions may apply.
 

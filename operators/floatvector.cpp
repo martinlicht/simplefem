@@ -30,8 +30,8 @@ FloatVector::FloatVector( const FloatVector& src )
 FloatVector::FloatVector( FloatVector&& src ) noexcept
 : dimension( std::move(src.dimension) ), pointer( std::move(src.pointer) )
 {
-    src.pointer = nullptr;
     assert( dimension >= 0 and pointer != nullptr and pointer == src.pointer and dimension == src.dimension );
+    src.pointer = nullptr;
     FloatVector::check();
 }
 
