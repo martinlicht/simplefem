@@ -30,7 +30,6 @@
 
 int main( int argc, char *argv[] )
 {
-        
     LOG << "Unit Test: 3D Poisson Problem" << nl;
         
     if(true){

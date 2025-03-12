@@ -12,7 +12,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Index Map Generators" << nl;
+    LOG << "Unit Test: Index Map Generators" << nl;
     
     if(true)
     {

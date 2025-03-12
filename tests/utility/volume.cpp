@@ -7,7 +7,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for computing ball/sphere measures" << nl;
+    LOG << "Unit Test: computing ball/sphere measures" << nl;
 
     const Float pi = Constants::pi;
 

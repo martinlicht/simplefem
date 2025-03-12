@@ -12,7 +12,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh (1D)" << nl;
+    LOG << "Unit Test: VTK output of Simplicial Mesh (1D)" << nl;
     
     {
         

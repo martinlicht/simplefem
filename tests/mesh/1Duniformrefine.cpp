@@ -8,7 +8,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Manifold 1D Module" << nl;
+    LOG << "Unit Test: Manifold 1D Module" << nl;
 
     MeshSimplicial1D M = StandardInterval1D();
     

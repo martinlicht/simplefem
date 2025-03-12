@@ -8,11 +8,11 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Simple operator" << nl;
+    LOG << "Unit Test: Simple operator" << nl;
     
     {
     
-        LOG << "Unit Test for Zero Operator" << nl;
+        LOG << "Unit Test: Zero Operator" << nl;
 
         int dim = 10;
 
@@ -34,7 +34,7 @@ int main( int argc, char *argv[] )
     
     {
     
-        LOG << "Unit Test for Identity Operator" << nl;
+        LOG << "Unit Test: Identity Operator" << nl;
 
         int dim = 10;
 
@@ -57,7 +57,7 @@ int main( int argc, char *argv[] )
     
     {
     
-        LOG << "Unit Test for Scaling Operator" << nl;
+        LOG << "Unit Test: Scaling Operator" << nl;
 
         FloatVector a(5);
         for( int i = 0; i < 5; i++ ) a.setentry( i, i+1 );
@@ -99,7 +99,7 @@ int main( int argc, char *argv[] )
 
     {
     
-        LOG << "Unit Test for Diagonal Operator" << nl;
+        LOG << "Unit Test: Diagonal Operator" << nl;
 
         int dim = 10;
 
@@ -137,7 +137,7 @@ int main( int argc, char *argv[] )
     
     {
     
-        LOG << "Unit Test for Lambda Operator" << nl;
+        LOG << "Unit Test: Lambda Operator" << nl;
 
         int dim = 10;
 

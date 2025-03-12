@@ -32,8 +32,7 @@ inline double hilbert_determinant(int n) {
 // Main function to test Vandermonde determinant computations
 int main( int argc, char *argv[] )
 {
-
-    LOG << "Unit Test for Determinant computation" << nl;
+    LOG << "Unit Test: Determinant computation" << nl;
 
     {
         LOG << nl << nl << "Vandermonde Matrices" << nl;

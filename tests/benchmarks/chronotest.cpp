@@ -22,6 +22,7 @@ static volatile long double foo;
 
 int main( int argc, char *argv[] )
 {
+    LOG << "Unit Test: chrono test" << nl;
     
     std::clock_t c_start = std::clock();
     auto t_start = std::chrono::high_resolution_clock::now();

@@ -53,7 +53,6 @@ struct Compare {
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 3D grad estimate" << nl;
     
     LOG << "Initial mesh..." << nl;

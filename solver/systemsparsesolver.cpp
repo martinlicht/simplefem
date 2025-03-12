@@ -132,7 +132,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     
     int K = 0;
     
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     START Hodge Conjugate Residual (diag) CSR\n", K, N );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     BEGIN: Hodge Conjugate Residual (diag) CSR\n", K, N );
 
     while( K < N ){
         
@@ -232,7 +232,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
 
         }
         
@@ -356,7 +356,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(Md_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -486,7 +486,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     
     int K = 0;
     
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)    START Hodge Conjugate Residual (SSOR) CSR\n", K, N );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     BEGIN: Hodge Conjugate Residual (SSOR) CSR\n", K, N );
 
     while( K < N ){
         
@@ -586,7 +586,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
 
         }
         
@@ -712,7 +712,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(Md_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(Md_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -822,7 +822,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     
     int K = 0;
     
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     START Hodge Conjugate Residual (textbook) CSR\n", K, N );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     BEGIN: Hodge Conjugate Residual (textbook) CSR\n", K, N );
 
     while( K < N ){
         
@@ -919,7 +919,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
             
         }
         
@@ -1044,7 +1044,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(Mr_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(Mr_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -1173,7 +1173,7 @@ int HodgeHerzogSoodhalterMethod(
         assert( PCvalues );
     }
     
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     START Hodge Herzog-Soodhalter CSR\n", recent_iteration_count, max_iteration_count );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     BEGIN: Hodge Herzog-Soodhalter CSR\n", recent_iteration_count, max_iteration_count );
     
     if( precon_A_available ) LOGPRINTF("      Preconditioner for A detected\n");
     if( precon_C_available ) LOGPRINTF("      Preconditioner for C detected\n");
@@ -1277,7 +1277,7 @@ int HodgeHerzogSoodhalterMethod(
             c0 = c1 = 1;
             
             if( print_modulo >= 0 ) {
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) absolute(eta), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) absolute(eta), (double)(safedouble)tolerance );
                 LOGPRINTF( "(%d/%d)            Gamma: %.9le Eta_A %.9le Eta_C %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)eta_A, (double)(safedouble)eta_C, (double)(safedouble)gamma );
             }
 
@@ -1502,7 +1502,7 @@ int HodgeHerzogSoodhalterMethod(
     Float recent_deviation = absolute( eta );
         
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)recent_deviation, (double)(safedouble)tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "   "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble)recent_deviation, (double)(safedouble)tolerance );
 
     return recent_iteration_count;
 }

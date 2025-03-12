@@ -13,7 +13,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for one-dimensional simplicial mesh" << nl;
+    LOG << "Unit Test: one-dimensional simplicial mesh" << nl;
 
     MeshSimplicial1D M = StandardInterval1D();
 

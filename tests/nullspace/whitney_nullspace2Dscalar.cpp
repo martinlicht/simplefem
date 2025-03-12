@@ -27,7 +27,6 @@ const Float mass_threshold_for_small_vectors = 1e-6;
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: Nullspace computation (2D) scalar" << nl;
     
     if(true){

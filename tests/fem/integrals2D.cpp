@@ -20,7 +20,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (2D) Integrating scalar fields and volume forms" << nl;
     
     LOG << "Initial mesh..." << nl;

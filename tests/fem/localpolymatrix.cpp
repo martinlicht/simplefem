@@ -15,7 +15,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Inverse of Poly Matrix" << nl;
+    LOG << "Unit Test: Inverse of Poly Matrix" << nl;
     
     const int r_min = 1;
     const int r_max = 9;

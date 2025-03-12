@@ -29,7 +29,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 2D Poisson problem with mixed BC" << nl;
     
     if(true){

@@ -10,7 +10,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Tests for Matrix Algorithms" << nl;
+    LOG << "Unit Test: Matrix Algorithms" << nl;
     
     // LOG << std::setprecision(5);
     // LOG << std::fixed << std::ios::floatfield; //setf( std::ios::fixed, std::ios::floatfield ); 

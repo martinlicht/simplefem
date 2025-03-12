@@ -17,7 +17,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Interpolation in FEEC" << nl;
+    LOG << "Unit Test: Interpolation in FEEC" << nl;
     
     {
 

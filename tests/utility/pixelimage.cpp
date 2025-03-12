@@ -6,9 +6,8 @@
 // using namespace std;
 
 int main( int argc, char** argv ) 
-{    
-    
-    LOG << "Unit Test for image manipulation" << nl;
+{
+    LOG << "Unit Test: image manipulation" << nl;
 
     // auto pim = readPixelImage("lena_color.tiff");
     // auto pim = readPixelImage("aurora.jpeg");
@@ -39,7 +38,7 @@ int main( int argc, char** argv )
     savePixelImage(pim,"reverse.tiff");
 
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
-        
+
     return 0;
 
 }

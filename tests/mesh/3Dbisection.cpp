@@ -9,7 +9,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Simplicial 3D Module" << nl;
+    LOG << "Unit Test: Simplicial 3D Module" << nl;
     
     for( int ei = 0; ei < 6; ei++ )
     {

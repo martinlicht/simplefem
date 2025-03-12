@@ -28,7 +28,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 3D Poisson Neumann Problem" << nl;
     
     if(true){

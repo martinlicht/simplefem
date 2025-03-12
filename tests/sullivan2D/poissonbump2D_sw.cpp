@@ -32,7 +32,6 @@
 
 int main( int argc, char *argv[] )
 {
-        
     LOG << "Unit Test: 2D Dirichlet problem with Bump function" << nl;
     
     if(true){

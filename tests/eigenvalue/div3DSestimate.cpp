@@ -25,7 +25,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 3D divergence estimate" << nl;
     
     LOG << "Initial mesh..." << nl;

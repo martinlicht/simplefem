@@ -28,8 +28,7 @@
 
 int main( int argc, char *argv[] )
 {
-    
-    LOG << "Unit Test for Solution of Neumann Problem" << nl;
+    LOG << "Unit Test: adaptive solution of Neumann Problem" << nl;
     
     if(true){
 

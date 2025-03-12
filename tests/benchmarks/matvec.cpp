@@ -15,7 +15,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Benchmark: (2D) CSR-matrix vector product" << nl;
+    LOG << "Benchmark: CSR-matrix vector product (2D Mass Matrix)" << nl;
     
     LOG << "Initial mesh..." << nl;
     

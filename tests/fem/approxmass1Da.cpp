@@ -20,7 +20,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (1D) masses are correctly approximated: precomputed mass" << nl;
     
     LOG << "Initial mesh..." << nl;

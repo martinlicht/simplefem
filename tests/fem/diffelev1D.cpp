@@ -23,7 +23,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (1D) degree elevation commutes with exterior derivative" << nl;
     
     LOG << "Initial mesh..." << nl;

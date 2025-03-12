@@ -8,7 +8,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for SparseMatrix" << nl;
+    LOG << "Unit Test: SparseMatrix" << nl;
 
     {
         LOG << "1. Action of Identity Matrix" << nl;

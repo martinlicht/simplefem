@@ -26,7 +26,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (?D) Lagrange matrices agree with FEEC analogues" << nl;
     
     LOG << "Initial mesh..." << nl;

@@ -9,7 +9,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Vector class" << nl;
+    LOG << "Unit Test: Vector class" << nl;
 
     {
         // Test default initialization

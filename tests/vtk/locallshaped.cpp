@@ -16,7 +16,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh" << nl;
+    LOG << "Unit Test: VTK output of Simplicial Mesh" << nl;
     
     // MeshSimplicial2D M = UnitCubeTriangulation(3,3);
     MeshSimplicial2D M = LShapedDomain2D();

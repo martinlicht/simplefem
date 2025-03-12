@@ -75,7 +75,7 @@ class InverseOperator
     
 };
 
-class PseudoInverseOperator final
+class PseudoInverseOperator
 : public InverseOperator<LinearOperator> 
 {
 

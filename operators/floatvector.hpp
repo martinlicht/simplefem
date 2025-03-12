@@ -228,7 +228,7 @@ class FloatVector final
         
         /* For each semantics */ 
         
-        class ConstIterator {
+        class ConstIterator final {
             
             friend FloatVector;
             
@@ -266,7 +266,7 @@ class FloatVector final
                     
         };
         
-        class Iterator {
+        class Iterator final {
             
             friend FloatVector;
             

@@ -22,8 +22,10 @@
         // printf( "Sum: %10.10e\t%10ld%lcs\t", result, duration, L'\u00b5' )
 
 
-int main( int argc, char *argv[] ){
-
+int main( int argc, char *argv[] )
+{
+    LOG << "Unit Test: allocation benchmark" << nl;
+    
     int arraylength = 1000; // reduce this number in case your program crashes
     int repetitions = 800000;
     

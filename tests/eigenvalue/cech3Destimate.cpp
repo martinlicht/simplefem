@@ -20,7 +20,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: Cech complex 3D estimates" << nl;
     
     LOG << "Initial mesh..." << nl;

@@ -55,7 +55,6 @@ FloatVector IncreaseResolution( const MeshSimplicial2D& mesh, const FloatVector&
 
 int main( int argc, char *argv[] )
 {
-        
     LOG << "Unit Test: 2D Dirichlet problem on L-shaped domain" << nl;
     
     LOG << "Initial mesh..." << nl;

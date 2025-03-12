@@ -7,7 +7,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Tests for QR Algorithm" << nl;
+    LOG << "Unit Test: QR Algorithm" << nl;
     
     {
         LOG << "1. QR Iteration" << nl;

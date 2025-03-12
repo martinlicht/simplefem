@@ -11,7 +11,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Simplicial 2D Module" << nl;
+    LOG << "Unit Test: Simplicial 2D Module" << nl;
     
     
     MeshSimplicial2D M = UnitTriangle2D();

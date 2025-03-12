@@ -1,7 +1,10 @@
-## Exception policy
+Exception policy
+================
 
 The entire code adheres to a fail-fast philosophy: any error should lead to an immediate program termination. 
-For that reason, the compilation is generally compiled with the flag `-fno-exceptions`, disabling all exception handling.
+Typically, this is done with program termination once any assertion is triggered. 
+
+For reasons of performance and simplicity, the program is generally compiled with the flag `-fno-exceptions`, disabling all exception handling.
 Nevertheless, some methods should always be marked as `noexcept` to accommodate style conventions and silence linters. 
 The following methods are always declared `noexcept`:
 
@@ -9,7 +12,23 @@ The following methods are always declared `noexcept`:
 - move assignment operator
 - destructor
 
-## Virtual destructor policy
+Should it be desired to throw exceptions, then is done from within the custom assertion macro. 
+A feature test reads:
+
+```cpp
+// gcc and clang define __cpp_exceptions = 199711 if exceptions are on
+// gcc and clang also define __EXCEPTIONS
+#if __cpp_exceptions == 199711
+    // with exceptions...
+#else
+    // without exceptions...
+#endif
+// see also: https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_exceptions.html
+```
+
+
+Virtual destructor policy
+=========================
 
 The destructors of all classes shall be virtual unless the class meets the following conditions:
 
@@ -20,7 +39,9 @@ As a rationale, we recall that virtual destructors are mandatory if the class is
 so the conditions describe exactly when a destructor is permitted to be non-virtual. 
 A non-virtual destructor will generally have slightly better performance.
 
-## Final keyword
+
+Final keyword
+=========================
 
 Classes that are not part of a class hierarchy should be declared `final`.
 Rationale: the classes are currently only used within the code,
@@ -28,7 +49,8 @@ and any class being part of a hierarchy, should be a conscious decision.
 This avoids the vtable in some cases.
 
 
-## Rule of Five
+Rule of Five
+=========================
 
 We adhere to the following rule of Five. If a class features one of the following methods
 
@@ -40,9 +62,22 @@ We adhere to the following rule of Five. If a class features one of the followin
 
 then it must provide all of these five methods. 
 This can be via implementation or via `default` or `delete`.
+It is preferable to use the `default` implementation whenever possible. 
+These methods can be `delete`d until the need for them arises. 
 
 
-# General guidelines on resources managed by objects 
+Explicit keyword
+=========================
+
+All constructors with arguments, except for the copy and move constructors, are declared `explicit`.
+This is irrespective of the number of arguments that these constructors take.
+
+**Rationale:** Marking almost all constructors explicit makes the overload resolution more robust to code change, e.g., when an argument is made optional or an accidental assignment is made. 
+
+
+
+General guidelines on resources managed by objects 
+==================================================
 
 We want to provide general guidelines for the copy and move operations and destructors. 
 The objects in this library manage resources that can be categorized very broadly into the following:
@@ -62,7 +97,7 @@ This last item contrasts with the STL. It allows us to improve performance while
 
 These are general guidelines that suit our particular situation. 
 
-# Copy constructor guidelines
+## Copy constructor guidelines
 
 - The copy constructor will perform copy construction on all plain data members and members with copy constructor, except for pointers to resources
 - pointers will be initialized in accordance with the properties of the source
@@ -70,38 +105,35 @@ These are general guidelines that suit our particular situation.
 - Any copy operations take place in the body 
 - The copy constructor finishes with a check and with `return *this`
 
-# Move constructor guidelines
+## Move constructor guidelines
 
 - The move constructor will perform move construction on all plain data members and members with copy constructor, including pointers to resources
 - source pointers are set to zero
 - The move constructor finishes with a check and with `return *this`
 
-# Copy assignment operator guidelines 
+## Copy assignment operator guidelines 
 
 - The operator finishes with a check and with `return *this`
 - The operator checks for self-assignment and performs anything else only then
 - Plain data members and members with copy assignment operator experience copy assignment
 - Pointers to resources are checked for nullptr; then the data are copied manually
 
-# Move assignment operator guidelines 
+## Move assignment operator guidelines 
 
 - The operator finishes with a check and with `return *this`
 - The operator checks for self-assignment and performs anything else only then
 - Plain data members and members with move assignment operator move copy assignment
 - Pointers to resources are checked for nulltpr; then the pointer is moved to the destination and the source gets a nullptr
 
-# Destructor guideline
+## Destructor guideline
 
 - If the object is not a moved-from state, then optionally check at the beginning 
 - If pointers to resources are not nullptr, then delete them
 
-# Explicit keyword
-
-All constructors with arguments, except for the copy and move constructors, are declared `explicit`.
-This is irrespective of the number of arguments that these constructors take.
 
 
-## Prefixes for code readability
+Prefixes for code readability
+==================================================
 
 Using prefixes such as `get`, `set`, `find`, `count`, `compute`, and `calculate` should improve the readability of the code. Possible convention:
 
@@ -127,10 +159,27 @@ Using prefixes such as `get`, `set`, `find`, `count`, `compute`, and `calculate`
 
 11. `find` for searching for a particular element or condition within a collection or range and returning its position or a reference/pointer to it. It might return a special value or indicator (like end iterator, null pointer) if the search is unsuccessful. **Example**: `findValue( std::vector<int>, int )` 
 
+More prefixes: prefixes: 
+
+- eval
+- calc
+- comp
+- generate
+- derive
+- check
+- complete
+- count
+- give
+- take
+- call
+- load
+- save
+- print
 
 
 
-## NOTES Scott Meyers book
+NOTES Scott Meyers book
+==================================================
 
 - 7: declare destructors virtual in polymorphic base classes OK
 - 9: never call virtual functions during construction or destruction OK
@@ -138,7 +187,8 @@ Using prefixes such as `get`, `set`, `find`, `count`, `compute`, and `calculate`
 - 11: handle self-assignment in operator=	 OK
 
 
-### Better make operators non-member
+Better make operators non-member
+==================================================
 
 - https://www.reddit.com/r/cpp_questions/comments/1cjgvfe/overloading_operators_from_outside_a_class_as/
 - some mandatory member operators 
@@ -183,8 +233,6 @@ k=3	max * mid * min | PF |  max * mid  = max * mid * min / min * mid  = max
  * * better preconditioners (4h)
  * * parallelism (lots and lots)
  
-    -----------------------
-    prefixes: eval, get, set, calc, compute, generate, derive, check, complete, count, 
 
 
 

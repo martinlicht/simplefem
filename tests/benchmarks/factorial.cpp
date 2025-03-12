@@ -11,7 +11,7 @@
 
 int main( int argc, char *argv[] )
 {
-    std::cout << "Unit Test and Benchmark for Factorials and Binomials" << nl;
+    std::cout << "Unit Test: Benchmark for Factorials and Binomials" << nl;
     
     /* survey factorials */
 

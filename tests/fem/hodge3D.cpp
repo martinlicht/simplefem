@@ -21,7 +21,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (3D) Hodge star, wedge, vee" << nl;
     
     LOG << "Initial mesh..." << nl;

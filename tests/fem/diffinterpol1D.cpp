@@ -18,7 +18,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (1D) exterior derivative and interpolation" << nl;
     
     

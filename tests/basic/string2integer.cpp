@@ -14,7 +14,6 @@
 
 int main( int argc, char *argv[] ) 
 {
-
     LOG << "Unit Test: string to integer conversion" << nl;
     
     if( argc == 2 ) {

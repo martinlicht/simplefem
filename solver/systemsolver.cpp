@@ -97,7 +97,7 @@ int BlockHerzogSoodhalterMethod(
     int max_iteration_count = dimension_A + dimension_C;
     int recent_iteration_count = 0;
 
-    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)     START Block Herzog-Soodhalter CSR\n", recent_iteration_count, max_iteration_count );
+    if( print_modulo >= 0 ) LOGPRINTF( "(%d/%d)      BEGIN: Block Herzog-Soodhalter CSR\n", recent_iteration_count, max_iteration_count );
 
     while( recent_iteration_count < max_iteration_count ){
         
@@ -146,7 +146,7 @@ int BlockHerzogSoodhalterMethod(
             c0 = c1 = 1;
             
             if( print_modulo >= 0 ) {
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) absolute(eta), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) absolute(eta), (double)(safedouble)tolerance );
                 LOGPRINTF( "(%d/%d)            Gamma: %.9le Eta_A %.9le Eta_C %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)gamma, (double)(safedouble)eta_A, (double)(safedouble)eta_C );
             }
 
@@ -273,7 +273,7 @@ int BlockHerzogSoodhalterMethod(
     Float recent_deviation = absolute( eta );
         
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)recent_deviation, (double)(safedouble)tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble)recent_deviation, (double)(safedouble)tolerance );
 
     return recent_iteration_count;
 }

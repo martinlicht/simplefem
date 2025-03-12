@@ -10,7 +10,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit test: (3D) CSR-matrix rainbow partition" << nl;
+    LOG << "Unit Test: (3D) CSR-matrix rainbow partition" << nl;
     
     LOG << "Initial mesh..." << nl;
     

@@ -32,7 +32,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 3D Darcy problem" << nl;
     
     if(true){

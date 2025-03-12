@@ -6,7 +6,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Index Mapping" << nl;
+    LOG << "Unit Test: Index Map" << nl;
 
     const IndexRange irA(  2, 5 );
     const IndexRange irB(  3, 5 );

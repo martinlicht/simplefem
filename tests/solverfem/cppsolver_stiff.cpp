@@ -19,7 +19,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
     
     if(true){

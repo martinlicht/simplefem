@@ -31,7 +31,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 2D curl-curl problem" << nl;
     
     LOG << "Initial mesh..." << nl;

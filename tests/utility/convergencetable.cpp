@@ -6,7 +6,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for convergence table" << nl;
+    LOG << "Unit Test: convergence table" << nl;
 
 
     ConvergenceTable Contable("Test Table");

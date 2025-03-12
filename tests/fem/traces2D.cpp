@@ -21,7 +21,6 @@
 
 int main( int argc, char *argv[] )
 {
-        
     LOG << "Unit Test: (2D) degree elevation of interpolation preserves mass" << nl;
     
     LOG << "Initial mesh..." << nl;

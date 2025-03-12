@@ -7,7 +7,8 @@
 
 int main( int argc, char *argv[] )
 {
-
+    LOG << "Unit Test: arithmetics" << nl;
+    
     LOG << "Test absolute\n";
     
     assert(absolute<int>(0) == 0);

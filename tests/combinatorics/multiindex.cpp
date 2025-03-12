@@ -7,8 +7,7 @@
 
 int main( int argc, char *argv[] )
 {
-    
-    LOG << "Unit Test for Multi-Indices" << nl;
+    LOG << "Unit Test: Multi-Indices" << nl;
         
     if( true )
     {

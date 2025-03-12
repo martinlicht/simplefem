@@ -25,7 +25,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (?D) Compare different matrix-matrix products" << nl;
     
     LOG << "Initial mesh..." << nl;

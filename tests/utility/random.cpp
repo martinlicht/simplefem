@@ -8,8 +8,7 @@
 
 int main( int argc, char *argv[] )
 {
-
-    LOG << "Unit Test for randomness" << nl;
+    LOG << "Unit Test: randomness" << nl;
 
     {
         LOG << "testing random integer generation...\n";

@@ -18,7 +18,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Image triangulation" << nl;
+    LOG << "Unit Test: Image triangulation" << nl;
     
     MeshSimplicial2D M = UnitSquare2D_centered();
 

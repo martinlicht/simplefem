@@ -9,7 +9,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for producting permutations via Heap's algorithm" << nl;
+    LOG << "Unit Test: producing permutations via Heap's algorithm" << nl;
     
     if(true)
     {

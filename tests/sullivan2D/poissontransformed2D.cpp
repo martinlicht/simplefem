@@ -28,7 +28,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 2D Poisson transformed problem" << nl;
     
     if(true){

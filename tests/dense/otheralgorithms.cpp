@@ -8,7 +8,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Tests for Matrix Algorithms: inverses, determinants, cofactors" << nl;
+    LOG << "Unit Test: Matrix Algorithms: inverses, determinants, cofactors" << nl;
     
     {
       

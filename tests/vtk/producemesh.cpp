@@ -50,7 +50,7 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "Unit Test for VTK output of Simplicial Mesh" << nl;
+        LOG << "Unit Test: VTK output of Simplicial Mesh" << nl;
         
         const int K = 4;
         const int L = 12;

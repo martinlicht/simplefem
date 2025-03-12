@@ -124,7 +124,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     // Float sigma_min_sq = b * ( A * b ) / (b*b);
     
     if( verbosity >= VerbosityLevel::startandfinish ) 
-        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Gradient iteration" );
+        LOGPRINTF("(%d/%d)     BEGIN: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Gradient iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -140,7 +140,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
             d = r;
 
             if( verbosity >= VerbosityLevel::verbose )
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(r*r), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(r*r), (double)(safedouble)tolerance );
             
         }
 
@@ -202,7 +202,7 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     recent_deviation = absolute(r * r);
     
     if( verbosity >= VerbosityLevel::startandfinish and print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
         
     
 }
@@ -235,7 +235,7 @@ void PreconditionedConjugateGradientMethod::solve( FloatVector& x, const FloatVe
     recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::startandfinish ) 
-        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Preconditioned Conjugate Gradient iteration" );
+        LOGPRINTF("(%d/%d)     BEGIN: %s\n", recent_iteration_count, max_iteration_count, "Preconditioned Conjugate Gradient iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -262,7 +262,7 @@ void PreconditionedConjugateGradientMethod::solve( FloatVector& x, const FloatVe
                 rMr = r * Mr;
 
                 if( verbosity >= VerbosityLevel::verbose )
-                    LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rMr), (double)(safedouble)tolerance );
+                    LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rMr), (double)(safedouble)tolerance );
 
             }
 
@@ -327,7 +327,7 @@ void PreconditionedConjugateGradientMethod::solve( FloatVector& x, const FloatVe
     recent_deviation = rMr;
     
     if( verbosity >= VerbosityLevel::startandfinish and print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
 
     
 }
@@ -458,7 +458,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::startandfinish ) 
-        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Residual (explicit) iteration" );
+        LOGPRINTF("(%d/%d)     BEGIN: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Residual (explicit) iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -488,7 +488,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             assert( rAr >= 0. );
 
             if( verbosity >= VerbosityLevel::verbose )
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rAr), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rAr), (double)(safedouble)tolerance );
             
 
             
@@ -567,7 +567,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     recent_deviation = rAr;
     
     if( verbosity >= VerbosityLevel::startandfinish and print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
 
     
 }
@@ -593,7 +593,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::startandfinish ) 
-        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Residual (robust) iteration" );
+        LOGPRINTF("(%d/%d)     BEGIN: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Residual (robust) iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -614,7 +614,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             // fast and explicit: Ar_r = Ar * r;
 
             if( verbosity >= VerbosityLevel::verbose )
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt( r * Ar ), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt( r * Ar ), (double)(safedouble)tolerance );
 
         }
 
@@ -675,7 +675,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
     recent_deviation = absolute( r * Ar );
     
     if( verbosity >= VerbosityLevel::startandfinish and print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
     
 }
 
@@ -702,7 +702,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     Float Ar_r = notanumber;
     
     if( verbosity >= VerbosityLevel::startandfinish ) 
-        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Residual (fast) iteration" );
+        LOGPRINTF("(%d/%d)     BEGIN: %s\n", recent_iteration_count, max_iteration_count, "Conjugate Residual (fast) iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -722,7 +722,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             Ar_r = Ar * r;
 
             if( verbosity >= VerbosityLevel::verbose )
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble)tolerance );
 
         }
 
@@ -784,7 +784,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
     recent_deviation = absolute( Ar * r );
     
     if( verbosity >= VerbosityLevel::startandfinish and print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
     
 }
 
@@ -943,7 +943,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::startandfinish ) 
-        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Preconditioned Conjugate Residual iteration" );
+        LOGPRINTF("(%d/%d)     BEGIN: %s\n", recent_iteration_count, max_iteration_count, "Preconditioned Conjugate Residual iteration" );
         
     while( recent_iteration_count < max_iteration_count )
     {
@@ -970,7 +970,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
                 rMAMr = Mr * AMr;
                 
                 if( verbosity >= VerbosityLevel::verbose )
-                    LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rMAMr), (double)(safedouble)tolerance );
+                    LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rMAMr), (double)(safedouble)tolerance );
 
             }
 
@@ -1039,7 +1039,7 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
     recent_deviation = rMAMr;
     
     if( verbosity >= VerbosityLevel::startandfinish and print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
 
     
 }
@@ -1118,7 +1118,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 //     Float recent_alpha = notanumber;
     
     if( verbosity >= VerbosityLevel::startandfinish ) 
-    LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Minimal Residual iteration" );
+    LOGPRINTF("(%d/%d)     BEGIN: %s\n", recent_iteration_count, max_iteration_count, "Minimal Residual iteration" );
 
     while( recent_iteration_count < max_iteration_count )
     {
@@ -1190,7 +1190,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
 //             recent_alpha = alpha1;
 
             if( verbosity >= VerbosityLevel::verbose )
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rr), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(rr), (double)(safedouble)tolerance );
 
             
         }
@@ -1279,7 +1279,7 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = absolute(rr);
     
     if( verbosity >= VerbosityLevel::startandfinish and print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
     
 }
 
@@ -1406,7 +1406,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_iteration_count = 0;
     
     if( verbosity >= VerbosityLevel::startandfinish ) 
-        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Residual Descent iteration" );
+        LOGPRINTF("(%d/%d)     BEGIN: %s\n", recent_iteration_count, max_iteration_count, "Residual Descent iteration" );
                 
     while( recent_iteration_count < max_iteration_count )
     {
@@ -1421,7 +1421,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
             assert( r_r >= 0. );
             
             if( verbosity >= VerbosityLevel::verbose )
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(r_r), (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(r_r), (double)(safedouble)tolerance );
 
         }
 
@@ -1465,7 +1465,7 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = r_r;
     
     if( verbosity >= VerbosityLevel::startandfinish and print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
 
     
 }
@@ -1558,7 +1558,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_iteration_count = 0;
 
     if( verbosity >= VerbosityLevel::startandfinish ) 
-        LOGPRINTF("(%d/%d)   STARTED: %s\n", recent_iteration_count, max_iteration_count, "Herzog-Soodhalter iteration" );
+        LOGPRINTF("(%d/%d)     BEGIN: %s\n", recent_iteration_count, max_iteration_count, "Herzog-Soodhalter iteration" );
 
                 
     while( recent_iteration_count < max_iteration_count ){
@@ -1588,7 +1588,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
             eta = gamma;
             
             if( verbosity >= VerbosityLevel::verbose ) {
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) eta, (double)(safedouble)tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) eta, (double)(safedouble)tolerance );
                 LOGPRINTF( "(%d/%d)            Gamma: %.9le Res: %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)gamma, (double)(safedouble)(b - A * x).norm() );
             }
 
@@ -1673,7 +1673,7 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
     recent_deviation = ( b - A * x ).norm_sq();
     
     if( verbosity >= VerbosityLevel::startandfinish and print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );
 
     
 }

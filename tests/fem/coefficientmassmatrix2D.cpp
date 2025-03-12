@@ -18,8 +18,7 @@
 
 int main( int argc, char *argv[] )
 {
-    
-    LOG << "Unit Test for Weighted Mass Matrices" << nl;
+    LOG << "Unit Test: Weighted Mass Matrices" << nl;
     
     LOG << "Initial mesh..." << nl;
         

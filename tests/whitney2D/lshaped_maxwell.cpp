@@ -30,7 +30,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 2D Maxwell System on L-shaped domain" << nl;
     
     if(true){

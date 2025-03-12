@@ -7,7 +7,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Produkt Operator Class" << nl;
+    LOG << "Unit Test: Produkt Operator Class" << nl;
 
     if( true ) {
             

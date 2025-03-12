@@ -209,8 +209,7 @@ FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector&
 
 int main( int argc, char *argv[] )
 {
-        
-    LOG << "Unit Test for transformed 3D Poisson Problem" << nl;
+    LOG << "Unit Test: transformed 3D Poisson Problem" << nl;
     
     LOG << "Initial mesh..." << nl;
     

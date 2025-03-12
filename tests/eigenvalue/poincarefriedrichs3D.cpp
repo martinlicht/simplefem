@@ -36,7 +36,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 3D curl PF estimates using shellings" << nl;
     
     LOG << "Initial mesh..." << nl;

@@ -23,8 +23,7 @@
 
 int main( int argc, char *argv[] )
 {
-        
-    LOG << "Unit Test: 2D Maxwell System" << nl;
+        LOG << "Unit Test: 2D Maxwell System" << nl;
     
     LOG << "Initial mesh..." << nl;
     

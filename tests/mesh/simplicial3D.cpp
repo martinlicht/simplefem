@@ -10,7 +10,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Simplicial 3D Module" << nl;
+    LOG << "Unit Test: Simplicial 3D Module" << nl;
 
     MeshSimplicial3D M = UnitSimplex3D();
 
