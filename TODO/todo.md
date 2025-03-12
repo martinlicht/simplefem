@@ -161,11 +161,9 @@ Understand the floating-point comparison functions and import them into this pro
          For example, the Lagrange test should reflect simple things and additional overhead
 - [x] Clean up the test for the nullspace computation.
 - [x] FEM tests check assertions more thoroughly
-- [x] ~\writing\project.simplefem :      changes all copied
-- [x] ~\writing\project.simplefem.test : changes all copied
 - [x] Mesh: improve consistency. Include orientation tests in usual tests to save compile time
 - [x] VTK: different outputs
-- [x] Combinatorics: make things independent of screen output
+- [x] Combinatorics: make tests independent of screen output
 - [x] Dense: test everything thoroughly, even up to smaller rounding errors
 - [x] Operators: make things independent of screen output
 - [ ] Sparse: check that composition does not change the outcome
