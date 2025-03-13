@@ -252,7 +252,11 @@ The maximum iteration count should be only the dimension of the system.
 
 ## (MEDIUM) Solvers study the size of the RHS
 
-Notably, the class-based solvers should not change nay member variables.
+Notably, the class-based solvers should not change any member variables during the solution process.
+
+1. Rename the outside argument to `threshold` and use `tolerance` only internally. (requires minimal change)
+2. Compute the internal `tolerance` using the RHS norm.
+3. Run all tests and see whether it converges. In tests with random RHSs, ensure to normalize the input 
 
 ```cpp
 // the argument is now called `_threshold`
@@ -261,16 +265,6 @@ Float RHS_NORM_SQUARED = 0.;
 for( int i = 0; i < N; i++ ) RHS_NORM_SQUARED += b[i]*b[i];
 threshold *= sqrt(RHS_NORM_SQUARED);
 ```
-
-## (MEDIUM) Simplify the solver component 
-
-The project is suffering from too much complexity in the solver component and the unit tests. The solver component is too complex at this time. The solver component must be simplified considerably.
-
-There shouldn't be several CRM solvers in the CPP component. Furthermore, those are poorly understood and it's not clear which one is more stable or faster: so far, it's only been experimental observations without understanding.
-
-Rather, there should be a template for several variants of the CRM, so that different variations can be studied systematically.
-
-A prerequisite for that endeavor are working notes on the CGM and CRM, even with preconditioners. There are different variants for the numerator and denominator of alpha and beta: the latter even has a possible two-term recursion.
 
 ## (DONE) Solvers print whether they have been successful
 
@@ -287,14 +281,23 @@ A prerequisite for that endeavor are working notes on the CGM and CRM, even with
     }
 ```
 
+## (MEDIUM) Solvers should abort if Ar_r or Ad_r is negative ?
+
+## (MEDIUM) Simplify the solver component 
+
+The project is suffering from too much complexity in the solver component and the unit tests. The solver component is too complex at this time. The solver component must be simplified considerably.
+
+There shouldn't be several CRM solvers in the CPP component. Furthermore, those are poorly understood and it's not clear which one is more stable or faster: so far, it's only been experimental observations without understanding.
+
+Rather, there should be a template for several variants of the CRM, so that different variations can be studied systematically.
+
+A prerequisite for that endeavor are working notes on the CGM and CRM, even with preconditioners. There are different variants for the numerator and denominator of alpha and beta: the latter even has a possible two-term recursion.
+
 ## (MEDIUM) Fix Whatever solvers or fix Wikipedia
 
 - [x] Herzog-Soodhalter funktioniert nun, auch die sparse variant.
 - [ ] Identify the source for MINRES solver; the other ones are known
 - [x] Fix the whatever solver or retire it
-
-
-## (MEDIUM) Solvers should abort if Ar_r or Ad_r is negative ?
 
 ## (MEDIUM) Conjugate Residual method: check // rAr = 0.;
 
@@ -316,7 +319,7 @@ A prerequisite for that endeavor are working notes on the CGM and CRM, even with
   Idee: Zur Not kann man einen Solver dann einer Klasse verpacken
   mittels einer Template-Konstruktion?
   Funktionen sind:
-      
+  
   * Matrix, initial guess, rhs
   * residual
   * max steps, desired precision
@@ -346,11 +349,8 @@ A prerequisite for that endeavor are working notes on the CGM and CRM, even with
 ## (MEDIUM) SPARSE
 
 - [ ] SparseMatrix, CSR-Matrix. Statistics substructure that provides the min-average-max number of off-diagonal elements.
-
 - [ ] check symmetry, measure deviation from symmetry. Assume sort+compress has been applied.
-
 - [ ] Die Sortierung und Kompression der SparseMatrix braucht nicht soviel Zeit. Lasse den Output weg
-
 - [ ] Unit tests to check for sparse matrix sorting and compression. Test those sparse matrix routines with random input.
 
 ## (MEDIUM) Interesting meshes
@@ -1575,3 +1575,45 @@ The SSOR preconditioner gives a massive advantage for the CGM and stiffness matr
 The diagonal preconditioner seems to work well for the CGM and the mass matrix.
 
 The diagonal entries of the Poisson stiffness matrix seem to converge to about 4 as the mesh is refined uniformly. This is compatible with our theoretical scaling estimates. In particular, the diagonal preconditioner is not going to have much of an affect here.
+
+
+
+
+2D pullback:
+
+```
+k=1	max		| PF |             = max                          = max
+k=2	max * min       | PF |  max        = max * min / min              = max
+
+3D pullback:
+k=1	max 		| PF |             = max 			  = max 
+k=2	max * mid       | PF |  max 	   = max * mid / min 		  = max/min * mid 
+k=3	max * mid * min | PF |  max * mid  = max * mid * min / min * mid  = max 
+```
+
+--- PRODUCT NAME:
+
+    Coffeec.org
+    Coffeecpp.org
+    FEECpp.org
+    FEEC++
+
+  http://asp-software.org/www/misv_resources/business-articles/how-to-name-an-app-a-program-a-company-or-a-service/
+
+--- SOFTWARE:
+
+ * Provide software for rapid prototyping of tensor-valued finite element methods over simplicial grids.
+ * Gain practical experience in the implementation of FEEC 
+ 
+ * YES: Maintainability, Flexibility, Produce qualitative results
+ * NO: Performance, industry
+
+ * Future features:
+ * * mesh refinement in several dimensions (10h)
+ * * better preconditioners (4h)
+ * * parallelism (lots and lots)
+ 
+
+
+
+

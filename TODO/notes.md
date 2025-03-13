@@ -1,3 +1,78 @@
+CODING STYLE GUIDE
+======================
+
+
+
+Naming Conventions
+================================
+
+Use `CapitalizedCamelCase` for classes, structs, enums and namespaces.
+
+Use `CapitalizedCamelCase`, `camelCase` or `snake_case` for functions.
+
+Use `snake_case` for variables.
+
+Underscores also be used in the names of classes, structs, enums, and functions, if they indicate variations of a common principle, such as different implementations of the same idea.
+
+As by common and nearly universal convention, macros must always be in `UPPERCASE_WITH_UNDERSCORES`.
+
+In general, do not abbreviate when naming classes and functions. An exception is using common abbreviations (such as 'VTK') specific to the domain of knowledge. 
+
+
+
+
+Indentation and tabs
+================================
+
+- No character in the entire source code must be a tab.
+- Generally, indentation of blocks uses four spaces though exceptions may apply.
+
+
+
+
+
+
+
+
+
+Assertions and checks
+======================
+
+Make extensive use of the assert macro. The assertions must have no side effects except possibly output.
+
+At the beginning of every function, call the `check` method of that class except for the `check` method itself and functions that must avoid this for technical reasons. 
+
+At the beginning of the function call, all object arguments need to be checked.
+
+At the end of a method, all non-const object arguments need to be checked, and the `this` pointer of any non-const method as well. Moreover, any return value must be checked. 
+
+There are circumstances when a check is not performed, due to implementation-specific situations. 
+In that case, instead, there should be a comment like:
+
+```
+// No check possible
+```
+
+If there are non-semantic reasons, such as performance, to disable the check,
+then comment out the check and add an explanation:
+
+```
+// check(); // NOTE: performance
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Exception policy
 ================
 
@@ -196,44 +271,6 @@ Better make operators non-member
 - hidden friend idiom: affects argument-dependent lookup because member friends are not in the global namespace
 - DRY Principle: Implement non-mutating operators (e.g., +) in terms of mutating members (e.g., +=).
 Tell me more about the custom comparison / hashing and the member functions?
-
-
-
-2D pullback:
-
-```
-k=1	max		| PF |             = max                          = max
-k=2	max * min       | PF |  max        = max * min / min              = max
-
-3D pullback:
-k=1	max 		| PF |             = max 			  = max 
-k=2	max * mid       | PF |  max 	   = max * mid / min 		  = max/min * mid 
-k=3	max * mid * min | PF |  max * mid  = max * mid * min / min * mid  = max 
-```
-
---- PRODUCT NAME:
-
-    Coffeec.org
-    Coffeecpp.org
-    FEECpp.org
-    FEEC++
-
-  http://asp-software.org/www/misv_resources/business-articles/how-to-name-an-app-a-program-a-company-or-a-service/
-
---- SOFTWARE:
-
- * Provide software for rapid prototyping of tensor-valued finite element methods over simplicial grids.
- * Gain practical experience in the implementation of FEEC 
- 
- * YES: Maintainability, Flexibility, Produce qualitative results
- * NO: Performance, industry
-
- * Future features:
- * * mesh refinement in several dimensions (10h)
- * * better preconditioners (4h)
- * * parallelism (lots and lots)
- 
-
 
 
 

@@ -268,6 +268,15 @@ $(module).cppcheck:
 
 
 ##########################################################################################
+# Apply uncrustify to all cpp and hpp files in the directory. Read-only.
+
+.PHONY: uncrustify $(module).uncrustify
+uncrustify: $(module).uncrustify
+$(module).uncrustify:
+	uncrustify -c - --check $($(mymodule).sources) 
+
+
+##########################################################################################
 # Regex several useful things. Read-only. 
 # - find trailing white spaces 
 # - find non-ASCII characters 

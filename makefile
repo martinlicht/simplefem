@@ -200,6 +200,10 @@ tidy:
 cppcheck:
 	@cd ./tests && $(MAKE) --no-print-directory cppcheck
 
+.PHONY: uncrustify
+uncrustify:
+	@cd ./tests && $(MAKE) --no-print-directory uncrustify
+
 .PHONY: check
 check:
 	@cd ./tests && $(MAKE) --no-print-directory check
