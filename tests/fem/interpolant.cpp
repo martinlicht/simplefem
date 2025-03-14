@@ -5,7 +5,7 @@
 
 #include <functional>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples2D.hpp"

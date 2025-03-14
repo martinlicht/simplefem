@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_SOLVER_SYSTEMSOLVER
 
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../operators/linearoperator.hpp"
 
 int BlockHerzogSoodhalterMethod( 

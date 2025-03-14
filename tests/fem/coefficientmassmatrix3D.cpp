@@ -6,7 +6,7 @@
 
 #include <functional>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"

@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_SOLVER_NULLSPACE
 #define INCLUDEGUARD_SOLVER_NULLSPACE
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../operators/floatvector.hpp"
 #include "../operators/linearoperator.hpp"
 

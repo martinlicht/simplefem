@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../utility/stl.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"

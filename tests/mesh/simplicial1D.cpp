@@ -2,7 +2,7 @@
 #include <ios>
 #include <sstream>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/io.simplicial1D.hpp"

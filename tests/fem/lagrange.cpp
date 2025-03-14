@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"

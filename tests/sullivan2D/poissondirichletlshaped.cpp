@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
 #include "../../sparse/matcsr.hpp"

@@ -8,7 +8,7 @@
 #include <functional>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../sparse/sparsematrix.hpp"

@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"

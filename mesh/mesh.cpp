@@ -6,7 +6,7 @@
 #include <vector>
 
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../utility/random.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../dense/factorization.hpp"

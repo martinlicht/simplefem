@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_DENSE_SIMPLESOLVER_HPP
 #define INCLUDEGUARD_DENSE_SIMPLESOLVER_HPP
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../operators/floatvector.hpp"
 
 #include "densematrix.hpp"

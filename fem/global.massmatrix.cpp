@@ -1,7 +1,7 @@
 
 #include <cmath>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../operators/floatvector.hpp"
 #include "../dense/factorization.hpp"
 #include "../dense/densematrix.hpp"

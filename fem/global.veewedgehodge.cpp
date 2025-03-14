@@ -5,7 +5,7 @@
 #include <array>
 #include <vector>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../operators/floatvector.hpp"

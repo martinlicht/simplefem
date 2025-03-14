@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_DENSE_FACTORIZATION_HPP
 #define INCLUDEGUARD_DENSE_FACTORIZATION_HPP
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 
 #include "densematrix.hpp"
 

@@ -8,7 +8,7 @@
 
 
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "mesh.simplicial1D.hpp"
 #include "io.simplicial1D.hpp"
 #include "coordinates.hpp"

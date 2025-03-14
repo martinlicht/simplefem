@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../dense/factorization.hpp"
 #include "../../dense/functions.hpp"

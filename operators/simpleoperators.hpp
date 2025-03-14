@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_OPERATOR_SIMPLEOPERATORS_HPP
 #define INCLUDEGUARD_OPERATOR_SIMPLEOPERATORS_HPP
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
 

@@ -771,7 +771,7 @@ The makefile in each source directory puts its output into the common build dire
 
 There is only one cleaning command for the entire build directory.
 
-## (INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
+## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
 
 Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names 
 
@@ -909,7 +909,7 @@ So for the unit tests, it's more important to have a common structure ready to g
 
 ## (INFRASTRUCTURE) remove code from parent directory
 
-rename basic.hpp in the main folder, move to basic subfolder, and have all exec.s include it
+rename base/include.hpp in the main folder, move to basic subfolder, and have all exec.s include it
 
 ## (INFRASTRUCTURE) Documentation:
 
