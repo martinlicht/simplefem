@@ -1,4 +1,4 @@
-name: Unit tests
+name: Unit tests (1)
 
 on:
   workflow_dispatch:
@@ -23,8 +23,8 @@ jobs:
       uses: actions/checkout@v4
     - name: build project...
       run: make
-    - name: run tests (basic)...
-      run: cd tests/ && make basic.run && cd .. 
+    - name: run tests (base)...
+      run: cd tests/ && make base.run && cd .. 
 #      continue-on-error: true
     - name: run tests (utility)...
       run: cd tests/ && make utility.run && cd .. 
