@@ -2,7 +2,7 @@
 #define INCLUDEGUARD_SOLVER_SYSTEMSPARSESOLVER
 
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "sparsesolver.hpp"
 
 const Float expected_sign_of_A =  1.;

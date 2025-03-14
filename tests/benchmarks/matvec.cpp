@@ -3,7 +3,7 @@
 /**/
 #include <ctime>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../mesh/coordinates.hpp"
 #include "../mesh/mesh.simplicial2D.hpp"
 #include "../mesh/examples2D.hpp"
@@ -15,7 +15,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Benchmark: (2D) CSR-matrix vector product" << nl;
+    LOG << "Benchmark: CSR-matrix vector product (2D Mass Matrix)" << nl;
     
     LOG << "Initial mesh..." << nl;
     

@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/files.hpp"
 #include "../../utility/pixelimage.hpp"
 #include "../../dense/factorization.hpp"
@@ -19,7 +19,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Interpolation in FEEC" << nl;
+    LOG << "Unit Test: Image output, San Francisco" << nl;
 
     MeshSimplicial2D M = UnitSquare2D_centered();
 

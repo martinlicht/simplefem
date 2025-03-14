@@ -1,15 +1,14 @@
 
 #include <cmath>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/random.hpp"
 
 // A small tolerance for floating-point comparisons
 
 int main( int argc, char *argv[] )
 {
-
-    LOG << "Unit Test for randomness" << nl;
+    LOG << "Unit Test: randomness" << nl;
 
     {
         LOG << "testing random integer generation...\n";

@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -21,7 +21,6 @@
 
 int main( int argc, char *argv[] )
 {
-        
     LOG << "Unit Test: (3D) degree elevation of interpolation preserves mass" << nl;
     
     LOG << "Initial mesh..." << nl;

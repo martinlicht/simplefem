@@ -1,12 +1,12 @@
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../dense/functions.hpp"
 #include "../../dense/simplesolver.hpp"
 
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Tests for simple solvers" << nl;
+    LOG << "Unit Test: simple solvers" << nl;
     
     for( int dim = 0; dim <     10; dim++ )
     for( int t   = 0;   t <= dim+1; t++   )

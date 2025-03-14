@@ -2,12 +2,13 @@
 #include <limits>
 #include <cmath>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 
 
 int main( int argc, char *argv[] )
 {
-
+    LOG << "Unit Test: arithmetics" << nl;
+    
     LOG << "Test absolute\n";
     
     assert(absolute<int>(0) == 0);

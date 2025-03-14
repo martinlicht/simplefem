@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../fem/global.veewedgehodge.hpp"
@@ -20,7 +20,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (2D) Integrating scalar fields and volume forms" << nl;
     
     LOG << "Initial mesh..." << nl;

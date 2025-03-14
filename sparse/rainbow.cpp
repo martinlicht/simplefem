@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "matcsr.hpp"
 
 #include "rainbow.hpp"

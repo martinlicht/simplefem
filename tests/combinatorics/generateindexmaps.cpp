@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../combinatorics/indexrange.hpp"
 #include "../../combinatorics/indexmap.hpp"
 #include "../../combinatorics/generateindexmaps.hpp"
@@ -12,7 +12,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Index Map Generators" << nl;
+    LOG << "Unit Test: Index Map Generators" << nl;
     
     if(true)
     {

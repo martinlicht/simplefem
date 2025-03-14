@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
 #include "../../sparse/matcsr.hpp"
@@ -55,7 +55,6 @@ FloatVector IncreaseResolution( const MeshSimplicial2D& mesh, const FloatVector&
 
 int main( int argc, char *argv[] )
 {
-        
     LOG << "Unit Test: 2D Dirichlet problem on L-shaped domain" << nl;
     
     LOG << "Initial mesh..." << nl;

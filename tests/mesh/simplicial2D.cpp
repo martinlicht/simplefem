@@ -5,7 +5,7 @@
 #include <ios>
 #include <sstream>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/files.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/io.simplicial2D.hpp"
@@ -16,7 +16,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Simplicial 2D Module" << nl;
+    LOG << "Unit Test: Simplicial 2D Module" << nl;
 
     // MeshSimplicial2D M = TetrahedralSurface2D();
     MeshSimplicial2D M = StandardSquare2D_strange14();

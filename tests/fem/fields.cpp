@@ -7,7 +7,7 @@
 #include <functional>
 #include <limits>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../fem/finitediff.hpp"
 
 
@@ -15,7 +15,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Fields and Finite Differences" << nl;
+    LOG << "Unit Test: Fields and Finite Differences" << nl;
     
     //TODO(martinlicht): Brush up these tests
     

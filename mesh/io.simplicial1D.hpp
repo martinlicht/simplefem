@@ -6,7 +6,7 @@
 #include <ostream>
 
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "mesh.simplicial1D.hpp"
 
 

@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../dense/densematrix.hpp"
 #include "../dense/functions.hpp"
 #include "../sparse/sparsematrix.hpp"

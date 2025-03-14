@@ -1,5 +1,5 @@
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../operators/floatvector.hpp"
 #include "../../operators/simpleoperators.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -7,7 +7,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Produkt Operator Class" << nl;
+    LOG << "Unit Test: Produkt Operator Class" << nl;
 
     if( true ) {
             

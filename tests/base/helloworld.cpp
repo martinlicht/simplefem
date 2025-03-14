@@ -2,7 +2,7 @@
 #include <iostream>
 #include <new>
 
-#include "../../basic/mallinfo.hpp"
+#include "../../base/mallinfo.hpp"
 
 using namespace std;
 

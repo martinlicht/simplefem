@@ -2,7 +2,7 @@
 #include <utility>
 #include <vector>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../combinatorics/indexrange.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/multiindex.hpp"

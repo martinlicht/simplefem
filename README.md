@@ -1,5 +1,6 @@
-[![C/C++ CI](https://github.com/martinlicht/simplefem/actions/workflows/main.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/main.yml)
-
+[![Compilation](https://github.com/martinlicht/simplefem/actions/workflows/main.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/main.yml)
+[![Base tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests.yml)
+[![FEM tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml)
 
 ```
                   [ FFFFF EEEEE EEEEE  CCCC    +       +   ]
@@ -14,7 +15,7 @@
 
 ![Cpp](https://img.shields.io/badge/-C++14-deepskyblue?logo=c%2B%2B&style=flat-square)
 
-FEEC++ is a C++ library for finite element methods in the spirit of finite element exterior calculus (FEEC). 
+FEEC++ is a work-in-progress C++ library for finite element methods in the spirit of finite element exterior calculus (FEEC). 
 Its goal is to enable easy prototyping for fundamental research in numerical PDE with a FEEC point-of-view. 
 
 FEEC++ implements finite element differential forms of arbitrary (uniform) polynomial degree over simplicial meshes,

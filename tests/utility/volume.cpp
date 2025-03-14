@@ -2,12 +2,12 @@
 #include <cmath>
 #include <cstdio>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/math.hpp"
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for computing ball/sphere measures" << nl;
+    LOG << "Unit Test: computing ball/sphere measures" << nl;
 
     const Float pi = Constants::pi;
 

@@ -5,7 +5,7 @@
 
 #include <functional>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -17,7 +17,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Interpolation in FEEC" << nl;
+    LOG << "Unit Test: Interpolation in FEEC" << nl;
     
     {
 

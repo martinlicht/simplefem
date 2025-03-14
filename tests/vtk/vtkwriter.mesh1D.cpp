@@ -1,7 +1,7 @@
 
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"
 
@@ -12,7 +12,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh (1D)" << nl;
+    LOG << "Unit Test: VTK output of Simplicial Mesh (1D)" << nl;
     
     {
         

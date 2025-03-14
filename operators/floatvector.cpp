@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "floatvector.hpp"
 #include "linearoperator.hpp"
 #include "../utility/random.hpp"

@@ -3,7 +3,7 @@
 
 #include <functional>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
@@ -19,7 +19,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: Compare numerical solvers CRM vs MINRES\n           for Solution of Dirichlet Problem" << nl;
     
     if(true){

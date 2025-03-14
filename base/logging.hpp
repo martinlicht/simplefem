@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_LOGGING_HPP
 #define INCLUDEGUARD_LOGGING_HPP
 
-#include "basic.hpp"
+#include "base.hpp"
 #include "safedouble.hpp"
 
 
@@ -39,9 +39,8 @@ class Logger final
         
     public:
     
-        explicit 
         // inline
-        Logger( 
+        explicit Logger( 
             bool use_cerr, //std::ostream& os,
             const bool do_newline = false,
             const char* filename = "UNKNOWN",

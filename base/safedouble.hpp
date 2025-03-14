@@ -3,7 +3,7 @@
 
 #include <limits>
 
-#include "basic.hpp"
+#include "base.hpp"
 
 class safedouble {
     double value;

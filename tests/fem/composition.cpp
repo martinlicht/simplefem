@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
@@ -25,7 +25,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (?D) Compare different matrix-matrix products" << nl;
     
     LOG << "Initial mesh..." << nl;

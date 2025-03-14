@@ -1,5 +1,5 @@
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../combinatorics/indexrange.hpp"
 #include "../../combinatorics/indexmap.hpp"
 #include "../../combinatorics/multiindex.hpp"
@@ -7,8 +7,7 @@
 
 int main( int argc, char *argv[] )
 {
-    
-    LOG << "Unit Test for Multi-Indices" << nl;
+    LOG << "Unit Test: Multi-Indices" << nl;
         
     if( true )
     {

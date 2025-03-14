@@ -1,7 +1,7 @@
 
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../combinatorics/indexrange.hpp"
 #include "../../combinatorics/indexmap.hpp"
 #include "../../combinatorics/heappermgen.hpp"
@@ -9,7 +9,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for producting permutations via Heap's algorithm" << nl;
+    LOG << "Unit Test: producing permutations via Heap's algorithm" << nl;
     
     if(true)
     {

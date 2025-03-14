@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
@@ -26,7 +26,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (?D) Lagrange matrices agree with FEEC analogues" << nl;
     
     LOG << "Initial mesh..." << nl;

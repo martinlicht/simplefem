@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"
 #include "../../fem/global.massmatrix.hpp"
@@ -20,7 +20,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (1D) masses are correctly approximated: precomputed mass" << nl;
     
     LOG << "Initial mesh..." << nl;

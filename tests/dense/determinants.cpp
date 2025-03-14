@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../dense/factorization.hpp"
 #include "../../dense/functions.hpp"
 // #include "../../dense/scalarfunctions.hpp"
@@ -32,8 +32,7 @@ inline double hilbert_determinant(int n) {
 // Main function to test Vandermonde determinant computations
 int main( int argc, char *argv[] )
 {
-
-    LOG << "Unit Test for Determinant computation" << nl;
+    LOG << "Unit Test: Determinant computation" << nl;
 
     {
         LOG << nl << nl << "Vandermonde Matrices" << nl;

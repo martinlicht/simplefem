@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
@@ -20,7 +20,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: Cech complex 3D estimates" << nl;
     
     LOG << "Initial mesh..." << nl;

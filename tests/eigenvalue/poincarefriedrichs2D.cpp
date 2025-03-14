@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -34,7 +34,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 2D PF estimates using shellings" << nl;
     
     LOG << "Initial mesh..." << nl;

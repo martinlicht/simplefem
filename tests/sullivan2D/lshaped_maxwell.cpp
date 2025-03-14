@@ -9,7 +9,7 @@
 
 
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -31,7 +31,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 2D Maxwell System on L-shaped domain" << nl;
     
     if(true){

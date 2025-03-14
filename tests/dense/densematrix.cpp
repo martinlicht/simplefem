@@ -1,14 +1,14 @@
 
 #include <limits>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/random.hpp"
 #include "../../dense/densematrix.hpp"
 
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Dense Matrix class" << nl;
+    LOG << "Unit Test: Dense Matrix class" << nl;
 
     { 
         LOG << "Random matrix A of size 3x4, and 3*A" << nl;

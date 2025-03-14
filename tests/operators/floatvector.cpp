@@ -3,13 +3,13 @@
 
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../operators/floatvector.hpp"
 
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Vector class" << nl;
+    LOG << "Unit Test: Vector class" << nl;
 
     {
         // Test default initialization

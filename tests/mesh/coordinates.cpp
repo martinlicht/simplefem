@@ -3,7 +3,7 @@
 #include <ios>
 #include <sstream>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/coordinates.hpp"
 #include "../../mesh/io.coordinates.hpp"
 
@@ -12,7 +12,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Coordinates" << nl;
+    LOG << "Unit Test: Coordinates" << nl;
     
     {        
         Coordinates coords(5,0);

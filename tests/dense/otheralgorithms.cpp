@@ -1,5 +1,5 @@
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../dense/factorization.hpp"
 #include "../../dense/functions.hpp"
 #include "../../dense/simplesolver.hpp"
@@ -8,7 +8,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Tests for Matrix Algorithms: inverses, determinants, cofactors" << nl;
+    LOG << "Unit Test: Matrix Algorithms: inverses, determinants, cofactors" << nl;
     
     {
       

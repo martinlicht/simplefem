@@ -67,7 +67,7 @@ help:
 
 modules:=
 modules+=external
-modules+=basic
+modules+=base
 modules+=utility
 modules+=combinatorics
 modules+=operators
@@ -90,8 +90,8 @@ moddir :=./external
 module:=external
 include common.module.mk
 
-moddir :=./basic
-module:=basic
+moddir :=./base
+module:=base
 include common.module.mk
 
 moddir :=./utility
@@ -199,6 +199,10 @@ tidy:
 .PHONY: cppcheck
 cppcheck:
 	@cd ./tests && $(MAKE) --no-print-directory cppcheck
+
+.PHONY: uncrustify
+uncrustify:
+	@cd ./tests && $(MAKE) --no-print-directory uncrustify
 
 .PHONY: check
 check:

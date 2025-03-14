@@ -1,5 +1,5 @@
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../sparse/matcsr.hpp"
@@ -10,7 +10,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit test: (3D) CSR-matrix rainbow partition" << nl;
+    LOG << "Unit Test: (3D) CSR-matrix rainbow partition" << nl;
     
     LOG << "Initial mesh..." << nl;
     

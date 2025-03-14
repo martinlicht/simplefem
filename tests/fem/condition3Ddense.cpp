@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../dense/densematrix.hpp"
 #include "../../dense/factorization.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
@@ -139,7 +139,6 @@ static FloatVector Eigenvalues( DenseMatrix A, int repetitions, Float shift = 0.
     
 int main( int argc, char *argv[] )
 {
-        
         LOG << "Unit Test: (3D) condition numbers" << nl;
         
         MeshSimplicial3D M = RegularSimplex3D();

@@ -1,7 +1,7 @@
 
 #include <vector>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../combinatorics/indexmap.hpp"
 #include "../combinatorics/generateindexmaps.hpp"
 #include "../combinatorics/generatemultiindices.hpp"

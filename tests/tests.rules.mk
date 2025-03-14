@@ -234,6 +234,17 @@ $(context).cppcheck:
 	--std=c++17 -q $(mycontextdir)/*pp
 
 
+########################################################################
+# Apply uncrustify to all cpp and hpp files in the directory. Read-only.
+
+.PHONY: uncrustify $(context).uncrustify
+uncrustify: $(context).uncrustify
+$(context).uncrustify:
+	uncrustify -c - --check $($(mymodule).sources) 
+
+
+
+
 
 ########################################################################
 # Regex several useful things. Read-only. 

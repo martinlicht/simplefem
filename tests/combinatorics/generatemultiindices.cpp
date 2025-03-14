@@ -1,13 +1,13 @@
 
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../combinatorics/generatemultiindices.hpp"
 
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Multiindex Generators" << nl;
+    LOG << "Unit Test: Multiindex Generators" << nl;
     
     if(true)
     {

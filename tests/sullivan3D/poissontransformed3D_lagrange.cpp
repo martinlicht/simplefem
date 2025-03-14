@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
 #include "../../sparse/sparsematrix.hpp"
@@ -209,8 +209,7 @@ FloatVector IncreaseResolution( const MeshSimplicial3D& mesh, const FloatVector&
 
 int main( int argc, char *argv[] )
 {
-        
-    LOG << "Unit Test for transformed 3D Poisson Problem" << nl;
+    LOG << "Unit Test: transformed 3D Poisson Problem" << nl;
     
     LOG << "Initial mesh..." << nl;
     

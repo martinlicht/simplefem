@@ -53,7 +53,7 @@ int ConjugateGradientSolverCSR(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: Conjugate Gradient CSR\n", K, N );
 
     while( K < N ){
         
@@ -82,7 +82,7 @@ int ConjugateGradientSolverCSR(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(r_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(r_r), (double)(safedouble) tolerance );
 
         
         }
@@ -170,7 +170,7 @@ int ConjugateGradientSolverCSR(
     
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(r_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(r_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(r_r), (double)(safedouble) tolerance );
 
     
     delete[] ( direction ); 
@@ -232,7 +232,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (Diag)\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: Conjugate Gradient CSR (Diag)\n", K, N );
 
     while( K < N ){
         
@@ -267,7 +267,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
             
         }
@@ -364,7 +364,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(z_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
     
     delete[] ( direction ); 
@@ -443,7 +443,7 @@ int ConjugateGradientSolverCSR_SSOR(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (SSOR)\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: Conjugate Gradient CSR (SSOR)\n", K, N );
 
     while( K < N ){
         
@@ -527,7 +527,7 @@ int ConjugateGradientSolverCSR_SSOR(
             }
 
             if( print_modulo >= 0 ) UNLIKELY 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
             
         }
@@ -651,7 +651,7 @@ int ConjugateGradientSolverCSR_SSOR(
     }
     
     if( print_modulo >= 0 ) UNLIKELY 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(z_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
     
     delete[] ( direction ); 
@@ -707,7 +707,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (SSOR-Eisenstat)\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: Conjugate Gradient CSR (SSOR-Eisenstat)\n", K, N );
 
     while( K < N ){
         
@@ -770,7 +770,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
             }
             
             if( print_modulo >= 0 ) UNLIKELY 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
             
         }
@@ -902,7 +902,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(z_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
     
     delete[] ( direction ); 
@@ -965,7 +965,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (SSOR-Rainbow)\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: Conjugate Gradient CSR (SSOR-Rainbow)\n", K, N );
 
     while( K < N ){
         
@@ -1073,7 +1073,7 @@ int ConjugateGradientSolverCSR_Rainbow(
             }
 
             if( print_modulo >= 0 ) UNLIKELY 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
             
         }
@@ -1222,7 +1222,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     }
     
     if( print_modulo >= 0 ) UNLIKELY 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(z_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
     
     delete[] ( direction ); 
@@ -1284,7 +1284,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START Conjugate Gradient CSR (SSOR-Rainbow-Eisenstat)\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: Conjugate Gradient CSR (SSOR-Rainbow-Eisenstat)\n", K, N );
 
     while( K < N ){
         
@@ -1358,7 +1358,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
             
         }
@@ -1512,7 +1512,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(z_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(z_r), (double)(safedouble) tolerance );
 
     
     delete[] ( direction ); 
@@ -1601,7 +1601,7 @@ int ConjugateResidualSolverCSR(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START Conjugate Residual CSR\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: Conjugate Residual CSR\n", K, N );
 
     while( K < N ){
         
@@ -1646,7 +1646,7 @@ int ConjugateResidualSolverCSR(
             }
             
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ad_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ad_r), (double)(safedouble) tolerance );
             
         }
         
@@ -1737,7 +1737,7 @@ int ConjugateResidualSolverCSR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ad_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(Ad_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(Ad_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -1814,7 +1814,7 @@ int ConjugateResidualSolverCSR_textbook(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START Conjugate Residual CSR (textbook)\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: Conjugate Residual CSR (textbook)\n", K, N );
 
     while( K < N ){
         
@@ -1859,7 +1859,7 @@ int ConjugateResidualSolverCSR_textbook(
             }
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble) tolerance );
             
         }
         
@@ -1946,7 +1946,7 @@ int ConjugateResidualSolverCSR_textbook(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(Ar_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble) std::sqrt(Ar_r), (double)(safedouble) tolerance );
 
     
     delete[] (  dir );
@@ -2048,7 +2048,7 @@ int MINRESCSR(
     int K = 0;
 
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START MINRES CSR\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: MINRES CSR\n", K, N );
 
     while( K < N ){
         
@@ -2094,7 +2094,7 @@ int MINRESCSR(
             eta = gamma;
 
             if( print_modulo >= 0 ) 
-                LOGPRINTF( "(%d/%d) RESTARTED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) absolute(eta), (double)(safedouble) tolerance );
+                LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble) absolute(eta), (double)(safedouble) tolerance );
 
             
         }
@@ -2200,7 +2200,7 @@ int MINRESCSR(
     }
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)eta, (double)(safedouble) tolerance );
+        LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, eta < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble)eta, (double)(safedouble) tolerance );
 
 
     for( int c = 0; c < N; c++ ) {
@@ -2305,7 +2305,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     int K = 0;
     
     if( print_modulo >= 0 ) 
-        LOGPRINTF( "(%d/%d)     START Chebyshev (Diag) CSR\n", K, N );
+        LOGPRINTF( "(%d/%d)     BEGIN: Chebyshev (Diag) CSR\n", K, N );
 
     while( K < N ){
         
@@ -2399,7 +2399,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
         
     }
     
-    LOGPRINTF( "(%d/%d)  FINISHED: Residual norm is %.9le < %.9le\n", K, N, (double)(safedouble)std::sqrt(r_r), (double)(safedouble) tolerance );
+    LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", K, N, std::sqrt(r_r) < tolerance ? "SUCCESS" : "FAILED", (double)(safedouble)std::sqrt(r_r), (double)(safedouble) tolerance );
 
     
     #if defined(_OPENMP)

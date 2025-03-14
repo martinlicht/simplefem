@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -24,7 +24,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (2D) degree elevation commutes with exterior derivative" << nl;
     
     LOG << "Initial mesh..." << nl;

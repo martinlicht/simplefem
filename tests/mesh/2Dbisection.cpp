@@ -1,5 +1,5 @@
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/random.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -9,7 +9,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Simplicial 2D Module" << nl;
+    LOG << "Unit Test: Simplicial 2D Module" << nl;
     
     for( int ei = 0; ei < 3; ei++ )
     {

@@ -8,7 +8,7 @@
 #include <functional>
 
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
 #include "../../utility/math.hpp"
@@ -33,7 +33,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 3D Maxwell System" << nl;
     
     if(true){

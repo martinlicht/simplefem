@@ -9,7 +9,7 @@
 #include <unistd.h>  // UNIX standard functions (read, sleep, STDIN_FILENO)
 #endif 
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 
 #if defined(__linux__) or defined(__unix__)
 
@@ -146,7 +146,7 @@ void* process_printer( void* /*unused*/ )
 
     LOG << "Printer thread finished!\n";
 
-    // Display memory allocation statistics (assumed function from basic.hpp)
+    // Display memory allocation statistics (assumed function from base/include.hpp)
     display_mallinfo(false);
   
     return nullptr;

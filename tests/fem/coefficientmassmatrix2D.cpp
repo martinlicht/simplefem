@@ -6,7 +6,7 @@
 
 #include <functional>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -18,8 +18,7 @@
 
 int main( int argc, char *argv[] )
 {
-    
-    LOG << "Unit Test for Weighted Mass Matrices" << nl;
+    LOG << "Unit Test: Weighted Mass Matrices" << nl;
     
     LOG << "Initial mesh..." << nl;
         

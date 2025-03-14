@@ -3,7 +3,7 @@
 
 #include <cstdio>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 
 // #include <cassert>
 // #include <cstdlib>
@@ -14,7 +14,6 @@
 
 int main( int argc, char *argv[] ) 
 {
-
     LOG << "Unit Test: string to integer conversion" << nl;
     
     if( argc == 2 ) {

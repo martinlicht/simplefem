@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/stl.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
@@ -15,7 +15,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for VTK output of Simplicial Mesh (2D)" << nl;
+    LOG << "Unit Test: VTK output of Simplicial Mesh (2D)" << nl;
     
     {
         

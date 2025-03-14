@@ -5,7 +5,7 @@
 #include <fstream>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
@@ -30,7 +30,6 @@ const Float mass_threshold_for_small_vectors = 1e-6;
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: Compute a nullspace " << nl;
     
     if(true){

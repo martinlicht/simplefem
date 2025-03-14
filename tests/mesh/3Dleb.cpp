@@ -1,7 +1,7 @@
 
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/random.hpp"
 #include "../../utility/stl.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
@@ -12,7 +12,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Simplicial 3D Module" << nl;
+    LOG << "Unit Test: Simplicial 3D Module" << nl;
     
     {
         

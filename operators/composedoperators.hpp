@@ -17,7 +17,7 @@ inline T* allocate(const T& )
     return nullptr;
 }
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "linearoperator.hpp"
 #include "simpleoperators.hpp"
 

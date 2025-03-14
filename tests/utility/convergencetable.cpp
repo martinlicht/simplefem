@@ -1,12 +1,12 @@
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../utility/convergencetable.hpp"
 
 // using namespace std;
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for convergence table" << nl;
+    LOG << "Unit Test: convergence table" << nl;
 
 
     ConvergenceTable Contable("Test Table");

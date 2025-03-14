@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../mesh/mesh.simplicial1D.hpp"
 #include "../../mesh/examples1D.hpp"
@@ -19,7 +19,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: (1D) degree elevations commute" << nl;
     
     LOG << "Initial mesh..." << nl;

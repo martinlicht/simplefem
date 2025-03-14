@@ -4,7 +4,7 @@
 
 #include <fstream>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 #include "../utility/files.hpp"
 #include "../utility/convergencetable.hpp"
 #include "../operators/composedoperators.hpp"
@@ -31,7 +31,6 @@
 
 int main( int argc, char *argv[] )
 {
-    
     LOG << "Unit Test: 2D Maxwell System" << nl;
     
     if(true){

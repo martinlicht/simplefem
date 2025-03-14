@@ -11,7 +11,7 @@ projectdir :=..
 include ../common.compile.mk 
 
 components:=
-components+=basic
+components+=base
 components+=utility
 components+=combinatorics
 components+=operators
@@ -39,11 +39,11 @@ testsdir:=.
 projectdir:=../
 pathvar:=$(CURDIR)/../
 
-contextdir:=./basic
-context:=basic
+contextdir:=./base
+context:=base
 include tests.rules.mk
 #include tests.run.mk
-build: basic.tests 
+build: base.tests 
 
 contextdir:=./utility
 context:=utility

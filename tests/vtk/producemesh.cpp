@@ -1,7 +1,7 @@
 
 #include <fstream>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 
@@ -50,7 +50,7 @@ int main( int argc, char *argv[] )
     
     
     {
-        LOG << "Unit Test for VTK output of Simplicial Mesh" << nl;
+        LOG << "Unit Test: VTK output of Simplicial Mesh" << nl;
         
         const int K = 4;
         const int L = 12;

@@ -3,14 +3,14 @@
 #include <limits>
 #include <vector>
 
-#include "../../basic.hpp"
+#include "../../base/include.hpp"
 #include "../../combinatorics/indexrange.hpp"
 
 
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test for Index Ranges" << nl;
+    LOG << "Unit Test: Index Ranges" << nl;
     
     if( true ) 
     {

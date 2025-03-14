@@ -6,7 +6,7 @@
 // #include <ostream>
 #include <vector>
 
-#include "../basic.hpp"
+#include "../base/include.hpp"
 
 class LinearOperator;
 
@@ -228,7 +228,7 @@ class FloatVector final
         
         /* For each semantics */ 
         
-        class ConstIterator {
+        class ConstIterator final {
             
             friend FloatVector;
             
@@ -266,7 +266,7 @@ class FloatVector final
                     
         };
         
-        class Iterator {
+        class Iterator final {
             
             friend FloatVector;
             
