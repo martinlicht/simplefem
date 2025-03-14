@@ -247,6 +247,15 @@ $($(module).sourcechecks): check-%.cpp :
 check: tidy
 
 ##########################################################################################
+# Apply astyle (dry-run) to all cpp and hpp files in the directory. Read-only.
+
+.PHONY: astyle $(module).astyle
+astyle: $(module).astyle
+$(module).astyle:
+	astyle --dry-run --mode=c --options=$(projectdir)/.astylerc --ascii $($(mymodule).sources)
+
+
+##########################################################################################
 # Apply clang-tidy to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: tidy $(module).tidy
@@ -313,7 +322,7 @@ endif
 # - outputclean: delete all *vtk output files
 # - dependclean: delete .deps directories and their content
 
-CMD_CLEAN       = rm -f .all.o .all.json .json *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
+CMD_CLEAN       = rm -f .all.o .all.json .json *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.orig *.out.stackdump 
 CMD_OUTPUTCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg
 CMD_DEPCLEAN    = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
 

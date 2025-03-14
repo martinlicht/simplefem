@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
             assert( vec.getdimension() == 3 );
             auto ret = FloatVector({ 
                             std::exp( vec[0] + vec[2] ), 
-                            std::sin( -5.*vec[0] -vec[1] ),
+                            std::sin( -5. * vec[0] - vec[1] ),
                             std::exp( vec[1] * vec[2] )
             });
             assert( ret.getdimension() == 3 );
@@ -61,9 +61,9 @@ int main( int argc, char *argv[] )
         [](const FloatVector& vec) -> FloatVector {
             assert( vec.getdimension() == 3 );
             auto ret = FloatVector({ 
-                            std::cos( -5.*vec[0]*vec[0] ), 
-                            -std::exp( 5.*vec[2] / ( 1. + vec[0] * vec[0] ) ), 
-                            std::cos( 2.*vec[1]-vec[0] ) 
+                            std::cos( -5. * vec[0] * vec[0] ), 
+                            -std::exp( 5. *vec[2] / ( 1. + vec[0] * vec[0] ) ), 
+                            std::cos( 2. * vec[1]-vec[0] ) 
                             
             });
             assert( ret.getdimension() == 3 );

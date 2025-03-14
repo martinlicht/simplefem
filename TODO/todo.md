@@ -773,7 +773,7 @@ There is only one cleaning command for the entire build directory.
 
 ## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
 
-Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names 
+Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include 
 
 - base 
 - common 
@@ -907,7 +907,7 @@ through the use of some simple text manipulation programs.
 
 So for the unit tests, it's more important to have a common structure ready to go.
 
-## (INFRASTRUCTURE) remove code from parent directory
+## (DONE/INFRASTRUCTURE) remove code from parent directory
 
 rename base/include.hpp in the main folder, move to basic subfolder, and have all exec.s include it
 
@@ -951,27 +951,55 @@ Generally, there should only be a few commands to describe what is happening.
 
 Include a style checker and add the necessary configuration files:
 
-- KWstyle
-- astyle
-- clang-format
-- uncrustify
+- [ ] KWstyle
+- [x] astyle
+- [ ] clang-format
+- [ ] uncrustify
 
-```ssh
-astyle --mode=c --options=none --project=path/to/astylerc --ascii --recursive "./*.cpp,*.hpp,*.cxx" --exclude=".playground" --exclude=".legacy"
-#--style=mozilla
+```sh
+astyle --dry-run --mode=c --options=none --ascii --project=path/to/astylerc --recursive "./*.cpp,*.hpp,*.cxx" --exclude="external" --exclude=".legacy" --exclude=".playground"
+```
+
+```file .astylerc
+# GENERAL BRACE ATTACHMENT STYLE 
+# mozilla, kr, otbs,
+--style=mozilla
 --attach-namespace
+--attach-closing-while
+
+# INDENT STYLE 
 --indent=spaces=4
 --indent-classes
+--indent-labels
+--indent-switches
+--indent-preproc-block
 --indent-preproc-cond
 --indent-col1-comments
+--min-conditional-indent=0
+--max-continuation-indent=120
+--indent-lambda
+
+# PADDING OPTIONS
 --break-blocks
 --pad-oper
 --pad-comma
+--pad-include=none
 --unpad-paren
 --pad-paren-in
+--unpad-brackets 
+--pad-brackets-in
+
+--fill-empty-lines
+--squeeze-lines=3
+
+# ALIGNMENT OPTIONS
 --align-pointer=type
 --align-reference=type
+
+# FORMAT OPTIONS
 --attach-return-type
+--keep-one-line-statements
+--convert-tabs
 ```
 
 
