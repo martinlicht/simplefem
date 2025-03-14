@@ -1,7 +1,7 @@
 #ifndef INCLUDEGUARD_LOGGING_HPP
 #define INCLUDEGUARD_LOGGING_HPP
 
-#include "basic.hpp"
+#include "base.hpp"
 #include "safedouble.hpp"
 
 

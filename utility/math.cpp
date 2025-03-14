@@ -1,7 +1,7 @@
 
 #include <cmath>
 
-#include "../basic/basic.hpp"
+#include "../basic.hpp"
 #include "math.hpp"
 
 

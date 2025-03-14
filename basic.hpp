@@ -1,6 +1,6 @@
 
-#include "basic/basic.hpp"
-#include "basic/safedouble.hpp"
-#include "basic/logging.hpp"
-#include "basic/constants.hpp"
-#include "basic/mallinfo.hpp"
+#include "base/base.hpp"
+#include "base/safedouble.hpp"
+#include "base/logging.hpp"
+#include "base/constants.hpp"
+#include "base/mallinfo.hpp"

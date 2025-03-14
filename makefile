@@ -67,7 +67,7 @@ help:
 
 modules:=
 modules+=external
-modules+=basic
+modules+=base
 modules+=utility
 modules+=combinatorics
 modules+=operators
@@ -90,8 +90,8 @@ moddir :=./external
 module:=external
 include common.module.mk
 
-moddir :=./basic
-module:=basic
+moddir :=./base
+module:=base
 include common.module.mk
 
 moddir :=./utility

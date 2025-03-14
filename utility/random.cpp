@@ -3,7 +3,7 @@
 #include <limits>
 
 
-#include "../basic/basic.hpp"
+#include "../basic.hpp"
 #include "random.hpp"
 
 #include <random>
