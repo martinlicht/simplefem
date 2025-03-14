@@ -206,7 +206,7 @@ int main( int argc, char *argv[] )
                             // );
                             
                             // ConjugateResidualMethod solver( X );
-                            // solver.tolerance           = desired_precision;
+                            // solver.precision           = desired_precision;
                             // solver.print_modulo        = 100;
                             // solver.max_iteration_count = 4 * candidate.getdimension();
                             // solver.solve( candidate, rhs );

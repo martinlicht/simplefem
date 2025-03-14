@@ -233,24 +233,22 @@ Align the entire DenseMatrix and FloatVector classes as much as only possible.
 
 # MEDIUM: DO-ABLE YET LOWER IMPORTANCE
 
-## (MEDIUM) Solver output
+## (DONE/MEDIUM) Solver output
 
 Within solvers without explicit output enum, distinguish the following cases of the print modulo:
 
 - *positive* print modulo that value and everything else
-- *0* same as *positive* but with automatic pick of print modulo
-- *-1* print only start, warnings, and exit
-- *-2* print only start and exit 
-- *-3* print only warnings
-- *-4* absolute silence
+- * 0* print everything except convergence steps
+- *-1* print only start and exit 
+- *else* absolute silence
 
-The automatic value should be 1/20th of the max iteration count
+Any automatic value should be 1/20th of the max iteration count
 
-## (MEDIUM) Standard max iteration count 
+## (DONE/MEDIUM) Standard max iteration count 
 
 The maximum iteration count should be only the dimension of the system. 
 
-## (MEDIUM) Solvers study the size of the RHS
+## (DONE/MEDIUM) Solvers study the size of the RHS
 
 Notably, the class-based solvers should not change any member variables during the solution process.
 
@@ -260,10 +258,9 @@ Notably, the class-based solvers should not change any member variables during t
 
 ```cpp
 // the argument is now called `_threshold`
-Float threshold = _threshold;
-Float RHS_NORM_SQUARED = 0.;
-for( int i = 0; i < N; i++ ) RHS_NORM_SQUARED += b[i]*b[i];
-threshold *= sqrt(RHS_NORM_SQUARED);
+Float tolerance = 0.;
+for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
 ```
 
 ## (DONE) Solvers print whether they have been successful
@@ -281,7 +278,7 @@ threshold *= sqrt(RHS_NORM_SQUARED);
     }
 ```
 
-## (MEDIUM) Solvers should abort if Ar_r or Ad_r is negative ?
+## (DONE/MEDIUM) Solvers should abort if Ar_r or Ad_r is negative ?
 
 ## (MEDIUM) Simplify the solver component 
 

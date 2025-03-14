@@ -65,13 +65,21 @@ int main( int argc, char *argv[] )
         contable_res.print_rowwise_instead_of_columnwise = true;
         contable_num.print_rowwise_instead_of_columnwise = true;
         contable_sec.print_rowwise_instead_of_columnwise = true;
+
+        contable_res.minimum_header_length = 12;
+        contable_num.minimum_header_length = 12;
+        contable_sec.minimum_header_length = 12;
+
+        contable_res.minimum_printed_precision = 5;
+        contable_num.minimum_printed_precision = 5;
+        contable_sec.minimum_printed_precision = 5;
         
         bool do_cgmpp      = true;
         bool do_crmpp_expl = true;
         bool do_crmpp_robt = true;
         bool do_crmpp_fast = true;
         bool do_minres     = true;
-        bool do_herzog     = true;
+        bool do_hersoo     = true;
         //
         // bool do_cgm_csr                = true;
         // bool do_crm_csr                = true;
@@ -86,7 +94,7 @@ int main( int argc, char *argv[] )
         // if( do_crmpp_robt ) contable_sol << "CRM++(robt)";
         // if( do_crmpp_fast ) contable_sol << "CRM++(fast)";
         // if( do_minres     ) contable_sol << "MINRES"     ;
-        // if( do_herzog     ) contable_sol << "HERZOG"     ;
+        // if( do_hersoo     ) contable_sol << "HERZOG"     ;
         // //
         // if( do_cgm_csr )                contable_sol << "CGMcsr"       ;
         // if( do_crm_csr )                contable_sol << "CRMcsr"       ;
@@ -102,7 +110,7 @@ int main( int argc, char *argv[] )
         if( do_crmpp_robt ) contable_res << "CRM++(robt)";
         if( do_crmpp_fast ) contable_res << "CRM++(fast)";
         if( do_minres     ) contable_res << "MINRES"     ;
-        if( do_herzog     ) contable_res << "HERZOG"     ;
+        if( do_hersoo     ) contable_res << "HERZOG"     ;
         //
         // if( do_cgm_csr )                contable_res << "CGMcsr"       ;
         // if( do_crm_csr )                contable_res << "CRMcsr"       ;
@@ -118,7 +126,7 @@ int main( int argc, char *argv[] )
         if( do_crmpp_robt ) contable_num << "CRM++(robt)";
         if( do_crmpp_fast ) contable_num << "CRM++(fast)";
         if( do_minres     ) contable_num << "MINRES"     ;
-        if( do_herzog     ) contable_num << "HERZOG"     ;
+        if( do_hersoo     ) contable_num << "HERZOG"     ;
         //
         // if( do_cgm_csr )                contable_num << "CGMcsr"       ;
         // if( do_crm_csr )                contable_num << "CRMcsr"       ;
@@ -134,7 +142,7 @@ int main( int argc, char *argv[] )
         if( do_crmpp_robt ) contable_sec << "CRM++(robt)";
         if( do_crmpp_fast ) contable_sec << "CRM++(fast)";
         if( do_minres     ) contable_sec << "MINRES"     ;
-        if( do_herzog     ) contable_sec << "HERZOG"     ;
+        if( do_hersoo     ) contable_sec << "HERZOG"     ;
         //
         // if( do_cgm_csr )                contable_sec << "CGMcsr"       ;
         // if( do_crm_csr )                contable_sec << "CRMcsr"       ;
@@ -211,7 +219,7 @@ int main( int argc, char *argv[] )
                         const FloatVector& rhs = rhs_original;
                         ConjugateGradientMethod solver( mass );
                         solver.print_modulo        = 0;
-                        solver.tolerance        = desired_precision;
+                        solver.precision        = desired_precision;
                         solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve( sol, rhs );
@@ -239,7 +247,7 @@ int main( int argc, char *argv[] )
                         const FloatVector& rhs = rhs_original;
                         ConjugateResidualMethod solver( mass );
                         solver.print_modulo        = 0;
-                        solver.tolerance        = desired_precision;
+                        solver.precision        = desired_precision;
                         solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve_explicit( sol, rhs );
@@ -267,7 +275,7 @@ int main( int argc, char *argv[] )
                         const FloatVector& rhs = rhs_original;
                         ConjugateResidualMethod solver( mass );
                         solver.print_modulo        = 0;
-                        solver.tolerance        = desired_precision;
+                        solver.precision        = desired_precision;
                         solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve_robust( sol, rhs );
@@ -295,7 +303,7 @@ int main( int argc, char *argv[] )
                         const FloatVector& rhs = rhs_original;
                         ConjugateResidualMethod solver( mass );
                         solver.print_modulo        = 0;
-                        solver.tolerance        = desired_precision;
+                        solver.precision        = desired_precision;
                         solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve_fast( sol, rhs );
@@ -323,7 +331,7 @@ int main( int argc, char *argv[] )
                         const FloatVector& rhs = rhs_original;
                         MinimumResidualMethod solver( mass );
                         solver.print_modulo        = 0;
-                        solver.tolerance        = desired_precision;
+                        solver.precision        = desired_precision;
                         solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve( sol, rhs );
@@ -343,7 +351,7 @@ int main( int argc, char *argv[] )
                         contable_sec << runtime;
                     }
 
-                    if( do_herzog )
+                    if( do_hersoo )
                     {
                         LOG << "HERZOG SOODHALTER C++" << nl;
                     
@@ -351,7 +359,7 @@ int main( int argc, char *argv[] )
                         const FloatVector& rhs = rhs_original;
                         HerzogSoodhalterMethod solver( mass );
                         solver.print_modulo        = 0;
-                        solver.tolerance        = desired_precision;
+                        solver.precision        = desired_precision;
                         solver.max_iteration_count =     1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve( sol, rhs );

@@ -119,6 +119,8 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
     const bool do_print_finish    = verbosity >= VerbosityLevel::startandfinish;
 
     /* Build up data */
+
+    const Float tolerance = precision * b.norm();
     
     const int dimension = A.getdimin();
 
@@ -181,10 +183,11 @@ void ConjugateGradientMethod::solve( FloatVector& x, const FloatVector& b ) cons
             // sigma_min_sq = minimum( sigma_min_sq, Ad_d / (d*d) );
             // LOG << "@" << recent_iteration_count << " : " << std::sqrt( r_r_old / ( sigma_min_sq * (x*x) ) ) << " with eigenvalue bound " << std::sqrt(sigma_min_sq) << nl;
 
+            bool numerator_is_unreasonable   = not std::isfinite(r_r_old) or r_r_old < 0.;
             bool denominator_is_unreasonable = not std::isfinite(Ad_d) or Ad_d < 0.;
             bool denominator_is_small        = std::sqrt(absolute(Ad_d)) < machine_epsilon;
             
-            if( denominator_is_unreasonable ) {
+            if( numerator_is_unreasonable or denominator_is_unreasonable ) {
                 if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_d );
                 break;
             }
@@ -238,6 +241,8 @@ void PreconditionedConjugateGradientMethod::solve( FloatVector& x, const FloatVe
     const bool do_print_finish    = verbosity >= VerbosityLevel::startandfinish;
 
     /* Build up data */
+    
+    const Float tolerance = precision * b.norm();
     
     const int dimension = A.getdimin();
 
@@ -308,10 +313,11 @@ void PreconditionedConjugateGradientMethod::solve( FloatVector& x, const FloatVe
             Float p_Ap = p * Ap;
             Float alpha = rMr / p_Ap;
 
+            bool numerator_is_unreasonable   = not std::isfinite(p_Ap) or p_Ap < 0.;
             bool denominator_is_unreasonable = not std::isfinite(p_Ap) or p_Ap < 0.;
             bool denominator_is_small        = std::sqrt(absolute(p_Ap)) < machine_epsilon;
             
-            if( denominator_is_unreasonable ) {
+            if( numerator_is_unreasonable or denominator_is_unreasonable ) {
                 if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)p_Ap );
                 break;
             }
@@ -472,6 +478,8 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
 
     /* Build up data */
     
+    const Float tolerance = precision * b.norm();
+    
     const int dimension = A.getdimin();
 
     Float rAr = notanumber;
@@ -549,10 +557,11 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
             Float Ad_Ad = Ad * Ad;
             Float alpha = rAr / Ad_Ad;
 
+            bool numerator_is_unreasonable   = not std::isfinite(rAr) or rAr < 0.;
             bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
             bool denominator_is_small        = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
-            if( denominator_is_unreasonable ) {
+            if( numerator_is_unreasonable or denominator_is_unreasonable ) {
                 if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
             }
@@ -623,6 +632,8 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
 
     /* Build up data */
     
+    const Float tolerance = precision * b.norm();
+    
     const int dimension = A.getdimin();
 
     FloatVector  r( dimension, 0. );
@@ -681,10 +692,11 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             Float Ad_r  = Ad * r; // fast/explicit uses and maintains Ar_r
             Float alpha = Ad_r / Ad_Ad;
             
+            bool numerator_is_unreasonable   = not std::isfinite(Ad_r) or Ad_r < 0.;
             bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
             bool denominator_is_small        = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
-            if( denominator_is_unreasonable ) {
+            if( numerator_is_unreasonable or denominator_is_unreasonable ) {
                 if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
             }
@@ -741,6 +753,8 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
 
     /* Build up data */
 
+    const Float tolerance = precision * b.norm();
+    
     const int dimension = A.getdimin();
 
     FloatVector  r( dimension, 0. );
@@ -799,10 +813,11 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             
             Float alpha = Ar_r / Ad_Ad;
             
+            bool numerator_is_unreasonable   = not std::isfinite(Ar_r) or Ar_r < 0.;
             bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
             bool denominator_is_small        = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
-            if( denominator_is_unreasonable ) {
+            if( numerator_is_unreasonable or denominator_is_unreasonable ) {
                 if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
             }
@@ -985,6 +1000,8 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
 
     /* Build up data */
     
+    const Float tolerance = precision * b.norm();
+    
     const int dimension = A.getdimin();
 
     Float rMAMr = notanumber;
@@ -1059,10 +1076,11 @@ void PreconditionedConjugateResidualMethod::solve( FloatVector& x, const FloatVe
             Float AMp_MAMp = AMp * MAMp;
             Float alpha = rMAMr / ( AMp_MAMp );
 
+            bool numerator_is_unreasonable   = not std::isfinite(rMAMr) or rMAMr < 0.;
             bool denominator_is_unreasonable = not std::isfinite(AMp_MAMp) or AMp_MAMp < 0.;
             bool denominator_is_small        = std::sqrt(absolute(AMp_MAMp)) < machine_epsilon;
             
-            if( denominator_is_unreasonable ) {
+            if( numerator_is_unreasonable or denominator_is_unreasonable ) {
                 if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient double energy is unreasonable with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)AMp_MAMp );
                 break;
             }
@@ -1167,6 +1185,8 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     const bool do_print_finish    = verbosity >= VerbosityLevel::startandfinish;
 
     /* Build up data */
+    
+    const Float tolerance = precision * b.norm();
     
     const int dimension = A.getdimin();
 
@@ -1474,6 +1494,8 @@ void ResidualDescentMethod::solve( FloatVector& x, const FloatVector& b ) const
 
     /* Build up data */
     
+    const Float tolerance = precision * b.norm();
+    
     const int dimension = A.getdimin();
 
     Float r_r = notanumber;
@@ -1627,6 +1649,8 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
 
     /* Build up data */
     
+    const Float tolerance = precision * b.norm();
+    
     const int dimension = A.getdimin();
 
     FloatVector v0( dimension, 0. );
@@ -1673,8 +1697,8 @@ void HerzogSoodhalterMethod::solve( FloatVector& x, const FloatVector& b ) const
             assert( gamma > 0. );
             
             // 7
-            s0 = s1 = 0;
-            c0 = c1 = 1;
+            s0 = s1 = 0.;
+            c0 = c1 = 1.;
             
             eta = gamma;
             

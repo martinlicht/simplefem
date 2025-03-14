@@ -32,14 +32,14 @@ int main( int argc, char *argv[] )
         bool do_crmpp_robt = false;
         bool do_crmpp_fast = false;
         bool do_minres     = false;
-        bool do_herzog     = false;
+        bool do_hersoo     = false;
         
         do_cgmpp      = true;
         do_crmpp_expl = true;
         do_crmpp_robt = true;
         do_crmpp_fast = true;
         do_minres     = true;
-        do_herzog     = true;
+        do_hersoo     = true;
         
         
         
@@ -50,7 +50,7 @@ int main( int argc, char *argv[] )
         if( do_crmpp_robt ) contable_sol << "CRM++(robt)";
         if( do_crmpp_fast ) contable_sol << "CRM++(fast)";
         if( do_minres     ) contable_sol << "MINRES"     ;
-        if( do_herzog     ) contable_sol << "HERZOG"     ;
+        if( do_hersoo     ) contable_sol << "HERZOG"     ;
         contable_sol << nl;
 
         contable_res << "Index";
@@ -59,7 +59,7 @@ int main( int argc, char *argv[] )
         if( do_crmpp_robt ) contable_res << "CRM++(robt)";
         if( do_crmpp_fast ) contable_res << "CRM++(fast)";
         if( do_minres     ) contable_res << "MINRES"     ;
-        if( do_herzog     ) contable_res << "HERZOG"     ;
+        if( do_hersoo     ) contable_res << "HERZOG"     ;
         contable_res << nl;
 
         contable_num << "Index";
@@ -68,7 +68,7 @@ int main( int argc, char *argv[] )
         if( do_crmpp_robt ) contable_num << "CRM++(robt)";
         if( do_crmpp_fast ) contable_num << "CRM++(fast)";
         if( do_minres     ) contable_num << "MINRES"     ;
-        if( do_herzog     ) contable_num << "HERZOG"     ;
+        if( do_hersoo     ) contable_num << "HERZOG"     ;
         contable_num << nl;
 
         
@@ -251,7 +251,7 @@ int main( int argc, char *argv[] )
                         contable_num << stat_num;
                     }
 
-                    if( do_herzog )
+                    if( do_hersoo )
                     {
                         LOG << "HERZOG SOODHALTER C++" << nl;
                     

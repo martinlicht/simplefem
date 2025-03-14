@@ -29,7 +29,7 @@ int ConjugateGradientSolverCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float tolerance,
+    const Float precision,
     int print_modulo
 ) {
     
@@ -40,9 +40,13 @@ int ConjugateGradientSolverCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( print_modulo >= -1 );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -134,10 +138,11 @@ int ConjugateGradientSolverCSR(
         }
         
         
+        bool numerator_is_unreasonable   = not std::isfinite(r_r) or r_r < 0.;
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small        = std::sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) UNLIKELY {
+        if( numerator_is_unreasonable or denominator_is_unreasonable ) UNLIKELY {
             if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
@@ -218,7 +223,7 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float tolerance,
+    const Float precision,
     int print_modulo,
     const Float* __restrict__ precon
 ) {
@@ -230,10 +235,14 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( print_modulo >= -1 );
     assert( precon );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -335,10 +344,11 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
         }
         
         
+        bool numerator_is_unreasonable   = not std::isfinite(z_r) or z_r < 0.;
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small        = std::sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) UNLIKELY {
+        if( numerator_is_unreasonable or denominator_is_unreasonable ) UNLIKELY {
             if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
@@ -437,7 +447,7 @@ int ConjugateGradientSolverCSR_SSOR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float tolerance,
+    const Float precision,
     int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega
@@ -450,10 +460,14 @@ int ConjugateGradientSolverCSR_SSOR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( print_modulo >= -1 );
     assert( diagonal );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -609,10 +623,11 @@ int ConjugateGradientSolverCSR_SSOR(
         }
         
         
+        bool numerator_is_unreasonable   = not std::isfinite(z_r) or z_r < 0.;
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small        = std::sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) UNLIKELY {
+        if( numerator_is_unreasonable or denominator_is_unreasonable ) UNLIKELY {
             if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
@@ -715,7 +730,7 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float tolerance,
+    const Float precision,
     int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega
@@ -728,10 +743,14 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( print_modulo >= -1 );
     assert( diagonal );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -901,10 +920,11 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
         
         
         
+        bool numerator_is_unreasonable   = not std::isfinite(z_r) or z_r < 0.;
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small        = std::sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable and do_print_breakdown ) UNLIKELY {
+        if( numerator_is_unreasonable or denominator_is_unreasonable ) UNLIKELY {
             if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
@@ -981,7 +1001,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float tolerance,
+    const Float precision,
     int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega,
@@ -995,7 +1015,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( print_modulo >= -1 );
     assert( diagonal );
 
@@ -1004,6 +1024,10 @@ int ConjugateGradientSolverCSR_Rainbow(
     assert( B );
     assert( R );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -1183,10 +1207,11 @@ int ConjugateGradientSolverCSR_Rainbow(
         }
         
         
+        bool numerator_is_unreasonable   = not std::isfinite(z_r) or z_r < 0.;
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small        = std::sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) UNLIKELY {
+        if( numerator_is_unreasonable or denominator_is_unreasonable ) UNLIKELY {
             if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
@@ -1315,7 +1340,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float tolerance,
+    const Float precision,
     int print_modulo,
     const Float* __restrict__ diagonal,
     Float omega,
@@ -1329,7 +1354,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( print_modulo >= -1 );
     assert( diagonal );
 
@@ -1338,6 +1363,10 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     assert( B );
     assert( R );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -1539,10 +1568,11 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
         
         
         
+        bool numerator_is_unreasonable   = not std::isfinite(z_r) or z_r < 0.;
         bool denominator_is_unreasonable = not std::isfinite(d_Ad) or d_Ad < 0.;
         bool denominator_is_small        = std::sqrt(absolute(d_Ad)) < machine_epsilon;
         
-        if( denominator_is_unreasonable ) UNLIKELY {
+        if( numerator_is_unreasonable or denominator_is_unreasonable ) UNLIKELY {
             if( do_print_breakdown ) LOGPRINTF( "(%d/%d) BREAKDOWN: Gradient energy is unreasonable with %.9le\n", K, N, (double)(safedouble)d_Ad );
             break;
         }
@@ -1654,7 +1684,7 @@ int ConjugateResidualSolverCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float tolerance,
+    const Float precision,
     int print_modulo
 ) {
     
@@ -1665,9 +1695,13 @@ int ConjugateResidualSolverCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( print_modulo >= -1 );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -1880,7 +1914,7 @@ int ConjugateResidualSolverCSR_textbook(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float tolerance,
+    const Float precision,
     int print_modulo
 ) {
     
@@ -1891,9 +1925,13 @@ int ConjugateResidualSolverCSR_textbook(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( print_modulo >= -1 );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -2116,7 +2154,7 @@ int MINRESCSR(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ res,
-    const Float tolerance,
+    const Float precision,
     int print_modulo
 ) {
     
@@ -2127,9 +2165,13 @@ int MINRESCSR(
     assert( csrcolumns );
     assert( csrvalues );
     assert( res );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( print_modulo >= -1 );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -2380,7 +2422,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
     const Float* __restrict__ b, 
     const int* __restrict__ csrrows, const int* __restrict__ csrcolumns, const Float* __restrict__ csrvalues, 
     Float* __restrict__ residual,
-    const Float tolerance,
+    const Float precision,
     int print_modulo,
     const Float* __restrict__ precon,
     const Float lower,
@@ -2394,9 +2436,13 @@ int ChebyshevIteration_DiagonalPreconditioner(
     assert( csrcolumns );
     assert( csrvalues );
     assert( residual );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     assert( precon );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -2683,7 +2729,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
 //     int maxiter = 10 * (M + pdim);
 //     int iter = 0;
 //     
-//     const Float tolerance = tolerance;
+//     const Float precision = tolerance;
 //     
 //     /*************/
 //     /* MAIN LOOP */
@@ -3155,7 +3201,7 @@ int ChebyshevIteration_DiagonalPreconditioner(
 //     int maxiter = 10 * (M + pdim);
 //     int iter = 0;
 //     
-//     const Float tolerance = tolerance;
+//     const Float precision = tolerance;
 //     
 //     /*************/
 //     /* MAIN LOOP */

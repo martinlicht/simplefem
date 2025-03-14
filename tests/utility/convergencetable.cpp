@@ -13,7 +13,7 @@ int main( int argc, char *argv[] )
     
     Contable << "a";
     Contable << "b" << "c" << "d";
-    Contable << "qwertyuiopasdfghjkl" << nl;
+    Contable << "1234567890ABCDEFGHI" << nl;
 
     Contable.lg();
 

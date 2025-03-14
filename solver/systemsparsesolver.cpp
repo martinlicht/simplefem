@@ -25,7 +25,7 @@ int HodgeConjugateResidualSolverCSR(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
-    Float tolerance,
+    Float precision,
     int print_modulo,
     Float inneriteration_tolerance,
     int inneriteration_print_modulo
@@ -41,7 +41,7 @@ int HodgeConjugateResidualSolverCSR(
         Btrows, Btcolumns, Btvalues, 
         Crows,   Ccolumns,  Cvalues, 
         res,
-        tolerance,
+        precision,
         print_modulo,
         inneriteration_tolerance,
         inneriteration_print_modulo
@@ -59,7 +59,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
-    Float tolerance,
+    Float precision,
     int print_modulo,
     Float inneriteration_tolerance,
     int inneriteration_print_modulo
@@ -79,8 +79,12 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     assert( Btcolumns );
     assert( Btvalues );
     assert( res );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -294,7 +298,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
         #endif 
         for( int c = 0; c < L; c++ ) {
             
-            aux1[c] = 0;
+            aux1[c] = 0.;
             
             for( int d = Btrows[c]; d < Btrows[c+1]; d++ )
                 aux1[c] += Btvalues[ d ] * Mdir[ Btcolumns[d] ];
@@ -428,7 +432,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
-    Float tolerance,
+    Float precision,
     int print_modulo,
     Float inneriteration_tolerance,
     int inneriteration_print_modulo
@@ -448,8 +452,12 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     assert( Btcolumns );
     assert( Btvalues );
     assert( res );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -568,7 +576,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
             #endif
             for( int c = 0; c < L; c++ ) {
                 
-                aux1[c] = 0;
+                aux1[c] = 0.;
                 
                 for( int d = Btrows[c]; d < Btrows[c+1]; d++ )
                     aux1[c] += Btvalues[ d ] * dir[ Btcolumns[d] ];
@@ -659,7 +667,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
         #endif 
         for( int c = 0; c < L; c++ ) {
             
-            aux1[c] = 0;
+            aux1[c] = 0.;
             
             for( int d = Btrows[c]; d < Btrows[c+1]; d++ )
                 aux1[c] += Btvalues[ d ] * Mdir[ Btcolumns[d] ];
@@ -795,7 +803,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
     Float* res,
-    Float tolerance,
+    Float precision,
     int print_modulo,
     Float inneriteration_tolerance,
     int inneriteration_print_modulo
@@ -815,7 +823,11 @@ int HodgeConjugateResidualSolverCSR_textbook(
     assert( Btcolumns );
     assert( Btvalues );
     assert( res );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
+
+    Float tolerance = 0.;
+    for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
 
     /* Determine the print flags */
 
@@ -912,7 +924,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
             #endif 
             for( int c = 0; c < L; c++ ) {
                 
-                aux1[c] = 0;
+                aux1[c] = 0.;
                 
                 for( int d = Btrows[c]; d < Btrows[c+1]; d++ )
                     aux1[c] += Btvalues[ d ] * dir[ Btcolumns[d] ];
@@ -1004,7 +1016,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
         #endif 
         for( int c = 0; c < L; c++ ) {
             
-            aux1[c] = 0;
+            aux1[c] = 0.;
             
             for( int d = Btrows[c]; d < Btrows[c+1]; d++ )
                 aux1[c] += Btvalues[ d ] * Mdir[ Btcolumns[d] ];
@@ -1115,7 +1127,7 @@ int HodgeHerzogSoodhalterMethod(
     const int* __restrict__  Brows, const int* __restrict__  Bcolumns, const Float* __restrict__  Bvalues, 
     const int* __restrict__ Btrows, const int* __restrict__ Btcolumns, const Float* __restrict__ Btvalues, 
     const int* __restrict__  Crows, const int* __restrict__  Ccolumns, const Float* __restrict__  Cvalues, 
-    Float tolerance,
+    Float precision,
     int print_modulo,
     const int* __restrict__ PArows, const int* __restrict__ PAcolumns, const Float* __restrict__ PAvalues, 
     const int* __restrict__ PCrows, const int* __restrict__ PCcolumns, const Float* __restrict__ PCvalues, 
@@ -1138,7 +1150,7 @@ int HodgeHerzogSoodhalterMethod(
     assert( Btrows );
     assert( Btcolumns );
     assert( Btvalues );
-    assert( tolerance > 0 );
+    assert( precision > 0 );
     // assert( PArows ); 
     // assert( PAcolumns );
     // assert( PAvalues );
@@ -1148,6 +1160,11 @@ int HodgeHerzogSoodhalterMethod(
     assert( inneriteration_tolerance > 0 );
 //     assert( inneriteration_print_modulo >= 0 );
     
+    Float tolerance = 0.;
+    for( int i = 0; i < dimension_A; i++ ) tolerance += b_A[i]*b_A[i];
+    for( int i = 0; i < dimension_C; i++ ) tolerance += b_C[i]*b_C[i];
+    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
@@ -1317,8 +1334,8 @@ int HodgeHerzogSoodhalterMethod(
             eta_A = gamma * std::sqrt( psi_A );
             eta_C = gamma * std::sqrt( psi_C );
             
-            s0 = s1 = 0;
-            c0 = c1 = 1;
+            s0 = s1 = 0.;
+            c0 = c1 = 1.;
             
             if( do_print_restart ) {
                 LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) absolute(eta), (double)(safedouble)tolerance );

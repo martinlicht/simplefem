@@ -29,9 +29,9 @@ class InverseOperator
         InverseOperator& operator=( InverseOperator&& invop )      noexcept = default; 
 
         
-        explicit InverseOperator( const Operator& op, Float tolerance, int print_modulo = -1 )
+        explicit InverseOperator( const Operator& op, Float precision, int print_modulo = -1 )
         : LinearOperator( op.getdimout(), op.getdimin() ), 
-          op( op ), tolerance(tolerance), print_modulo( print_modulo ), previous_sol( op.getdimin(), 0. )
+          op( op ), precision(precision), print_modulo( print_modulo ), previous_sol( op.getdimin(), 0. )
         { 
             assert( op.getdimin() == op.getdimout() );
             
@@ -65,7 +65,7 @@ class InverseOperator
     protected:
 
         const Operator& op;
-        Float tolerance;
+        Float precision;
         int print_modulo;
 
         mutable FloatVector previous_sol;
@@ -88,8 +88,8 @@ class PseudoInverseOperator
         PseudoInverseOperator& operator=( PseudoInverseOperator&& invop )      noexcept = default; 
 
         
-        explicit PseudoInverseOperator( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
-        : InverseOperator( op, tolerance, print_modulo )
+        explicit PseudoInverseOperator( const LinearOperator& op, Float precision, int print_modulo = -1 )
+        : InverseOperator( op, precision, print_modulo )
         { 
             assert( op.getdimin() == op.getdimout() );
 
@@ -175,7 +175,7 @@ void InverseOperator<MatrixCSR>::apply( FloatVector& dest, const FloatVector& sr
         src.raw(), 
         op.getA(), op.getC(), op.getV(), 
         res.raw(),
-        tolerance,
+        precision,
         print_modulo,
         diagonal.raw(),
         1.0,
@@ -188,7 +188,7 @@ void InverseOperator<MatrixCSR>::apply( FloatVector& dest, const FloatVector& sr
         src.raw(), 
         op.getA(), op.getC(), op.getV(), 
         res.raw(),
-        tolerance,
+        precision,
         print_modulo,
         diagonal.raw(),
         1.0
@@ -230,24 +230,24 @@ void PseudoInverseOperator::apply( FloatVector& dest, const FloatVector& src, Fl
 }
 
 
-inline InverseOperator<LinearOperator> inv( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
+inline InverseOperator<LinearOperator> inv( const LinearOperator& op, Float precision, int print_modulo = -1 )
 {
     op.check();
-    return InverseOperator<LinearOperator>( op, tolerance, print_modulo );
+    return InverseOperator<LinearOperator>( op, precision, print_modulo );
 } 
   
   
-inline InverseOperator<MatrixCSR> inv( const MatrixCSR& op, Float tolerance, int print_modulo = -1 )
+inline InverseOperator<MatrixCSR> inv( const MatrixCSR& op, Float precision, int print_modulo = -1 )
 {
     op.check();
-    return InverseOperator<MatrixCSR>( op, tolerance, print_modulo );
+    return InverseOperator<MatrixCSR>( op, precision, print_modulo );
 }  
 
 
-inline PseudoInverseOperator pinv( const LinearOperator& op, Float tolerance, int print_modulo = -1 )
+inline PseudoInverseOperator pinv( const LinearOperator& op, Float precision, int print_modulo = -1 )
 {
     op.check();
-    return PseudoInverseOperator( op, tolerance, print_modulo );
+    return PseudoInverseOperator( op, precision, print_modulo );
 } 
   
   

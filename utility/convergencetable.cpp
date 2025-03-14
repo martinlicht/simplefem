@@ -13,14 +13,17 @@
 #include "convergencetable.hpp"
 
 
-const int standard_minimum_printed_precision = 15;
+const int standard_minimum_printed_precision = 5;
+
+const int standard_minimum_header_length = 10;
 
 ConvergenceTable::ConvergenceTable( const std::string& table_name )
 : make_new_row( true ),
   table_name(table_name), 
   display_convergence_rates( true ),
   print_rowwise_instead_of_columnwise(false),
-  minimum_printed_precision( standard_minimum_printed_precision )
+  minimum_printed_precision( standard_minimum_printed_precision ),
+  minimum_header_length( standard_minimum_header_length )
 {
     LOG << "Table created! " << this << nl;
 }
@@ -133,24 +136,40 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
 
     // introduce several constants that drive the output format 
     
-    const char* column_separator = "   ";
+    
+    // header text metrics 
+
+    const int nc_desired_header_width = maximum( 1, minimum_header_length );
+    
+    
+    // metrics for cells and rates 
 
     const bool rates_are_float = true;
     
     const int nc_indent_width = 8;
     
-    const int nc_cell_precision = ( minimum_printed_precision > 4 ) ? minimum_printed_precision : 4;
+    const int nc_cell_precision = maximum( 1, minimum_printed_precision );
 
     const int nc_rate_precision = 2;
 
-    const int nc_cell_width = 7 + nc_cell_precision + 0;
+    const int nc_desired_cell_width = 7 + nc_cell_precision + 0;
     // 12; sign + digit + . + e + sign + two digits = 6 chars 
 
     const int nc_rate_width = ( rates_are_float ? ( 7 + nc_rate_precision ) : 3 + nc_rate_precision ) + 0;
     // if float: 10; sign + digit + . + e + sign + two digits = 7 chars 
     // if fixed:  6; sign + digit + . = 3 chars 
 
+    
+    // actual widths of headers and data 
+    
+    const int nc_cell_width   = maximum( nc_desired_header_width, nc_desired_cell_width );
+    
+    
+    // other definitions 
+    
+    const char* column_separator = "   ";
 
+    
     // First line is the name of the table 
     printf_into_stream( ss,  "\n%s\n", table_name.c_str() );
 
@@ -250,12 +269,12 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
     
     std::ostringstream ss;
 
-    // introduce several constants that drive the output format 
-    
-    const char* cell_separator = "   ";
+    // header text metrics 
 
-    const int nc_header_width = 14;
+    const int nc_desired_header_width = maximum( 1, minimum_header_length );
     
+    // main data metrics
+
     const int nc_floating_point_extra = 7;
     // sign/space + digit + . + e + sign + two digits = 7 chars 
 
@@ -266,13 +285,23 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
 
     const int nc_rate_precision = 4;
 
-    const int nc_cell_width = nc_floating_point_extra + nc_cell_precision;
+    const int nc_desired_cell_width = nc_floating_point_extra + nc_cell_precision;
+    
+    // actual widths of headers and data 
+    
+    const int nc_header_width = nc_desired_header_width;
+    
+    const int nc_cell_width = nc_desired_cell_width;
+    
+    // metrics for the rates 
     
     const bool rates_are_float = true;
     
     const int nc_rate_width = rates_are_float ? ( nc_floating_point_extra + nc_rate_precision ) : ( nc_fixed_point_extra + nc_rate_precision );
 
     const int nc_column_width = maximum( nc_cell_width, nc_rate_width );
+
+    const char* cell_separator = "   ";
 
     const char* line_prefix = ">> ";
 
