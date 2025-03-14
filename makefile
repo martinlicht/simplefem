@@ -196,6 +196,10 @@ dependclean:
 tidy:
 	@cd ./tests && $(MAKE) --no-print-directory tidy
 
+.PHONY: astyle
+astyle:
+	@cd ./tests && $(MAKE) --no-print-directory astyle
+
 .PHONY: cppcheck
 cppcheck:
 	@cd ./tests && $(MAKE) --no-print-directory cppcheck

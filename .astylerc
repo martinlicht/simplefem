@@ -1,15 +1,39 @@
-#astyle --mode=c --options=none --project=path/to/astylerc --ascii --recursive "./*.cpp,*.hpp,*.cxx" --exclude=".playground" --exclude=".legacy"
-#--style=mozilla
---attach-namespace 
+# GENERAL BRACE ATTACHMENT STYLE
+# mozilla, kr, otbs,
+--style=mozilla
+--attach-namespaces
+--attach-closing-while
+
+# INDENT STYLE
 --indent=spaces=4
 --indent-classes
+--indent-labels
+--indent-switches
+--indent-preproc-block
 --indent-preproc-cond
 --indent-col1-comments
---break-blocks 
---pad-oper 
+--min-conditional-indent=0
+--max-continuation-indent=120
+--indent-lambda
+
+# PADDING OPTIONS
+--break-blocks
+--pad-oper
 --pad-comma
+--pad-include=none
 --unpad-paren
---pad-paren-in 
---align-pointer=type 
+--pad-paren-in
+--unpad-brackets
+--pad-brackets-in
+
+--fill-empty-lines
+--squeeze-lines=3
+
+# ALIGNMENT OPTIONS
+--align-pointer=type
 --align-reference=type
+
+# FORMAT OPTIONS
 --attach-return-type
+--keep-one-line-statements
+--convert-tabs

@@ -23,6 +23,9 @@ Dox
 
 
 
+# Backup sources
+*.orig
+
 # Prerequisites
 *.d
 

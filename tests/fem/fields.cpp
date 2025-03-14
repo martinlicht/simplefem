@@ -39,7 +39,7 @@ int main( int argc, char *argv[] )
         
         AlternatingForm bar = foo.laplacian(h);
         
-        FloatVector point = FloatVector({1.*Constants::pi/2,0.});
+        FloatVector point = FloatVector({ 1. * Constants::pi / 2, 0. });
 
 //             LOG << h/2.0 << space << ( foo( {0.+h,0.} ) - foo( {0.,0.} ) )[0] / h << nl << nl;
 //             LOG << h/2.0 << space << ( 2 * foo( {0.,0.} ) - foo( {0.+h,0.} ) - foo( {0.-h,0.} ) )[0] / (h*h) << nl;

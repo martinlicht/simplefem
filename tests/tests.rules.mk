@@ -213,6 +213,15 @@ $($(context).sourcechecks): check-%.cpp :
 
 
 
+##########################################################################################
+# Apply astyle (dry-run) to all cpp and hpp files in the directory. Read-only.
+
+.PHONY: astyle $(context).astyle
+astyle: $(context).astyle
+$(context).astyle:
+	astyle --dry-run --mode=c --options=$(projectdir)/.astylerc --ascii $(mycontextdir)/*.?pp
+
+
 ########################################################################
 # Apply clang-tidy to all cpp and hpp files in the directory. Read-only.
 
@@ -290,7 +299,7 @@ check: tidy
 
 # TODO: rewrite the entire thing ...
 
-# $(context).cleanpattern    := .all.o *.a *.o *.d *.so *.gch *.exe *.exe.stackdump *.out *.out.stackdump OUTPUT_CPPLINT.txt callgrind.out.* 
+# $(context).cleanpattern    := .all.o *.a *.o *.d *.so *.gch *.exe *.exe.stackdump *.orig *.out *.out.stackdump OUTPUT_CPPLINT.txt callgrind.out.* 
 # $(context).outputcleanpattern := *.vtk
 # $(context).depcleanpattern := .deps
 
@@ -302,7 +311,7 @@ check: tidy
 # outputcleanfiles += $($(context).outputcleanfiles)
 # depcleanfiles += $($(context).depcleanfiles)
 
-CMD_CLEAN       = rm -f .all.o *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.out.stackdump 
+CMD_CLEAN       = rm -f .all.o *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.orig *.out *.out.stackdump 
 CMD_OUTPUTCLEAN = rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex
 CMD_DEPCLEAN    = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
 
