@@ -13,14 +13,14 @@ jobs:
     timeout-minutes: 600
 
     steps:
-    - name: Show Processor Information (Linux)
-      run: lscpu
-    - name: Install OpenMP
-      run: sudo apt-get install -y libomp-dev
 #    - name: install valgrind here 
 #      run: sudo apt install -y valgrind
-    - name: show information on the current node
+    - name: Install OpenMP
+      run: sudo apt-get install -y libomp-dev
+    - name: Show Processor Information (Linux)
       run: lscpu
+    - name: print software versions
+      run: g++ --version; clang++ --version; clang-tidy --version;
     - name: checkout repository...
       uses: actions/checkout@v4
     - name: build project...

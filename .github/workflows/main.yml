@@ -19,14 +19,14 @@ jobs:
 
     steps:
 
+    - name: Install OpenMP
+      run: sudo apt-get install -y libomp-dev
+    
     - name: Show Processor Information (Linux)
       run: lscpu
 
     - name: print software versions
       run: g++ --version; clang++ --version; clang-tidy --version;
-    
-    - name: Install OpenMP
-      run: sudo apt-get install -y libomp-dev
     
     - name: checkout repository
       uses: actions/checkout@v4
