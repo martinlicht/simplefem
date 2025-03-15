@@ -139,7 +139,7 @@ int main( int argc, char *argv[] )
             auto opr  = diffmatrix & incmatrix;
             auto opl  = opr.getTranspose(); 
             auto stiffness = opl & ( vector_massmatrix & opr );
-            
+
             stiffness.sortentries();
             auto stiffness_csr = MatrixCSR( stiffness );
             

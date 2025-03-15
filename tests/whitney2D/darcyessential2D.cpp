@@ -177,10 +177,8 @@ int main( int argc, char *argv[] )
                     
                     timestamp start = timestampnow();
 
-                    // {
-                    
+                    {
                         FloatVector res = sol;
-                        
                         HodgeConjugateResidualSolverCSR_SSOR( 
                             B.getdimout(), 
                             A.getdimout(), 
@@ -196,8 +194,7 @@ int main( int argc, char *argv[] )
                             desired_precision,
                             0
                         );
-                        
-                    // }
+                    }
 
                     timestamp end = timestampnow();
                     LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;

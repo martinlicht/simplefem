@@ -159,17 +159,14 @@ int main( int argc, char *argv[] )
                 
                 LOG << "... assemble matrices" << nl;
         
-                
+                LOG << "... assemble mass matrices" << nl;
+
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
                 SparseMatrix pseudo_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
 
-                SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
-                SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
-
-                SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
-                SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
-
+                LOG << "... assemble inclusion matrices" << nl;
+        
                 SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
                 SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
@@ -179,43 +176,61 @@ int main( int argc, char *argv[] )
                 SparseMatrix pseudo_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
                 SparseMatrix pseudo_incmatrix_t = pseudo_incmatrix.getTranspose();
                 
-                auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
+                LOG << "... assemble algebraic matrices" << nl;
 
-                auto mat_A  = scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix;
-                mat_A.sortandcompressentries();
-                
-                auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
-                mat_Bt.sortandcompressentries();
-                
-                auto mat_B = mat_Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower left
-                mat_B.sortandcompressentries();
-                
-                auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix;
-                mat_C.sortandcompressentries();
-                
-                LOG << "share zero A = " << mat_A.getnumberofzeroentries() << "/" <<  mat_A.getnumberofentries() << nl;
-                LOG << "share zero B = " << mat_B.getnumberofzeroentries() << "/" <<  mat_B.getnumberofentries() << nl;
-                LOG << "share zero C = " << mat_C.getnumberofzeroentries() << "/" <<  mat_C.getnumberofentries() << nl;
-                
-                auto A  = MatrixCSR( mat_A  );
-                auto Bt = MatrixCSR( mat_Bt );
-                auto B  = MatrixCSR( mat_B  );
-                auto C  = MatrixCSR( mat_C  );
+                SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
+                SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
-                // auto negA  = A;  negA.scale(-1);
-                // auto negB  = B;  negB.scale(-1);
-                // auto negBt = Bt; negBt.scale(-1);
+                SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
+                SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
+
                 
-                auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
+                
+                
+                
+                // TODO(martin): update using conjugation 
+    
+                // auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
+
+                LOG << "... compose system matrices" << nl;
+
+                auto A  = Conjugation( MatrixCSR(scalar_massmatrix), MatrixCSR(scalar_incmatrix) );
+
+                auto Bt = MatrixCSR(scalar_incmatrix_t) & MatrixCSR(scalar_diffmatrix_t) & MatrixCSR(vector_massmatrix) & MatrixCSR(vector_incmatrix); // upper right
+                
+                auto B  = Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower left
+                
+                auto C  = Conjugation( MatrixCSR(pseudo_massmatrix), MatrixCSR(vector_diffmatrix) & MatrixCSR(vector_incmatrix) );
+                
+                
+                
+                
+                LOG << "... compose preconditioner data" << nl;
+
+                auto PA = A // Conjugation( MatrixCSR(scalar_massmatrix), MatrixCSR(scalar_incmatrix) )
+                          +
+                          Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(scalar_diffmatrix) & MatrixCSR(scalar_incmatrix) );
+                
+                auto PC = Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(vector_incmatrix) )
+                          + 
+                          C; // Conjugation( MatrixCSR(pseudo_massmatrix), MatrixCSR(vector_diffmatrix) & MatrixCSR(vector_incmatrix) );
+                
+                LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
+                LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
+            
+                const auto PAinv = inv(PA,desired_precision,-1);
+                const auto PCinv = inv(PC,desired_precision,-1);
+
+                
                 
                 {
 
+                    LOG << "...interpolate explicit solution and rhs" << nl;
+                    
                     const auto& function_ndiv = experiment_ndiv;
                     const auto& function_sol  = experiment_sol;
                     const auto& function_curl = experiment_curl;
                     const auto& function_rhs  = experiment_rhs;
-                    
-                    LOG << "...interpolate explicit solution and rhs" << nl;
                     
                     FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r+1, function_ndiv  );
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   function_sol  );
@@ -224,36 +239,22 @@ int main( int argc, char *argv[] )
                     FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 1, r,   function_rhs  );
                     
                     FloatVector rhs = vector_incmatrix_t * ( vector_massmatrix * interpol_rhs );
-
-                        
+    
                     FloatVector sol( vector_incmatrix.getdimin(), 0. );
                     
+                    FloatVector  x_A( A.getdimin(),  0. );  // x_A is a dummy for the gradient 
+                    FloatVector& x_C = sol;                 // x_C is a reference to the solution 
                     
+                    const FloatVector  b_A( A.getdimin(),  0. ); 
+                    const FloatVector& b_C = rhs; 
+                    
+                    
+                    LOG << "...iterative solver" << nl;
+                        
                     timestamp start = timestampnow();
 
-                    {
-
-                        LOG << "...iterative solver" << nl;
-                        
-                        auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
-                                    + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
-                        auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
-                                    + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix );
-                        
-                        LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
-                        LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
-                    
-                        const auto PAinv = inv(PA,desired_precision,-1);
-                        const auto PCinv = inv(PC,desired_precision,-1);
-
-                        FloatVector  x_A( A.getdimin(),  0. ); 
-                        FloatVector& x_C = sol;
-                        
-                        const FloatVector  b_A( A.getdimin(),  0. ); 
-                        const FloatVector& b_C = rhs; 
-                        
-                        auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
-
+                    if(false){
+                        auto Z  = ZeroOperator( B.getdimout(), B.getdimout() ); // zero matrix
                         BlockHerzogSoodhalterMethod( 
                             x_A, 
                             x_C, 
@@ -264,31 +265,25 @@ int main( int argc, char *argv[] )
                             1,
                             PAinv, PCinv
                         );
-
-                        
-
-                        if(false){ // TODO(martinlicht): fix 
+                    }
                     
-                            FloatVector res = sol;
-                            
-                            HodgeConjugateResidualSolverCSR_SSOR( 
-                                B.getdimout(), 
-                                A.getdimout(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                A.getA(),   A.getC(),  A.getV(), 
-                                B.getA(),   B.getC(),  B.getV(), 
-                                Bt.getA(), Bt.getC(), Bt.getV(), 
-                                C.getA(),   C.getC(),  C.getV(), 
-                                res.raw(),
-                                desired_precision,
-                                1,
-                                desired_precision,
-                                0
-                            );
-                        
-                        }
-
+                    { // TODO(martinlicht): fix 
+                        HodgeConjugateResidualSolverCSR_SSOR( 
+                            B.getdimout(), 
+                            A.getdimout(), 
+                            x_C.raw(), 
+                            rhs.raw(), 
+                            A.getA(),   A.getC(),  A.getV(), 
+                            B.getA(),   B.getC(),  B.getV(), 
+                            Bt.getA(), Bt.getC(), Bt.getV(), 
+                            C.getA(),   C.getC(),  C.getV(), 
+                            FloatVector( C.getdimin(),  0. ).raw(),
+                            desired_precision,
+                            1,
+                            desired_precision,
+                            0
+                        );
+                        x_A = inv(A,desired_precision) * Bt * x_C;
                     }
 
                     timestamp end = timestampnow();

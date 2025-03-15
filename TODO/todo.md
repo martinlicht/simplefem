@@ -87,11 +87,9 @@ None of the above can be done in a day, so it most likely requires regular grind
 
 
 
-
-
 # HIGH: DO THESE NEXT
 
-## (HIGH) All one vector
+    ## (HIGH) All one vector
 
 Ensure that all-one vectors are not used for constant functions. That only works if r=1. Name: constant_one
 
@@ -211,6 +209,15 @@ Use augmented integration for checking errors and the rhs
 
 Align different Frobenius norms of vectors and dense matrices.
 Align the entire DenseMatrix and FloatVector classes as much as only possible.
+
+## (HIGH) Speed up computation of conjugation in sparse matrices
+
+`whitney2D/poissonmixedbc2Da.cpp` takes too long to assemble the matrices.
+Try out a subroutine to reduce the computational effort.
+
+- [ ] the compression algorithms for SparseMatrix become static methods that work on the entries 
+- [ ] The conjugation is implemented for the SparseMatrix class
+- [ ] The conjugation is implemented for the CSR Class
 
 
 
@@ -343,18 +350,6 @@ A prerequisite for that endeavor are working notes on the CGM and CRM, even with
 
 - [ ] Erstelle eine 08/15 FD matrix (square, laplace, Dirichlet/periodisch). Solve that SPD matrix using all available solvers
 
-## (MEDIUM) SPARSE
-
-- [ ] SparseMatrix, CSR-Matrix. Statistics substructure that provides the min-average-max number of off-diagonal elements.
-- [ ] check symmetry, measure deviation from symmetry. Assume sort+compress has been applied.
-- [ ] Die Sortierung und Kompression der SparseMatrix braucht nicht soviel Zeit. Lasse den Output weg
-- [ ] Unit tests to check for sparse matrix sorting and compression. Test those sparse matrix routines with random input.
-
-## (MEDIUM) Interesting meshes
-
-Use the US states map from Randy's source code and implement it here.
-Try to find other triangulations too and integrate them as examples.
-
 ## (MEDIUM) mergeelementsinsortedlist should be moved into legacy
 
 ## (MEDIUM) test getdimensionclone/loaddimension for the Coordinates class
@@ -381,6 +376,18 @@ They are a purely optional argument for the print method and may be skipped at c
 
 Recapitulate the interface for the composed operators, which is the reason that the library implements all those pointer methods. 
 Is it possible to overload these and contain the infrastructure within those particular files?
+
+## (LOW) SPARSE
+
+- [ ] SparseMatrix, CSR-Matrix. Statistics substructure that provides the min-average-max number of off-diagonal elements.
+- [ ] check symmetry, measure deviation from symmetry. Assume sort+compress has been applied.
+- [ ] Die Sortierung und Kompression der SparseMatrix braucht nicht soviel Zeit. Lasse den Output weg
+- [ ] Unit tests to check for sparse matrix sorting and compression. Test those sparse matrix routines with random input.
+
+## (LOW) Interesting meshes
+
+Use the US states map from Randy's source code and implement it here.
+Try to find other triangulations too and integrate them as examples.
 
 ## (LOW) embellish the output of complex operators and other operators with optional flag
 
@@ -691,11 +698,6 @@ Once the numerical tests have been cleaned up, the right-hand side should always
 There should be a parameter 'r_plus' to control the added interpolation quality of the right-hand side.
 Notably, if 'r_plus == 0', then there should be a fallback that avoid repeated computation of the mass matrix.
 Similarly, the errors should be computed with augmented integration.
-
-## (INACTIVE) Speed up computation of conjugation in sparse matrices
-
-`whitney2D/poissonmixedbc2Da.cpp` takes too long to assemble the matrices.
-Try out a subroutine to reduce the computational effort.
 
 
 
@@ -1106,6 +1108,11 @@ Revisit the Unreal engine for ideas
 
 
 # DONE!
+
+## (DONE) Faster assembly of matrices
+
+For higher-dimensional problems, the matrix assembly is speed up by converting all partial matrices to CSR first, and the combining the CSR matrices.
+Furthermore, matrix conjugation seems to speed up the assembly, as was shown by mea surements. 
 
 ## (DONE) clean up DenseMatrix subsystem
 

@@ -41,21 +41,23 @@ Checks: "portability*,\
         -google-readability-casting,\
         google-runtime-operator,\
         hicpp*,\
-        -hicpp-static-assert,\
+        -hicpp-avoid-c-arrays,\
+        -hicpp-braces-around-statements,\
+        -hicpp-move-const-arg,\
+        -hicpp-no-array-decay,\
         -hicpp-signed-bitwise,\
+        -hicpp-static-assert,\
         -hicpp-uppercase-literal-suffix,\
         -hicpp-use-auto,\
-        -hicpp-vararg,\
-        -hicpp-braces-around-statements,\
-        -hicpp-avoid-c-arrays,\
-        -hicpp-no-array-decay,\
         -hicpp-use-emplace,\
+        -hicpp-vararg,\
         llvm-header-guard,\
         llvm-include-order,\
         mpi*,\
         openmp*,\
         performance*,\
         -performance-inefficient-string-concatenation,\
+        -performance-move-const-arg,\
         readability*,\
         -readability-avoid-nested-conditional-operator,\
         -readability-avoid-unconditional-preprocessor-if,\
@@ -69,7 +71,6 @@ Checks: "portability*,\
         -readability-implicit-bool-conversion,\
         -readability-isolate-declaration,\
         -readability-misleading-indentation,\
-        -readability-magic-numbers,\
         -readability-magic-numbers,\
         -readability-redundant-casting,\
         -readability-redundant-member-init,\
@@ -272,7 +273,7 @@ CheckOptions:
   cppcoreguidelines-pro-type-member-init.IgnoreArrays: 'false'
   cppcoreguidelines-pro-type-member-init.UseAssignment: 'false'
   cppcoreguidelines-pro-type-static-cast-downcast.StrictMode: 'true'
-  cppcoreguidelines-rvalue-reference-param-not-moved.AllowPartialMove: 'false'
+  cppcoreguidelines-rvalue-reference-param-not-moved.AllowPartialMove: 'true'
   cppcoreguidelines-rvalue-reference-param-not-moved.IgnoreNonDeducedTemplateTypes: 'false'
   cppcoreguidelines-rvalue-reference-param-not-moved.IgnoreUnnamedParams: 'false'
   cppcoreguidelines-special-member-functions.AllowMissingMoveFunctions: 'false'

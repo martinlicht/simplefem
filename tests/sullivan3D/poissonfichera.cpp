@@ -110,14 +110,20 @@ int main( int argc, char *argv[] )
             
             LOG << "...assemble matrices" << nl;
     
+            LOG << "... assemble mass matrices" << nl;
+
             SparseMatrix aug_scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r + r_plus     );
             
             SparseMatrix aug_vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r + r_plus - 1 );
             
-            SparseMatrix aug_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r + r_plus );
-
+            LOG << "... assemble inclusion matrices" << nl;
+            
             SparseMatrix aug_incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r + r_plus );
             SparseMatrix     incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r          );
+
+            LOG << "... assemble algebraic matrices" << nl;
+
+            SparseMatrix aug_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r + r_plus );
 
             SparseMatrix elevmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_plus ); 
 
@@ -128,25 +134,30 @@ int main( int argc, char *argv[] )
             SparseMatrix elevmatrix_t = elevmatrix.getTranspose(); 
             
             
-            LOG << "...compose matrices" << nl;
-    
-            const auto& opr  = aug_diffmatrix;
-            auto opl  = opr.getTranspose(); 
-            auto opm = opl & ( aug_vector_massmatrix & opr );
+            LOG << "... compose system matrices" << nl;
 
-            auto aug_stiffness = aug_incmatrix_t & opm & aug_incmatrix;
-            
-            auto stiffness = incmatrix_t & elevmatrix_t & opm & elevmatrix & incmatrix;
-            
-            aug_stiffness.sortentries();
-            stiffness.sortentries();
+            // const auto& opr  = aug_diffmatrix;
+            // auto opl  = opr.getTranspose(); 
+            // auto opm = opl & ( aug_vector_massmatrix & opr );
 
-            auto     stiffness_csr = MatrixCSR(     stiffness );
-            auto aug_stiffness_csr = MatrixCSR( aug_stiffness );
+            // auto aug_stiffness = aug_incmatrix_t & opm & aug_incmatrix;
             
+            // auto stiffness = incmatrix_t & elevmatrix_t & opm & elevmatrix & incmatrix;
             
-            LOG << "...interpolate" << nl;
+            // aug_stiffness.sortentries();
+            // stiffness.sortentries();
 
+            // auto     stiffness_csr = MatrixCSR(     stiffness );
+            // auto aug_stiffness_csr = MatrixCSR( aug_stiffness );
+
+            auto aug_vector_massmatrix_csr = MatrixCSR( aug_vector_massmatrix );
+            auto aug_diffmatrix_csr        = MatrixCSR( aug_diffmatrix );
+            auto     stiffness_csr = Conjugation( aug_vector_massmatrix_csr, aug_diffmatrix_csr & ( MatrixCSR(elevmatrix) & MatrixCSR(incmatrix)     ) );
+            auto aug_stiffness_csr = Conjugation( aug_vector_massmatrix_csr, aug_diffmatrix_csr & (                         MatrixCSR(aug_incmatrix) ) );
+
+            
+            LOG << "...interpolate explicit solution and rhs" << nl;
+            
             const auto& function_sol  = experiment_sol;
             const auto& function_rhs  = experiment_rhs;
             
@@ -181,7 +192,6 @@ int main( int argc, char *argv[] )
                     diagonal.raw(),
                     1.0
                 );
-
             }
 
             {
@@ -215,7 +225,7 @@ int main( int argc, char *argv[] )
             FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevmatrix * incmatrix * sol );
             Float errornorm       = std::sqrt( error * ( aug_scalar_massmatrix * error ) );
             Float graderrornorm   = std::sqrt( graderror * ( aug_vector_massmatrix * graderror ) );
-            Float residualnorm  = ( rhs - stiffness * sol ).norm();
+            Float residualnorm  = ( rhs - stiffness_csr * sol ).norm();
 
             LOG << "error:     " << errornorm    << nl;
             LOG << "graderror: " << graderrornorm << nl;
@@ -246,7 +256,7 @@ int main( int argc, char *argv[] )
                 
                 {
                     auto computed_grad = aug_diffmatrix * elevmatrix * incmatrix * sol;
-                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 );
+                    const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r-1 + r_plus );
                     const auto printable_grad = interpol_matrix * computed_grad; 
                     vtk.write_cell_vector_data_barycentricgradients( printable_grad, "gradient_interpolation" , 1.0 );
                 }
