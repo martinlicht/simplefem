@@ -314,8 +314,10 @@ int main()
                             LOG << "CHEBYSHEV CSR" << endl;
                         
                             DiagonalOperator invprecon = InverseDiagonalPreconditioner( mass_prelim );
-                            assert( invprecon.getdiagonal().isfinite() );
-                            assert( invprecon.getdiagonal().ispositive() );
+                            auto diagonal = invprecon.getDiagonal();
+
+                            assert( diagonal.isfinite() );
+                            assert( diagonal.ispositive() );
                             
                             sol.zero();
                             FloatVector residual( rhs );
@@ -328,9 +330,9 @@ int main()
                                 residual.raw(),
                                 desired_precision,
                                 10,
-                                invprecon.getdiagonal().raw(),
+                                diagonal.raw(),
                                 0.,
-                                100 * invprecon.getdiagonal().maxnorm()
+                                100 * diagonal.maxnorm()
                             );
 
                             timestamp end = gettimestamp();

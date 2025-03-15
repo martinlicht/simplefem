@@ -159,19 +159,19 @@ int main( int argc, char *argv[] )
                 auto stiffness_csr_w = MatrixCSR( stiffness_w );
                 
                 
-                auto stiffness_invprecon_s = DiagonalOperator( stiffness_s.getdimin(), 1. );
-                auto stiffness_invprecon_w = DiagonalOperator( stiffness_w.getdimin(), 1. );
-                LOG << "Average value of diagonal preconditioner (Sullivan): " << stiffness_invprecon_s.getDiagonal().average() << nl;
-                LOG << "Average value of diagonal preconditioner (Whitney) : " << stiffness_invprecon_w.getDiagonal().average() << nl;
+                auto stiffness_diagonal_s = DiagonalOperator( stiffness_s.getdimin(), 1. );
+                auto stiffness_diagonal_w = DiagonalOperator( stiffness_w.getdimin(), 1. );
+                LOG << "Average value of diagonal preconditioner (Sullivan): " << stiffness_diagonal_s.getDiagonal().average() << nl;
+                LOG << "Average value of diagonal preconditioner (Whitney) : " << stiffness_diagonal_w.getDiagonal().average() << nl;
 
                 {
 
+                    LOG << "...interpolate explicit solution and rhs" << nl;
+        
                     const auto& function_sol  = experiment_sol;
                     const auto& function_grad = experiment_grad;
                     const auto& function_rhs  = experiment_rhs;
                     
-                    LOG << "...interpolate explicit solution and rhs" << nl;
-        
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                     FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                     FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );

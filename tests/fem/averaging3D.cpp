@@ -151,10 +151,6 @@ int main( int argc, char *argv[] )
             LOG << "Distortion..." << nl;
         
             M.shake_interior_vertices();
-            // for( auto& x : M.getCoordinates().raw() )
-            // {
-            //     x = std::sqrt(x);
-            // }
 
         }
         

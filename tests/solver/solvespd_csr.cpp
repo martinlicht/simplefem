@@ -493,9 +493,9 @@ int main( int argc, char *argv[] )
                         LOG << "CGM diagonal preconditioner CSR" << nl;
                     
                         DiagonalOperator invprecon = InverseDiagonalPreconditioner( system_prelim );
-//                             invprecon.setentries( 1. );
-                        assert( invprecon.getDiagonal().is_finite() );
-                        assert( invprecon.getDiagonal().is_nonnegative() );
+                        auto invprecon_diagonal = invprecon.getDiagonal();
+                        assert( invprecon_diagonal.is_finite() );
+                        assert( invprecon_diagonal.is_nonnegative() );
                         
                         FloatVector mysol( N*N );
                         mysol.zero();
@@ -511,7 +511,7 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             0,
-                            invprecon.getDiagonal().raw()
+                            invprecon_diagonal.raw()
                         );
                         timestamp end = timestampnow();
 
@@ -571,8 +571,9 @@ int main( int argc, char *argv[] )
                         LOG << "CHEBYSHEV CSR" << nl;
                     
                         DiagonalOperator invprecon = InverseDiagonalPreconditioner( system_prelim );
-                        assert( invprecon.getDiagonal().is_finite() );
-                        assert( invprecon.getDiagonal().is_positive() );
+                        auto invprecon_diagonal = invprecon.getDiagonal();
+                        assert( invprecon_diagonal.is_finite() );
+                        assert( invprecon_diagonal.is_positive() );
                         
                         FloatVector mysol( N*N );
                         mysol.zero();
@@ -588,7 +589,7 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             0,
-                            invprecon.getDiagonal().raw(),
+                            invprecon_diagonal.raw(),
                             0.,
                             system.eigenvalueupperbound()
                         );

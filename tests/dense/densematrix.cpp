@@ -130,7 +130,11 @@ int main( int argc, char *argv[] )
             {
                 mat( r, c ) = (r==c)?( std::numeric_limits<double>::infinity()):notanumber;
             }
-            assert( mat.is_finite() == false );
+            if( mat.is_finite() )
+            {
+                LOG << mat << nl;
+                assert( not mat.is_finite() );
+            };
 
 
 

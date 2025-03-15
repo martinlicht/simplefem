@@ -143,14 +143,17 @@ int main( int argc, char *argv[] )
             stiffness.sortentries();
             auto stiffness_csr = MatrixCSR( stiffness );
             
+            stiffness.save_graphics( ( getbasename(__FILE__) + "_stiffness.png" ).c_str() );
+            stiffness_csr.save_graphics( ( getbasename(__FILE__) + "_stiffness_csr.png" ).c_str() );
+
             {
 
+                LOG << "...interpolate explicit solution and rhs" << nl;
+    
                 const auto& function_sol  = experiment_sol;
                 const auto& function_grad = experiment_grad;
                 const auto& function_rhs  = experiment_rhs;
                 
-                LOG << "...interpolate explicit solution and rhs" << nl;
-    
                 FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                 FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                 FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
@@ -161,32 +164,22 @@ int main( int argc, char *argv[] )
                 
                 LOG << "...iterative solver" << nl;
                 
-                auto stiffness_unity = DiagonalOperator( stiffness.getdimin(), 1. );
-            
-                auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
-
-                // auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. ); // TODO(martinlicht): clean up
-                // // auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                // LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
-
-                // auto stiffness_blockprecon = cluster_inversion( stiffness_csr, MatrixCSR_disjoint_clusters( stiffness_csr, 0 ) );
-
-                stiffness.save_graphics( ( getbasename(__FILE__) + "_stiffness.png" ).c_str() );
-
-                stiffness_csr.save_graphics( ( getbasename(__FILE__) + "_stiffness_csr.png" ).c_str() );
-
-                // stiffness_blockprecon.save_graphics( ( getbasename(__FILE__) + "_stiffness_blockprecon.png" ).c_str() );
-
-                // SparseMatrix preconblock = stiffness_blockprecon;
-                // preconblock.scale(-1);
-                // for( int i = 0; i < preconblock.getdimout(); i++ ) preconblock.appendentry({i,i,1.});
-                // preconblock.sortandcompressentries();
                 
                 timestamp start = timestampnow();
 
                 if(false)
                 {
+                    auto stiffness_unity = DiagonalOperator( stiffness.getdimin(), 1. );
+            
+                    auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
+                    LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
+                    
+                    // auto stiffness_blockprecon = cluster_inversion( stiffness_csr, MatrixCSR_disjoint_clusters( stiffness_csr, 0 ) );
+                    // stiffness_blockprecon.save_graphics( ( getbasename(__FILE__) + "_stiffness_blockprecon.png" ).c_str() );
+                    // SparseMatrix preconblock = stiffness_blockprecon; preconblock.scale(-1);
+                    // for( int i = 0; i < preconblock.getdimout(); i++ ) preconblock.appendentry({i,i,1.});
+                    // preconblock.sortandcompressentries();
+                    
                     sol.zero();
                     const auto& id = IdentityOperator( stiffness_csr.getdimout() );
                     // ConjugateGradientMethod solver( stiffness_csr );
@@ -200,8 +193,7 @@ int main( int argc, char *argv[] )
 
                 if(false)
                 {
-                    FloatVector diag = stiffness_csr.getDiagonal();
-                    // FloatVector diag = stiffness_unity.getDiagonal();
+                    FloatVector diagonal = stiffness_csr.getDiagonal();
                     sol.zero();
                     auto residual = sol;
                     ConjugateGradientSolverCSR_SSOR_Eisenstat( 
@@ -212,7 +204,7 @@ int main( int argc, char *argv[] )
                         residual.raw(),
                         desired_precision,
                         0,
-                        diag.raw(),
+                        diagonal.raw(),
                         1.00
                     );
                     

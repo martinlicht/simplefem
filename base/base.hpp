@@ -25,12 +25,12 @@
 #endif 
 
 
-#if __cplusplus < 202002L
-#define LIKELY
-#define UNLIKELY
-#else
+#if __cplusplus >= 202002L
 #define LIKELY   [[likely]]
 #define UNLIKELY [[unlikely]]
+#else
+#define LIKELY
+#define UNLIKELY
 #endif
 
 
@@ -191,10 +191,10 @@ static const constexpr Float desired_closeness_for_sqrt =
 //                                             //
 /////////////////////////////////////////////////
 
-extern template class std::vector<char>;
-extern template class std::vector<int>;
-extern template class std::vector<std::size_t>;
-extern template class std::vector<Float>;
+// extern template class std::vector<char>;
+// extern template class std::vector<int>;
+// extern template class std::vector<std::size_t>;
+// extern template class std::vector<Float>;
 
 
 
@@ -457,7 +457,7 @@ inline constexpr int power_integer( int base, int exponent )
 inline constexpr int power_of_two( int exponent )
 {
     assert( exponent >= 0 );
-    return 1 << exponent; // power_integer( 2, exponent );
+    return 1 << exponent; // return 2 * power_integer( 2, exponent );
 }
 
 inline constexpr int sign_power( int exponent )
@@ -626,8 +626,8 @@ inline constexpr int binomial_integer( intmax_t n, intmax_t k )
     Assert( 0 <= n, "Negative n for integer binomial: ", n ); 
     Assert( 0 <= n );
     
-    if( k < 0 or n < k )
-        return 0;
+    if( k < 0 or n < k ) return 0;
+
     uintmax_t result = factorial_integer(n) / ( factorial_integer(k) * factorial_integer(n-k) );
     
     Assert( result <= std::numeric_limits<int>::max() );
