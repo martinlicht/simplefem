@@ -27,7 +27,7 @@ int HodgeConjugateResidualSolverCSR(
     Float* res,
     Float precision,
     int print_modulo,
-    Float inneriteration_tolerance,
+    Float inneriteration_precision,
     int inneriteration_print_modulo
 ) {
     return 
@@ -43,7 +43,7 @@ int HodgeConjugateResidualSolverCSR(
         res,
         precision,
         print_modulo,
-        inneriteration_tolerance,
+        inneriteration_precision,
         inneriteration_print_modulo
     );
 }
@@ -61,7 +61,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     Float* res,
     Float precision,
     int print_modulo,
-    Float inneriteration_tolerance,
+    Float inneriteration_precision,
     int inneriteration_print_modulo
 ) {
     
@@ -176,7 +176,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_tolerance, 
+                inneriteration_precision, 
                 inneriteration_print_modulo
                 , precon
             );
@@ -220,7 +220,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_tolerance,
+                inneriteration_precision,
                 inneriteration_print_modulo,
                 precon
             );
@@ -312,7 +312,7 @@ int HodgeConjugateResidualSolverCSR_diagonal(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            inneriteration_tolerance,
+            inneriteration_precision,
             inneriteration_print_modulo
             , precon
         );
@@ -434,7 +434,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     Float* res,
     Float precision,
     int print_modulo,
-    Float inneriteration_tolerance,
+    Float inneriteration_precision,
     int inneriteration_print_modulo
 ) {
     
@@ -546,7 +546,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_tolerance,
+                inneriteration_precision,
                 inneriteration_print_modulo
                 , diagonal, 1.
             );
@@ -590,7 +590,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_tolerance,
+                inneriteration_precision,
                 inneriteration_print_modulo,
                 diagonal, 1.
             );
@@ -681,7 +681,7 @@ int HodgeConjugateResidualSolverCSR_SSOR(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            inneriteration_tolerance,
+            inneriteration_precision,
             inneriteration_print_modulo
             , diagonal, 1.0
         );
@@ -805,7 +805,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
     Float* res,
     Float precision,
     int print_modulo,
-    Float inneriteration_tolerance,
+    Float inneriteration_precision,
     int inneriteration_print_modulo
 ) {
     
@@ -895,7 +895,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_tolerance,
+                inneriteration_precision,
                 inneriteration_print_modulo
             );
             
@@ -938,7 +938,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
                 (const Float *)aux1, 
                 Arows, Acolumns, Avalues, 
                 auxR,
-                inneriteration_tolerance,
+                inneriteration_precision,
                 inneriteration_print_modulo
             );
             
@@ -1030,7 +1030,7 @@ int HodgeConjugateResidualSolverCSR_textbook(
             (const Float *)aux1, 
             Arows, Acolumns, Avalues, 
             auxR,
-            inneriteration_tolerance,
+            inneriteration_precision,
             inneriteration_print_modulo
         );
         
@@ -1131,7 +1131,7 @@ int HodgeHerzogSoodhalterMethod(
     int print_modulo,
     const int* __restrict__ PArows, const int* __restrict__ PAcolumns, const Float* __restrict__ PAvalues, 
     const int* __restrict__ PCrows, const int* __restrict__ PCcolumns, const Float* __restrict__ PCvalues, 
-    Float inneriteration_tolerance,
+    Float inneriteration_precision,
     int inneriteration_print_modulo
 ) {
 
@@ -1157,7 +1157,7 @@ int HodgeHerzogSoodhalterMethod(
     // assert( PCrows );
     // assert( PCcolumns );
     // assert( PCvalues );
-    assert( inneriteration_tolerance > 0 );
+    assert( inneriteration_precision > 0 );
 //     assert( inneriteration_print_modulo >= 0 );
     
     Float tolerance = 0.;
@@ -1283,7 +1283,7 @@ int HodgeHerzogSoodhalterMethod(
                     v1_A, 
                     PArows, PAcolumns, PAvalues,
                     wn_A, // we recycle this memory 
-                    inneriteration_tolerance,
+                    inneriteration_precision,
                     inneriteration_print_modulo
                 );
             }
@@ -1296,7 +1296,7 @@ int HodgeHerzogSoodhalterMethod(
                     v1_C, 
                     PCrows, PCcolumns, PCvalues,
                     wn_C, // we recycle this memory 
-                    inneriteration_tolerance,
+                    inneriteration_precision,
                     inneriteration_print_modulo
                 );
             }
@@ -1415,7 +1415,7 @@ int HodgeHerzogSoodhalterMethod(
                     vn_A, 
                     PArows, PAcolumns, PAvalues,
                     wn_A, // we recycle this memory 
-                    inneriteration_tolerance,
+                    inneriteration_precision,
                     inneriteration_print_modulo
                 );
 
@@ -1431,7 +1431,7 @@ int HodgeHerzogSoodhalterMethod(
                     vn_C, 
                     PCrows, PCcolumns, PCvalues,
                     wn_C, // we recycle this memory 
-                    inneriteration_tolerance,
+                    inneriteration_precision,
                     inneriteration_print_modulo
                 );
 

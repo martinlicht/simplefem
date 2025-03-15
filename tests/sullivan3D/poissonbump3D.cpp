@@ -115,6 +115,8 @@ int main( int argc, char *argv[] )
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
+                LOG << "Polynomial degree: " << r << "/" << max_r << nl;
+                    
                 LOG << "...assemble scalar mass matrices" << nl;
         
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
@@ -123,39 +125,40 @@ int main( int argc, char *argv[] )
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                 
-                LOG << "...assemble differential matrix and transpose" << nl;
-
-                SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
-
-                SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
-
                 LOG << "...assemble inclusion matrix and transpose" << nl;
         
                 SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                 
                 SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
+                LOG << "...assemble differential matrix and transpose" << nl;
+
+                SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
+
+                SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
+
+                // TODO(martin): update using conjugation 
+                    
                 LOG << "...assemble stiffness matrix" << nl;
 
-                auto opr  = diffmatrix & incmatrix;
-                auto opl  = opr.getTranspose(); 
-                auto stiffness = opl & ( vector_massmatrix & opr );
+                // auto opr  = diffmatrix & incmatrix;
+                // auto opl  = opr.getTranspose(); 
+                // auto stiffness = opl & ( vector_massmatrix & opr );
+                // stiffness.sortentries();
+                // auto stiffness_csr = MatrixCSR( stiffness );
                 
-                stiffness.sortentries();
-                auto stiffness_csr = MatrixCSR( stiffness );
-                
-                auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-//                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
+                auto stiffness_csr = Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(diffmatrix) & MatrixCSR(incmatrix) );
+
+                // LOG << "... compose preconditioner data" << nl;
 
                 {
 
+                    LOG << "...interpolate explicit solution and rhs" << nl;
+        
                     const auto& function_sol  = experiment_sol;
                     const auto& function_grad = experiment_grad;
                     const auto& function_rhs  = experiment_rhs;
                     
-                    LOG << "...interpolate explicit solution and rhs" << nl;
-        
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                     FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                     FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
@@ -196,7 +199,7 @@ int main( int argc, char *argv[] )
                     
                     Float errornorm     = std::sqrt( errornorm_aux * ( scalar_massmatrix * errornorm_aux ) );
                     Float graderrornorm = std::sqrt( graderror_aux * ( vector_massmatrix * graderror_aux ) );
-                    Float residualnorm  = ( rhs - stiffness * sol ).norm();
+                    Float residualnorm  = ( rhs - stiffness_csr * sol ).norm();
                     
                     LOG << "error:     " << errornorm    << nl;
                     LOG << "graderror: " << graderrornorm << nl;

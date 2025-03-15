@@ -528,11 +528,8 @@ void DenseMatrix::random_matrix()
 void DenseMatrix::random_integer_matrix( int min, int max )
 {
     check();
-    assert( min < max );
-    assert( min+2 <= max );
-    unsigned long int diff = max - min;
-    assert( diff+1 > 0 );
-    // LOG << diff << nl << max << nl << min << nl;
+    assert( min < max and not ( min < 0 and max > std::numeric_limits<int>::max() + min ) );
+    unsigned int diff = max; diff -= min; assert( diff+1 > 0 );
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
     {
@@ -540,8 +537,7 @@ void DenseMatrix::random_integer_matrix( int min, int max )
         Float value = random_int % (diff+1) + (Float)min; // force the addition to be floating-point, avoid unsigned arithmetic
         assert( min <= value and value <= max );
         (*this)(r,c) = value;
-    }
-        
+    }    
 }
 
 void DenseMatrix::random_orthogonal_matrix()

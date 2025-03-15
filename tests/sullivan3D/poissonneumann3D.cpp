@@ -13,6 +13,7 @@
 #include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
+#include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial3D.hpp"
 #include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
@@ -123,6 +124,8 @@ int main( int argc, char *argv[] )
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
+                LOG << "Polynomial degree: " << r << "/" << max_r << nl;
+                
                 LOG << "...assemble scalar mass matrices" << nl;
         
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
@@ -131,47 +134,40 @@ int main( int argc, char *argv[] )
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                 
-                LOG << "...assemble differential matrix and transpose" << nl;
-
-                SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
-
-                SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
-
                 LOG << "...assemble inclusion matrix and transpose" << nl;
         
                 SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                 
                 SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
+                LOG << "...assemble differential matrix and transpose" << nl;
+
+                SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
+
+                SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
+
+                // TODO(martin): update using conjugation 
+    
                 LOG << "...assemble stiffness matrix" << nl;
         
-                // ProductOperator 
-//                     auto stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
-                auto op1 = incmatrix_t * diffmatrix_t;
-                auto op2 = op1 * vector_massmatrix;
-                auto op3 = op2 * diffmatrix;
-                auto stiffness = op3 * incmatrix;
-                auto& stiffness_csr = stiffness;
+                // auto opr  = diffmatrix & incmatrix;
+                // auto opl  = opr.getTranspose(); 
+                // auto stiffness = opl & ( vector_massmatrix & opr );
+                // stiffness.sortentries();
+                // auto stiffness_csr = MatrixCSR( stiffness );
+                
+                auto stiffness = Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(diffmatrix) & MatrixCSR(incmatrix) );
 
-//                     auto opr  = diffmatrix & incmatrix;
-//                     auto opl  = opr.getTranspose(); 
-//                     auto stiffness = opl & ( vector_massmatrix & opr );
-                
-//                     stiffness.sortentries();
-//                     auto stiffness_csr = MatrixCSR( stiffness );
-                
-                auto stiffness_invprecon = DiagonalOperator( stiffness.getdimin(), 1. );
-//                     auto stiffness_invprecon = InverseDiagonalPreconditioner( stiffness );
-                LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
+                // LOG << "... compose preconditioner data" << nl;
 
                 {
 
+                    LOG << "...interpolate explicit solution and rhs" << nl;
+        
                     const auto& function_sol  = experiment_sol;
                     const auto& function_grad = experiment_grad;
                     const auto& function_rhs  = experiment_rhs;
                     
-                    LOG << "...interpolate explicit solution and rhs" << nl;
-        
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                     FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                     FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );
@@ -195,7 +191,7 @@ int main( int argc, char *argv[] )
                     
                     {
                         sol.zero();
-                        ConjugateResidualMethod solver( stiffness_csr );
+                        ConjugateResidualMethod solver( stiffness );
                         solver.solve( sol, rhs );
                     }
 

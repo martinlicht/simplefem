@@ -267,41 +267,65 @@ int main( int argc, char *argv[] )
             SparseMatrix pseudo_elevmatrix_t = pseudo_elevmatrix.getTranspose();
 
             LOG << "... compose system matrices" << nl;
+
+            // TODO(martin): update using conjugation 
     
-            auto mat_A  = vector_incmatrix_t & vector_diffmatrix_t & ( pseudo_elevmatrix_t & pseudo_massmatrix & pseudo_elevmatrix ) & vector_diffmatrix & vector_incmatrix;
-            mat_A.sortandcompressentries();
+            // auto mat_A  = vector_incmatrix_t & vector_diffmatrix_t & ( pseudo_elevmatrix_t & pseudo_massmatrix & pseudo_elevmatrix ) & vector_diffmatrix & vector_incmatrix;
+            // mat_A.sortandcompressentries();
                 
-            auto mat_Bt = vector_incmatrix_t & ( vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix ) & scalar_diffmatrix & scalar_incmatrix; // upper right
-            mat_Bt.sortandcompressentries();
+            // auto mat_Bt = vector_incmatrix_t & ( vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix ) & scalar_diffmatrix & scalar_incmatrix; // upper right
+            // mat_Bt.sortandcompressentries();
             
-            auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower left
-            mat_B.sortandcompressentries();
+            // auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & pseudo_massmatrix & diffmatrix & vector_incmatrix; // lower left
+            // mat_B.sortandcompressentries();
             
-            LOG << "... compose CSR system matrices" << nl;
+            // auto A  = MatrixCSR( mat_A  );
+            // auto Bt = MatrixCSR( mat_Bt );
+            // auto B  = MatrixCSR( mat_B  );
+            
+            // auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+
+
+
+
+            // auto A = Conjugation( Conjugation( MatrixCSR(pseudo_massmatrix), MatrixCSR(pseudo_elevmatrix) ) , MatrixCSR(vector_diffmatrix) & MatrixCSR(vector_incmatrix) );
+            auto A = Conjugation( MatrixCSR(pseudo_massmatrix), MatrixCSR(pseudo_elevmatrix) & ( MatrixCSR(vector_diffmatrix) & MatrixCSR(vector_incmatrix) ) );
+            
+            auto Bt = MatrixCSR(vector_incmatrix_t) & Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(vector_elevmatrix) )
+                                                    & MatrixCSR(scalar_diffmatrix) & MatrixCSR(scalar_incmatrix); // upper right
+            
+            auto B = Bt.getTranspose(); // lower left
+            
+            auto C  = MatrixCSR( B.getdimout(), B.getdimout() ); // zero matrix
+            
+            
+            
+
+
+
+            
+            LOG << "... compose preconditioner data" << nl;
     
-            auto A  = MatrixCSR( mat_A  );
-            auto Bt = MatrixCSR( mat_Bt );
-            auto B  = MatrixCSR( mat_B  );
-            
-            auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
-            
             // TODO(martinlicht): develop preconditioners 
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
-            auto PA = MatrixCSR( vector_incmatrix_t & vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix & vector_incmatrix )
-                              + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_elevmatrix_t & pseudo_massmatrix & pseudo_elevmatrix & vector_diffmatrix & vector_incmatrix );
-            auto PC = MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevmatrix_t & vector_massmatrix & vector_elevmatrix & scalar_diffmatrix & scalar_incmatrix );
+            
+            auto PA = Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(vector_elevmatrix) & MatrixCSR(vector_incmatrix) );
+                      + 
+                      A; // Conjugation( MatrixCSR(pseudo_massmatrix), MatrixCSR(pseudo_elevmatrix) & ( MatrixCSR(vector_diffmatrix) & MatrixCSR(vector_incmatrix) ) );
+
+            auto PC = Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(vector_elevmatrix) & ( MatrixCSR(scalar_diffmatrix) & MatrixCSR(scalar_incmatrix) ) );
                 
             LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
             LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
                         
                         
+            LOG << "...interpolate explicit solution and rhs" << nl;
+            
             const auto& function_sol  = experiment_sol;
             const auto& function_rhs  = experiment_rhs;
             const auto& function_aux  = experiment_aux;
             const auto& function_curl = experiment_curl;
-            
-            LOG << "...interpolate explicit solution and rhs" << nl;
             
             FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r   + r_plus_vector, function_sol  );
             FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 1, r   + r_plus_vector, function_rhs  );
@@ -317,7 +341,8 @@ int main( int argc, char *argv[] )
             // compute the solution ....
 
 
-
+            LOG << "...iterative solver" << nl;
+                        
             timestamp start = timestampnow();
 
             {
@@ -333,31 +358,8 @@ int main( int argc, char *argv[] )
                     1,
                     PAinv, PCinv
                 );
-
-                if(false){ // TODO(martinlicht): fix 
-            
-                    FloatVector res = sol;
-                    
-                    HodgeConjugateResidualSolverCSR_SSOR( 
-                        B.getdimout(), 
-                        A.getdimout(), 
-                        sol.raw(), 
-                        rhs_sol.raw(), 
-                        A.getA(),   A.getC(),  A.getV(), 
-                        B.getA(),   B.getC(),  B.getV(), 
-                        Bt.getA(), Bt.getC(), Bt.getV(), 
-                        C.getA(),   C.getC(),  C.getV(), 
-                        res.raw(),
-                        desired_precision,
-                        1,
-                        desired_precision,
-                        0
-                    );
-                
-                }
-
             }
-
+            
             timestamp end = timestampnow();
 
             // ... computed the solution

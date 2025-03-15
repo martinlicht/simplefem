@@ -145,7 +145,7 @@ inline MatrixCSR operator-( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 
 inline MatrixCSR operator&( const MatrixCSR& mat1, const MatrixCSR& mat2 )
 {
-    return MatrixCSRMultiplication_reduced( mat1, mat2 );
+    return MatrixCSRMultiplication( mat1, mat2 );
 }
 
 inline MatrixCSR operator*( Float s, const MatrixCSR& mat )
@@ -159,6 +159,11 @@ inline MatrixCSR operator*( const MatrixCSR& mat, Float s )
 {
     return s * mat;
 }
+
+
+MatrixCSR Conjugation( const MatrixCSR& center, const MatrixCSR& factor );
+
+
 
 
 

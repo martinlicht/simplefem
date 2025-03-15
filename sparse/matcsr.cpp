@@ -772,14 +772,14 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     const int mat2_rows = mat2.getdimout();
     const int mat2_cols = mat2.getdimin();
     
-    const int* mat1A = mat1.getA();
-    const int* mat2A = mat2.getA();
+    const int* __restrict__ mat1A = mat1.getA();
+    const int* __restrict__ mat2A = mat2.getA();
     
-    const int* mat1C = mat1.getC();
-    const int* mat2C = mat2.getC();
+    const int* __restrict__ mat1C = mat1.getC();
+    const int* __restrict__ mat2C = mat2.getC();
 
-    const Float* mat1V = mat1.getV();
-    const Float* mat2V = mat2.getV();
+    const Float* __restrict__ mat1V = mat1.getV();
+    const Float* __restrict__ mat2V = mat2.getV();
 
     Assert( mat1_cols == mat2_rows );
 
@@ -790,7 +790,7 @@ MatrixCSR MatrixCSRMultiplication( const MatrixCSR& mat1, const MatrixCSR& mat2 
     
     std::vector<int> A( mat1_rows + 1, 0 );
 
-    LOG << mat1.text() << nl << mat2.text() << nl;
+    // LOG << mat1.text() << nl << mat2.text() << nl;
 
     #if defined(_OPENMP)
     #pragma omp parallel for
@@ -862,14 +862,14 @@ MatrixCSR MatrixCSRMultiplication_reduced( const MatrixCSR& mat1, const MatrixCS
     const int mat2_rows = mat2.getdimout();
     const int mat2_cols = mat2.getdimin();
     
-    const int* mat1A = mat1.getA();
-    const int* mat2A = mat2.getA();
+    const int* __restrict__ mat1A = mat1.getA();
+    const int* __restrict__ mat2A = mat2.getA();
     
-    const int* mat1C = mat1.getC();
-    const int* mat2C = mat2.getC();
+    const int* __restrict__ mat1C = mat1.getC();
+    const int* __restrict__ mat2C = mat2.getC();
 
-    const Float* mat1V = mat1.getV();
-    const Float* mat2V = mat2.getV();
+    const Float* __restrict__ mat1V = mat1.getV();
+    const Float* __restrict__ mat2V = mat2.getV();
 
     Assert( mat1_cols == mat2_rows );
 
@@ -1035,6 +1035,120 @@ void MatrixCSR::save_graphics( const char* filepath ) const
 
 
 
+
+
+MatrixCSR Conjugation( const MatrixCSR& center, const MatrixCSR& factor )
+{
+
+    const int N = center.getdimout();
+    assert( center.is_square() );
+    
+    const int L = factor.getdimin();
+    assert( center.getdimin() == factor.getdimout() );
+    
+    const auto* __restrict__ centerA = center.getA();
+    const auto* __restrict__ factorA = factor.getA();
+
+    const auto* __restrict__ centerC = center.getC();
+    const auto* __restrict__ factorC = factor.getC();
+
+    const auto* __restrict__ centerV = center.getV();
+    const auto* __restrict__ factorV = factor.getV();
+    
+    // count the maximum entries for each row of the result 
+    
+    std::vector<int> entries_per_row(L);
+    
+    for( int r = 0; r < N; r++ )
+    {
+    
+        int counter = 0;
+    
+        for( int i = centerA[r]; i < centerA[r+1]; i++ )
+        {
+            int c = centerC[i];
+            assert( 0 <= c && c < N );
+    
+            counter += factorA[c+1] - factorA[c];
+        }
+    
+        for( int i = factorA[r]; i < factorA[r+1]; i++ )
+        {
+            int c = factorC[i];
+            assert( 0 <= c && c < L );
+            
+            entries_per_row[c] += counter;
+        }
+    
+    }
+
+    int total_number_of_entries = 0; 
+    for( auto number : entries_per_row ) total_number_of_entries += number; 
+
+    // Assemble A 
+
+    std::vector<int> resultA(L+1);
+    resultA[0] = 0;
+    for( int r = 1; r <= L; r++ ) resultA[r] = resultA[r-1] + entries_per_row[r-1]; 
+    assert( resultA[L] == total_number_of_entries );
+    
+    // Assemble C and V
+    
+    std::vector<int>   resultC( total_number_of_entries, -1 );
+    std::vector<Float> resultV( total_number_of_entries, notanumber );
+
+    for( int r = 0; r < N; r++ )
+    {
+    
+        for( int i = centerA[r]; i < centerA[r+1]; i++ )
+        for( int j = factorA[r]; j < factorA[r+1]; j++ )
+        {
+            int   cj = factorC[j];
+            Float vj = factorV[j];
+            
+            int   ci = centerC[i];
+            Float vi = centerV[i];
+
+            assert( 0 <= cj && cj < L );
+            assert( 0 <= ci && ci < N );
+
+            
+            for( int k = factorA[ci]; k < factorA[ci+1]; k++ )
+            {
+                int   ck = factorC[k];
+                Float vk = factorV[k];
+                assert( 0 <= ck && ck < L );
+
+                assert( entries_per_row[cj] > 0 );
+                
+                int index = resultA[cj] + entries_per_row[cj] - 1;
+
+                Float c = ck;
+                Float v = vj * vi * vk;
+
+                assert( resultC[index] == -1 );
+                assert( not std::isfinite( resultV[index] ) );
+                
+                resultC[index] = c;
+                resultV[index] = v;
+                
+                entries_per_row[cj]--;
+            }
+            
+        }
+    
+    }
+
+    // Finished
+
+    for( auto number : entries_per_row ) assert( number == 0 );
+
+    for( auto c : resultC ) assert( 0 <= c && c < L );
+    for( auto v : resultV ) assert( std::isfinite(v) );
+
+    return MatrixCSR( L, L, resultA, resultC, resultV );
+    
+}
 
 
 

@@ -57,8 +57,8 @@ int main( int argc, char *argv[] )
         // std::function<FloatVector(const std::function<FloatVector(const FloatVector&) ) >scalarfield = 
         
         const Float xfeq = 1.;
-        const Float yfeq = 2.;
-        const Float zfeq = 3.;
+        const Float yfeq = 1.;
+        const Float zfeq = 1.;
         
         
         // u dx + v dy -> u_y dydx + v_x dxdy = ( v_x - u_y ) dxdy
@@ -111,7 +111,7 @@ int main( int argc, char *argv[] )
         
 
         const int min_l = 0; 
-        const int max_l = 3;
+        const int max_l = 5;
         
         const int min_r = 1;
         const int max_r = 1;
@@ -138,48 +138,75 @@ int main( int argc, char *argv[] )
                 
                 LOG << "... assemble matrices" << nl; 
         
+                LOG << "Polynomial degree: " << r << "/" << max_r << nl;
+                    
+                LOG << "... assemble mass matrices" << nl;
+
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
                                 
-                SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 3, r-1, 1 );
-                SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
-
                 SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r );
 
-                SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r );
-                SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
-
+                LOG << "... assemble inclusion matrices" << nl;
+        
                 SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r );
                 SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
 
                 SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 3, r );
                 SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
 
-                auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
-                mat_A.sortandcompressentries();
+                LOG << "... assemble algebraic matrices" << nl;
+
+                SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r );
+                SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
+
+                SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 3, r-1, 1 );
+                SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
+
                 
-                auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
-                mat_Bt.sortandcompressentries();
                 
-                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
-                mat_B.sortandcompressentries();
+                LOG << "... compose system matrices" << nl;
                 
-                auto A  = MatrixCSR( mat_A  );
-                auto Bt = MatrixCSR( mat_Bt );
-                auto B  = MatrixCSR( mat_B  );
+                // TODO(martin): update using conjugation 
+
+                auto A = Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(vector_incmatrix) );
                 
-                auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+                auto Bt = MatrixCSR(vector_incmatrix_t) & MatrixCSR(diffmatrix_t) & MatrixCSR(volume_elevationmatrix_t) & MatrixCSR(volume_massmatrix) & MatrixCSR(volume_incmatrix); // upper right
                 
-                auto Schur = B * inv(A,desired_precision) * Bt;
+                auto B  = Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
+                
+                auto C  = MatrixCSR( B.getdimout(), B.getdimout() ); // zero matrix
                 
                 auto negA = - A; 
                 
+
+                
+                LOG << "... compose preconditioner data" << nl;
+                        
+                // auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                //         + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_elevationmatrix & diffmatrix & vector_incmatrix );
+                // auto PC = MatrixCSR( volume_incmatrix_t & volume_massmatrix & volume_incmatrix );
+
+                auto PA = A // Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(vector_incmatrix) )
+                          + 
+                          Conjugation( MatrixCSR(volume_massmatrix), MatrixCSR(volume_elevationmatrix) & ( MatrixCSR(diffmatrix) & MatrixCSR(vector_incmatrix) ) );
+                
+                auto PC = Conjugation( MatrixCSR(volume_massmatrix), MatrixCSR(volume_incmatrix) );
+
+                LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
+                LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
+                
+                const auto PAinv = inv(PA,desired_precision,-1);
+                const auto PCinv = inv(PC,desired_precision,-1);
+
+                
+                
                 {
 
+                    LOG << "...interpolate explicit solution and rhs" << nl;
+                    
                     const auto& function_sol  = experiment_sol;
                     const auto& function_grad = experiment_grad;
                     const auto& function_rhs  = experiment_rhs;
-                    
-                    LOG << "...interpolate explicit solution and rhs" << nl;
                     
                     FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 2, r,   function_grad );
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 3, r-1, function_sol  );
@@ -189,67 +216,53 @@ int main( int argc, char *argv[] )
 
                     FloatVector sol( volume_incmatrix.getdimin(), 0. );
                     
+                    FloatVector  x_A( A.getdimin(),  0. ); // x_A is a dummy for the gradient 
+                    FloatVector& x_C = sol;                // x_C is a reference to the solution 
+                    
+                    const FloatVector  b_A( A.getdimin(),  0. ); 
+                    const FloatVector& b_C = rhs; 
+                    
+                    LOG << "...iterative solver" << nl;
+
                     timestamp start = timestampnow();
 
-                    // {
-
-                        LOG << "...iterative solver" << nl;
-                        
-                        auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
-                              + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_elevationmatrix & diffmatrix & vector_incmatrix );
-                        auto PC = MatrixCSR( volume_incmatrix_t & volume_massmatrix & volume_incmatrix );
-
-                        LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
-                        LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
-                        
-                        const auto PAinv = inv(PA,desired_precision,-1);
-                        const auto PCinv = inv(PC,desired_precision,-1);
-
-                        FloatVector  x_A( A.getdimin(),  0. ); 
-                        FloatVector& x_C = sol;
-                        
-                        const FloatVector  b_A( A.getdimin(),  0. ); 
-                        const FloatVector& b_C = rhs; 
-                        
+                    if(false){
                         BlockHerzogSoodhalterMethod( 
                             x_A, 
                             x_C, 
                             b_A, 
                             b_C, 
-                            negA, Bt, B, C, 
+                            A, Bt, B, C, 
                             desired_precision,
                             1,
                             PAinv, PCinv
                         );
+                    }
 
-                        if(false){
-                    
-                            FloatVector res = sol;
-                            
-                            HodgeConjugateResidualSolverCSR_SSOR( 
-                                B.getdimout(), 
-                                A.getdimout(), 
-                                sol.raw(), 
-                                rhs.raw(), 
-                                A.getA(),   A.getC(),  A.getV(), 
-                                B.getA(),   B.getC(),  B.getV(), 
-                                Bt.getA(), Bt.getC(), Bt.getV(), 
-                                C.getA(),   C.getC(),  C.getV(), 
-                                res.raw(),
-                                desired_precision,
-                                1,
-                                desired_precision,
-                                0
-                            );
-                        
-                        }
-
-                    // }
+                    {
+                        FloatVector res = x_C;        
+                        HodgeConjugateResidualSolverCSR_SSOR( 
+                            B.getdimout(), 
+                            A.getdimout(), 
+                            x_C.raw(), 
+                            b_C.raw(), 
+                            A.getA(),   A.getC(),  A.getV(), 
+                            B.getA(),   B.getC(),  B.getV(), 
+                            Bt.getA(), Bt.getC(), Bt.getV(), 
+                            C.getA(),   C.getC(),  C.getV(), 
+                            res.raw(),
+                            desired_precision,
+                            1,
+                            desired_precision,
+                            0
+                        );
+                        x_A = inv(A,desired_precision) * Bt * x_C;
+                    }
                     
                     timestamp end = timestampnow();
                     LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                                         
-                    auto grad = x_A; // inv(A,desired_precision) * Bt * sol;
+                    auto grad = x_A;
 
                     LOG << "...compute error and residual" << nl;
 
