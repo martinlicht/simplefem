@@ -1,0 +1,36 @@
+name: Unit tests (3)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 14 * * MON'
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    timeout-minutes: 600
+
+    steps:
+    - name: Show Processor Information (Linux)
+      run: lscpu
+    - name: Install OpenMP
+      run: sudo apt-get install -y libomp-dev
+#    - name: install valgrind here 
+#      run: sudo apt install -y valgrind
+    - name: show information on the current node
+      run: lscpu
+    - name: checkout repository...
+      uses: actions/checkout@v4
+    - name: build project...
+      run: make OPTIMIZED_DEBUG=yes
+    - name: run tests (sullivan3D)...
+      run: cd tests/ && make sullivan3D.run && cd ..
+#       continue-on-error: true
+    - name: run tests (whitney3D)...
+      run: cd tests/ && make whitney3D.run && cd ..
+#       continue-on-error: true
+#     - name: run tests (nullspace)...
+#       run: cd tests/ && make nullspace.run && cd .. 
+##       continue-on-error: true

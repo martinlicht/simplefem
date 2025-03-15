@@ -1,6 +1,7 @@
 [![Compilation](https://github.com/martinlicht/simplefem/actions/workflows/main.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/main.yml)
 [![Base tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests.yml)
-[![FEM tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml)
+[![FEM 2D tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml)
+[![FEM 3D tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests_3d.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests_3D.yml)
 
 ```
                   [ FFFFF EEEEE EEEEE  CCCC    +       +   ]
@@ -33,7 +34,7 @@ Most important features:
 
 Finite element features: 
 
-- [x] Meshes in dimension 1, 2, and 3
+- [x] Simplicial meshes in dimension 1, 2, and 3
 - [x] uniform mesh refinement and longest edge bisection
 - [x] Whitney and Sullivan k-forms of any polynomial degree in any dimension
 - [x] Exterior derivative, traces, exterior and interior products
