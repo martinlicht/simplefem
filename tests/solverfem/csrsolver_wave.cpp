@@ -98,6 +98,18 @@ int main( int argc, char *argv[] )
     contable_iter.display_convergence_rates  = false;
     contable_time.display_convergence_rates  = false;
     contable_res.display_convergence_rates   = false;
+
+    contable_u.minimum_header_length = 20;
+    contable_du.minimum_header_length = 20;
+    contable_iter.minimum_header_length = 20;
+    contable_time.minimum_header_length = 20;
+    contable_res.minimum_header_length = 20;
+
+    contable_u.minimum_printed_precision = 5;
+    contable_du.minimum_printed_precision = 5;
+    contable_iter.minimum_printed_precision = 5;
+    contable_time.minimum_printed_precision = 5;
+    contable_res.minimum_printed_precision = 5;
     
 
     bool do_cgmpp      = false;
@@ -105,7 +117,7 @@ int main( int argc, char *argv[] )
     bool do_crmpp_robt = false;
     bool do_crmpp_fast = false;
     bool do_minres     = false;
-    bool do_herzog     = false;
+    bool do_hersoo     = false;
     //
     bool do_cgm_csr                = false;
     bool do_crm_csr                = true;
@@ -123,7 +135,7 @@ int main( int argc, char *argv[] )
     if( do_crmpp_robt ) contable_u << "CRM++(robt)";
     if( do_crmpp_fast ) contable_u << "CRM++(fast)";
     if( do_minres     ) contable_u << "MINRES"     ;
-    if( do_herzog     ) contable_u << "HERZOG"     ;
+    if( do_hersoo     ) contable_u << "HERZOG"     ;
     //
     if( do_cgm_csr )                contable_u << "CGMcsr"       ;
     if( do_crm_csr )                contable_u << "CRMcsr"       ;
@@ -142,7 +154,7 @@ int main( int argc, char *argv[] )
     if( do_crmpp_robt ) contable_du << "CRM++(robt)";
     if( do_crmpp_fast ) contable_du << "CRM++(fast)";
     if( do_minres     ) contable_du << "MINRES"     ;
-    if( do_herzog     ) contable_du << "HERZOG"     ;
+    if( do_hersoo     ) contable_du << "HERZOG"     ;
     //
     if( do_cgm_csr )                contable_du << "CGMcsr"       ;
     if( do_crm_csr )                contable_du << "CRMcsr"       ;
@@ -161,7 +173,7 @@ int main( int argc, char *argv[] )
     if( do_crmpp_robt ) contable_iter << "CRM++(robt)";
     if( do_crmpp_fast ) contable_iter << "CRM++(fast)";
     if( do_minres     ) contable_iter << "MINRES"     ;
-    if( do_herzog     ) contable_iter << "HERZOG"     ;
+    if( do_hersoo     ) contable_iter << "HERZOG"     ;
     //
     if( do_cgm_csr )                contable_iter << "CGMcsr"       ;
     if( do_crm_csr )                contable_iter << "CRMcsr"       ;
@@ -180,7 +192,7 @@ int main( int argc, char *argv[] )
     if( do_crmpp_robt ) contable_time << "CRM++(robt)";
     if( do_crmpp_fast ) contable_time << "CRM++(fast)";
     if( do_minres     ) contable_time << "MINRES"     ;
-    if( do_herzog     ) contable_time << "HERZOG"     ;
+    if( do_hersoo     ) contable_time << "HERZOG"     ;
     //
     if( do_cgm_csr )                contable_time << "CGMcsr"       ;
     if( do_crm_csr )                contable_time << "CRMcsr"       ;
@@ -199,7 +211,7 @@ int main( int argc, char *argv[] )
     if( do_crmpp_robt ) contable_res << "CRM++(robt)";
     if( do_crmpp_fast ) contable_res << "CRM++(fast)";
     if( do_minres     ) contable_res << "MINRES"     ;
-    if( do_herzog     ) contable_res << "HERZOG"     ;
+    if( do_hersoo     ) contable_res << "HERZOG"     ;
     //
     if( do_cgm_csr )                contable_res << "CGMcsr"       ;
     if( do_crm_csr )                contable_res << "CRMcsr"       ;
@@ -279,7 +291,7 @@ int main( int argc, char *argv[] )
                     if( k ==  2 and not do_crmpp_robt ) continue;
                     if( k ==  3 and not do_crmpp_fast ) continue;
                     if( k ==  4 and not do_minres     ) continue;
-                    if( k ==  5 and not do_herzog     ) continue;
+                    if( k ==  5 and not do_hersoo     ) continue;
                     //
                     if( k ==  6 and not do_cgm_csr )                continue;
                     if( k ==  7 and not do_crm_csr )                continue;
@@ -301,7 +313,7 @@ int main( int argc, char *argv[] )
                     
                         ConjugateGradientMethod solver( SystemMatrix );
                         solver.print_modulo        = 0;
-                        solver.tolerance           = desired_precision;
+                        solver.precision           = desired_precision;
                         solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve( sol, rhs );
@@ -318,7 +330,7 @@ int main( int argc, char *argv[] )
                     
                         ConjugateResidualMethod solver( SystemMatrix );
                         solver.print_modulo        = 0;
-                        solver.tolerance           = desired_precision;
+                        solver.precision           = desired_precision;
                         solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve_explicit( sol, rhs );
@@ -335,7 +347,7 @@ int main( int argc, char *argv[] )
                     
                         ConjugateResidualMethod solver( SystemMatrix );
                         solver.print_modulo        = 0;
-                        solver.tolerance           = desired_precision;
+                        solver.precision           = desired_precision;
                         solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve_robust( sol, rhs );
@@ -352,7 +364,7 @@ int main( int argc, char *argv[] )
                     
                         ConjugateResidualMethod solver( SystemMatrix );
                         solver.print_modulo        = 0;
-                        solver.tolerance           = desired_precision;
+                        solver.precision           = desired_precision;
                         solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve_fast( sol, rhs );
@@ -369,7 +381,7 @@ int main( int argc, char *argv[] )
                     
                         MinimumResidualMethod solver( SystemMatrix );
                         solver.print_modulo        = 0;
-                        solver.tolerance           = desired_precision;
+                        solver.precision           = desired_precision;
                         solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve( sol, rhs );
@@ -380,13 +392,13 @@ int main( int argc, char *argv[] )
                         iteration_count = solver.recent_iteration_count;
                     }
 
-                    if( k == 5 and do_herzog )
+                    if( k == 5 and do_hersoo )
                     {
                         LOG << "HERZOG SOODHALTER C++" << nl;
                     
                         HerzogSoodhalterMethod solver( SystemMatrix );
                         solver.print_modulo        = 0;
-                        solver.tolerance           = desired_precision;
+                        solver.precision           = desired_precision;
                         solver.max_iteration_count = 1 * sol.getdimension();
                         timestamp start = timestampnow();
                         solver.solve( sol, rhs );

@@ -26,6 +26,8 @@ class ConvergenceTable final
 
         unsigned int minimum_printed_precision; // may increase the displayed precision.
     
+        unsigned int minimum_header_length;     // length of the header 
+    
     public:
 
         explicit ConvergenceTable( const std::string& table_name = "---------- Default Table Name ----------" );
@@ -34,7 +36,6 @@ class ConvergenceTable final
         ConvergenceTable( ConvergenceTable&& ) noexcept = default;
         ConvergenceTable& operator=( const ConvergenceTable& ) = default;
         ConvergenceTable& operator=( ConvergenceTable&& ) noexcept = default;
-        
         
         void insert_numerical_entry( EntryType entry );
         void insert_seriesheader( const std::string& seriesheader );

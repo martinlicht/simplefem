@@ -15,9 +15,12 @@ std::vector<FloatVector> computeNullspace(
     //
     const Float tolerance_residual, 
     const Float tolerance_zero
-) {
+) { 
 
     std::vector<FloatVector> nullvectorgallery;
+    
+    // TODO(martin): double check how tolerance and precision should be used/named here. 
+    //               Introduce new terminology. 
     
     for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
     {
@@ -42,7 +45,7 @@ std::vector<FloatVector> computeNullspace(
             ConjugateResidualMethod solver( SystemMatrix );
             solver.print_modulo        = -1; //candidate.getdimension();
             solver.max_iteration_count = candidate.getdimension();
-            solver.tolerance           = tolerance_residual;
+            solver.precision           = tolerance_residual;
 
             solver.solve( candidate, rhs );
             

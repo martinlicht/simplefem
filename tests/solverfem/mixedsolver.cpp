@@ -116,14 +116,14 @@ int main( int argc, char *argv[] )
         
         bool do_crmcsr = true;
         bool do_crmcpp = true; 
-        bool do_herzogblock = true; 
+        bool do_hersooblock = true; 
         bool do_minresblock = false; // comparable to Herzog-Soodhalter 
         bool do_systemherzog = true;
         bool do_sparseherzog = true;
         
         if( do_crmcsr )       { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
         if( do_crmcpp )       { contable_sigma << "CRMcpp"; contable_u << "CRMcpp"; contable_du << "CRMcpp"; contable_iter << "CRMcpp"; contable_time << "CRMcpp"; contable_res << "CRMcpp"; } 
-        if( do_herzogblock )  { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
+        if( do_hersooblock )  { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
         if( do_minresblock )  { contable_sigma << "Minres"; contable_u << "Minres"; contable_du << "Minres"; contable_iter << "Minres"; contable_time << "Minres"; contable_res << "Minres"; } 
         if( do_systemherzog ) { contable_sigma << "SysHerzog"; contable_u << "SysHerzog"; contable_du << "SysHerzog"; contable_iter << "SysHerzog"; contable_time << "SysHerzog"; contable_res << "SysHerzog"; } 
         if( do_sparseherzog ) { contable_sigma << "SpaHerzog"; contable_u << "SpaHerzog"; contable_du << "SpaHerzog"; contable_iter << "SpaHerzog"; contable_time << "SpaHerzog"; contable_res << "SpaHerzog"; } 
@@ -220,7 +220,7 @@ int main( int argc, char *argv[] )
                     
                     FloatVector sol( vector_incmatrix.getdimin(), 0. );
 
-                    assert( do_crmcsr or do_crmcpp or do_herzogblock or do_minresblock or do_systemherzog or do_sparseherzog );
+                    assert( do_crmcsr or do_crmcpp or do_hersooblock or do_minresblock or do_systemherzog or do_sparseherzog );
                     
                     for( int k = 0; k <= 5; k++ )
                     {
@@ -232,7 +232,7 @@ int main( int argc, char *argv[] )
 
                         if( k == 0 and not do_crmcsr ) continue;
                         if( k == 1 and not do_crmcpp ) continue;
-                        if( k == 2 and not do_herzogblock ) continue;
+                        if( k == 2 and not do_hersooblock ) continue;
                         if( k == 3 and not do_minresblock ) continue;
                         if( k == 4 and not do_systemherzog ) continue;
                         if( k == 5 and not do_sparseherzog ) continue;
@@ -288,7 +288,7 @@ int main( int argc, char *argv[] )
                         }
 
 
-                        if( k == 2 and do_herzogblock )
+                        if( k == 2 and do_hersooblock )
                         {
                             sol.zero();
                             
@@ -354,8 +354,8 @@ int main( int argc, char *argv[] )
                             
                             // const auto PAinv = IdentityOperator(A.getdimin());
                             // const auto PCinv = IdentityOperator(C.getdimin());
-                            const auto PAinv = inv(PA,desired_precision,-1);
-                            const auto PCinv = inv(PC,desired_precision,-1);
+                            const auto PAinv = inv(PA,desired_precision,0);
+                            const auto PCinv = inv(PC,desired_precision,0);
 
                             FloatVector  x_A( A.getdimin(),  0. ); 
                             FloatVector& x_C = sol;
@@ -412,7 +412,7 @@ int main( int argc, char *argv[] )
                                 PA.getA(), PA.getC(), PA.getV(),
                                 PC.getA(), PC.getC(), PC.getV(),
                                 desired_precision, 
-                                1
+                                0
                             );
                             
                             timestamp end = timestampnow();

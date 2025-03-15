@@ -88,7 +88,7 @@ int main( int argc, char *argv[] )
             CGM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
             CGM.print_modulo = 0;
             CGM.max_iteration_count = 2 * dimension;
-            CGM.tolerance = desired_precision;
+            CGM.precision = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -104,7 +104,7 @@ int main( int argc, char *argv[] )
             PCGM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
             PCGM.print_modulo = 0;
             PCGM.max_iteration_count = 2 * dimension;
-            PCGM.tolerance = desired_precision;
+            PCGM.precision = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -120,7 +120,7 @@ int main( int argc, char *argv[] )
             CRM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
             CRM.print_modulo = 0;
             CRM.max_iteration_count = 2 * dimension;
-            CRM.tolerance = desired_precision;
+            CRM.precision = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -136,7 +136,7 @@ int main( int argc, char *argv[] )
             PCRM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
             PCRM.print_modulo = 0;
             PCRM.max_iteration_count = 2 * dimension;
-            PCRM.tolerance = desired_precision;
+            PCRM.precision = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -152,7 +152,7 @@ int main( int argc, char *argv[] )
             MINRES.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
             MINRES.print_modulo = 0;
             MINRES.max_iteration_count = 2 * dimension;
-            MINRES.tolerance = desired_precision;
+            MINRES.precision = desired_precision;
             
             timestamp start, end;
             start = timestampnow();
@@ -194,7 +194,7 @@ int main( int argc, char *argv[] )
             
             MinimumResidualMethod MINRES(A);
             MINRES.max_iteration_count = 2 * dimension;
-            MINRES.tolerance = desired_precision;
+            MINRES.precision = desired_precision;
             
             timestamp start, end;
             start = timestampnow();

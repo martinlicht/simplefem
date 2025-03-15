@@ -18,7 +18,7 @@ int BlockHerzogSoodhalterMethod(
     const FloatVector& b_A, 
     const FloatVector& b_C, 
     const LinearOperator& A, const LinearOperator& Bt, const LinearOperator& B, const LinearOperator& C, 
-    Float tolerance,
+    Float precision,
     int print_modulo,
     const LinearOperator& PAinv, const LinearOperator& PCinv
 ) {
@@ -63,6 +63,8 @@ int BlockHerzogSoodhalterMethod(
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
+
+    const Float tolerance = maximum( desired_precision, precision * sqrt( b_A.norm_sq() + b_C.norm_sq() ) );
     
     FloatVector v0_A( dimension_A, 0. );
     FloatVector v1_A( dimension_A, 0. );
@@ -153,8 +155,8 @@ int BlockHerzogSoodhalterMethod(
             eta_A = gamma * std::sqrt( psi_A );
             eta_C = gamma * std::sqrt( psi_C );
             
-            s0 = s1 = 0;
-            c0 = c1 = 1;
+            s0 = s1 = 0.;
+            c0 = c1 = 1.;
             
             if( do_print_restart ) {
                 LOGPRINTF( "(%d/%d)   RESTART: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) absolute(eta), (double)(safedouble)tolerance );
