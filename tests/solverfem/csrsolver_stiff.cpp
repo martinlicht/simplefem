@@ -588,7 +588,7 @@ int main( int argc, char *argv[] )
                         LOG << "CGM - CSR Classic with diagonal preconditioning" << nl;
                         
                         auto precon = InverseDiagonalPreconditioner( stiffness );
-
+                        auto precon_diagonal = precon.getDiagonal();
                         
                         FloatVector sol = sol_original;
                         const FloatVector& rhs = rhs_original;
@@ -604,7 +604,7 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             0,
-                            precon.getDiagonal().raw()
+                            precon_diagonal.raw()
                         );
 
                         timestamp end = timestampnow();
@@ -802,8 +802,10 @@ int main( int argc, char *argv[] )
                         LOG << "CHEBYSHEV CSR" << nl;
                     
                         DiagonalOperator invprecon = InverseDiagonalPreconditioner( stiffness_csr_prelim );
-                        assert( invprecon.getDiagonal().is_finite() );
-                        assert( invprecon.getDiagonal().is_nonnegative() );
+                        auto invprecon_diagonal = invprecon.getDiagonal();
+
+                        assert( invprecon_diagonal.is_finite() );
+                        assert( invprecon_diagonal.is_nonnegative() );
                         
                         FloatVector sol = sol_original;
                         const FloatVector& rhs = rhs_original;
@@ -819,9 +821,9 @@ int main( int argc, char *argv[] )
                             residual.raw(),
                             desired_precision,
                             10,
-                            invprecon.getDiagonal().raw(),
+                            invprecon_diagonal.raw(),
                             0.,
-                            100 * invprecon.getDiagonal().maxnorm()
+                            100 * invprecon_diagonal.maxnorm()
                         );
 
                         timestamp end = timestampnow();

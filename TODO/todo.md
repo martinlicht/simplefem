@@ -89,7 +89,7 @@ None of the above can be done in a day, so it most likely requires regular grind
 
 # HIGH: DO THESE NEXT
 
-    ## (HIGH) All one vector
+## (HIGH) All one vector
 
 Ensure that all-one vectors are not used for constant functions. That only works if r=1. Name: constant_one
 
@@ -555,6 +555,18 @@ Possible definition: `typedef std::size_t Index;`
 ## (LOW) Various
 
 Upvote: <https://stackoverflow.com/questions/10865957/printf-with-stdstring>
+
+## (LOW) Avoid compiler warning about sizes 
+
+```cpp
+template< typename T, std::enable_if_t<std::is_integral<Integer>::value, bool> = true >
+std::size_t ADMISSIBLE_SIZE_CAST( T t )
+{
+    if( std::is_signed<T>::value ) assert( 0 <= t )
+    assert( t < SOME_LIMIT );
+    return static_cast<std::size_t>(t);
+}
+```
 
 
 
@@ -1084,7 +1096,6 @@ Should smart pointers be employed throughout the library to make it more robust 
 ## (INFRASTRUCTURE) Unreal engine 
 
 Revisit the Unreal engine for ideas 
-
 
 
 

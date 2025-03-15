@@ -223,12 +223,12 @@ int main( int argc, char *argv[] )
 
                 {
 
+                    LOG << "...interpolate explicit solution and rhs" << nl;
+        
                     const auto& function_sol  = parametric_u;
                     const auto& function_grad = parametric_gradu;
                     const auto& function_rhs  = parametric_f;
                     
-                    LOG << "...interpolate explicit solution and rhs" << nl;
-        
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
                     FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
                     FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 0, r,   function_rhs  );

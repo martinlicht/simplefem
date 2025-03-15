@@ -237,12 +237,12 @@ int main( int argc, char *argv[] )
                 
                 {
 
+                    LOG << "...interpolate explicit solution and rhs" << nl;
+                    
                     const auto& function_ndiv = experiment_ndiv;
                     const auto& function_sol  = experiment_sol;
                     const auto& function_curl = experiment_curl;
                     const auto& function_rhs  = experiment_rhs;
-                    
-                    LOG << "...interpolate explicit solution and rhs" << nl;
                     
                     FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r, function_ndiv );
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r, function_sol  );

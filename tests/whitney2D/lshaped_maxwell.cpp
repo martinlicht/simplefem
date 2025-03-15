@@ -92,7 +92,7 @@ int main( int argc, char *argv[] )
                 LOG << "... assemble matrices" << nl;
         
                 
-                    // TODO(martinlicht): correct the degrees, perhaps via degree elevation
+                
                 
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
@@ -148,7 +148,7 @@ int main( int argc, char *argv[] )
                 // auto negB  = B;  negB.scale(-1);
                 // auto negBt = Bt; negBt.scale(-1);
                 
-                auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
+                // auto SystemMatrix = C + B * inv(A,desired_precision) * Bt;
                 
                 {
 

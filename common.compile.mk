@@ -262,7 +262,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 	else 
 # wierd warnings appear at LTO and O1+ ....
 		CXXFLAGS_OPTIMIZE += -flto
-		CXXFLAGS_OPTIMIZE += -Ofast  
+		CXXFLAGS_OPTIMIZE += -O3 -fno-finite-math-only
 		CXXFLAGS_OPTIMIZE += -fshort-enums
 		ifeq ($(FLAG_CXX),GCC)
 			CXXFLAGS_OPTIMIZE += -fno-fat-lto-objects
@@ -348,6 +348,11 @@ CXXFLAGS_WARNINGS += -Wall -Wextra -Wpedantic
 
 ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
+	
+	# This flag is buggy and should not be used 
+	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85783
+	CXXFLAGS_WARNINGS += -Wno-alloc-size-larger-than
+	
 	CXXFLAGS_WARNINGS += -Wodr  
 	
 	CXXFLAGS_WARNINGS += -Wredundant-decls
@@ -387,6 +392,8 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Warray-bounds
 		CXXFLAGS_WARNINGS += -Warray-bounds=2
 		CXXFLAGS_WARNINGS += -Wattribute-alias=2
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wattribute-warning
+		CXXFLAGS_WARNINGS += -Wno-attribute-warning
 		# # unknown: CXXFLAGS_WARNINGS += -Wbidi-chars=any
 		# # unknown: CXXFLAGS_WARNINGS += -Wcalloc-transposed-args
 		CXXFLAGS_WARNINGS += -Wcast-qual
@@ -411,7 +418,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		# # DISABLED: CXXFLAGS_WARNINGS += -Winfinite-recursion
 		CXXFLAGS_WARNINGS += -Winit-self
 		# # DISABLED: CXXFLAGS_WARNINGS += -Winline 
-		CXXFLAGS_WARNINGS += -Winline 
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wno-inline 
 		CXXFLAGS_WARNINGS += -Wint-in-bool-context
 		CXXFLAGS_WARNINGS += -Winvalid-pch
 		# # unknown: CXXFLAGS_WARNINGS += -Winvalid-utf8
@@ -442,8 +449,10 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		# # DISABLED: CXXFLAGS_WARNINGS += -Wstrict-overflow=5
 		CXXFLAGS_WARNINGS += -Wstringop-overflow=4
 		# # DISABLED: CXXFLAGS_WARNINGS += -Wsuggest-attribute
-		CXXFLAGS_WARNINGS += -Wsuggest-final-types 
-		CXXFLAGS_WARNINGS += -Wsuggest-final-methods 
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wsuggest-final-methods 
+		CXXFLAGS_WARNINGS += -Wno-suggest-final-methods
+		# # DISABLED: CXXFLAGS_WARNINGS += -Wsuggest-final-types 
+		CXXFLAGS_WARNINGS += -Wno-suggest-final-types 
 		CXXFLAGS_WARNINGS += -Wsuggest-override
 		CXXFLAGS_WARNINGS += -Wswitch-default 
 		CXXFLAGS_WARNINGS += -Wswitch-enum
@@ -613,6 +622,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wnarrowing
 		CXXFLAGS_WARNINGS += -Wnested-anon-types
 		CXXFLAGS_WARNINGS += -Wnewline-eof
+		CXXFLAGS_WARNINGS += -Wno-attribute-warning
 		CXXFLAGS_WARNINGS += -Wnon-gcc
 		CXXFLAGS_WARNINGS += -Wnon-virtual-dtor
 		CXXFLAGS_WARNINGS += -Wnonportable-system-include-path
