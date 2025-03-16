@@ -144,8 +144,6 @@ class DenseMatrix final
         
         DenseMatrix submatrix( const IndexMap& rows, const IndexMap& columns ) const;
         
-        FloatVector getDiagonal() const;
-        
         /* Arithmetic operations */
         
         void add( const DenseMatrix& addendum );
@@ -153,26 +151,28 @@ class DenseMatrix final
         void add( Float s, Float scaling, const DenseMatrix& addendum );
         
         
-        /* Measurements */
+        /* Simple calculations */
         
-        DenseMatrix symmetricPart() const;
+        Float min() const;
         
-        DenseMatrix antisymmetricPart() const;
+        Float average() const;
         
-        /* Measurements */
+        Float sum() const;
         
         Float maxabsoluteentry() const;
         
         Float norm() const;
         
-        Float frobeniusnorm() const;
-        
         Float maxnorm() const;
         
         Float sumnorm() const;
         
+        Float l2norm() const;
+
         Float lpnorm( Float ) const;
 
+        Float frobeniusnorm() const;
+        
         Float norm_row_col( Float p, Float q ) const;
 
         Float norm_col_row( Float p, Float q ) const;
@@ -182,24 +182,43 @@ class DenseMatrix final
         Float norm_operator_max() const;
         
 
-        // matrix trace 
-
+        /* Measurements */
+        
+        FloatVector getDiagonal() const;
+        
+        DenseMatrix symmetricPart() const;
+        
+        DenseMatrix antisymmetricPart() const;
+        
         Float trace() const;
 
-        // Gerschgorin circles : row/column 
+        
+        /* Gerschgorin circles and eigenvalue estimates */
 
         DenseMatrix Gerschgorin() const;
+        
         DenseMatrix GerschgorinRow() const;
+        
         DenseMatrix GerschgorinColumn() const;
 
-        // Crude eigenvalue and singular value estimate 
-
         Float eigenvalue_estimate() const;
+        
         Float operator_norm_estimate( int sample_numbers = 5, int iteration_numbers = 10 ) const;
-
-
+        
         
         /* Investigations */
+        
+        bool is_finite() const;
+        
+        bool is_zero() const;
+        
+        bool is_positive() const;
+        
+        bool is_negative() const;
+        
+        bool is_nonnegative() const;
+        
+        bool is_nonpositive() const;
         
         bool is_square() const;
         
@@ -217,24 +236,14 @@ class DenseMatrix final
         
         bool is_upper_right_triangular() const;
         
-        bool is_finite() const;
-        
-        bool is_zero() const;
-        
-        bool is_positive() const;
-        
-        bool is_negative() const;
-        
-        bool is_nonnegative() const;
-        
-        bool is_nonpositive() const;
-        
         
         bool is_numerically_small( Float threshold = desired_closeness ) const;
         
         bool is_numerically_identity( Float threshold = desired_closeness ) const;
         
         
+        /* Raw access */
+
         Float* raw();
         const Float* raw() const;
 

@@ -445,7 +445,7 @@ FloatVector& FloatVector::shiftnegative( Float delta )
     return *this;
 }
 
-FloatVector& FloatVector::inverse()
+FloatVector& FloatVector::reciprocal()
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
@@ -598,13 +598,13 @@ Float FloatVector::min() const
 
 Float FloatVector::average() const 
 {
+    assert( getdimension() > 0 );
     return sum() / getdimension();
 }
 
 Float FloatVector::sum() const 
 {
     check();
-    assert( getdimension() > 0 );
     long double ret = 0.;
     for( int d = 0; d < getdimension(); d++ )
         ret = ret + pointer[d];

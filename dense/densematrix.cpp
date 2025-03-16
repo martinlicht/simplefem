@@ -344,6 +344,16 @@ void DenseMatrix::apply( FloatVector& dest, const FloatVector& add, Float scalin
 
 }
 
+int DenseMatrix::numrows() const
+{
+    return getdimout();
+}
+
+int DenseMatrix::numcolumns() const
+{
+    return getdimin();
+}
+
 Float DenseMatrix::get( int r, int c ) const
 {
     return (*this)( r, c );
@@ -798,6 +808,37 @@ DenseMatrix DenseMatrix::antisymmetricPart() const
 
 
 
+
+Float DenseMatrix::min() const 
+{
+    check();
+    assert( getdimin() > 0 and getdimout() > 0 );
+    Float ret = get(0,0);
+    for( int i = 0; i < getdimin();  i++ )
+    for( int j = 0; j < getdimout(); j++ )
+        ret = ( ret < get(i,j) ) ? ret : get(i,j);
+    return ret;
+}
+
+Float DenseMatrix::average() const 
+{
+    return sum() / ( getdimin() > 0 and getdimout() );
+}
+
+Float DenseMatrix::sum() const 
+{
+    check();
+    long double ret = 0.;
+    for( int i = 0; i < getdimin();  i++ )
+    for( int j = 0; j < getdimout(); j++ )
+        ret = ( ret < get(i,j) ) ? ret : get(i,j);
+    return static_cast<Float>(ret);
+}
+
+Float DenseMatrix::l2norm() const 
+{
+    return frobeniusnorm();
+}
 
 
 Float DenseMatrix::maxabsoluteentry() const
