@@ -150,7 +150,7 @@ int main( int argc, char *argv[] )
             
             {
                 
-                LOG << "...assemble matrix" << nl;
+                LOG << "... assemble matrix" << nl;
 
                 std::vector< SparseMatrix::MatrixEntry > entries;
 
@@ -177,7 +177,7 @@ int main( int argc, char *argv[] )
                 auto system = MatrixCSR( system_prelim );
 
 
-                LOG << "...create solutions and right-hand sides" << nl;
+                LOG << "... create solutions and right-hand sides" << nl;
 
                 const int T = 5;
 

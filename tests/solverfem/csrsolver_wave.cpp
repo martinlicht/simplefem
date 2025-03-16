@@ -251,7 +251,7 @@ int main( int argc, char *argv[] )
             
             LOG << "Polynomial degree: " << r << "/" << max_r << nl;
             
-            LOG << "...assemble partial matrices" << nl;
+            LOG << "... assemble partial matrices" << nl;
     
             SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
             SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
@@ -262,7 +262,7 @@ int main( int argc, char *argv[] )
             SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
             SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
-            LOG << "...convert to CSR" << nl;
+            LOG << "... convert to CSR" << nl;
     
             auto MassMatrix = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix );
             auto DiffMatrix = MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix );
@@ -270,7 +270,7 @@ int main( int argc, char *argv[] )
             
             {
 
-                LOG << "...interpolate explicit solution and rhs" << nl;
+                LOG << "... interpolate explicit solution and rhs" << nl;
                 
                 FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   experiment_sol  );
                 FloatVector interpol_curl = Interpolation( M, M.getinnerdimension(), 2, r-1, experiment_curl );
@@ -702,7 +702,7 @@ int main( int argc, char *argv[] )
 
                     assert( sol.is_finite() );
 
-                    LOG << "...compute error and residual:" << k << nl;
+                    LOG << "... compute error and residual:" << k << nl;
 
                     auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;
                     auto errornorm_aux_curl = interpol_curl - vector_diffmatrix * vector_incmatrix * sol;

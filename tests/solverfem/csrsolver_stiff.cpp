@@ -204,32 +204,32 @@ int main( int argc, char *argv[] )
             
             {
                 
-                LOG << "...assemble scalar mass matrix" << nl;
+                LOG << "... assemble scalar mass matrix" << nl;
         
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
-                LOG << "...assemble vector mass matrix" << nl;
+                LOG << "... assemble vector mass matrix" << nl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
 
-                LOG << "...sort and compress mass matrices" << nl;
+                LOG << "... sort and compress mass matrices" << nl;
         
                 scalar_massmatrix.sortandcompressentries();
                 vector_massmatrix.sortandcompressentries();
 
-                LOG << "...assemble differential matrix and transpose" << nl;
+                LOG << "... assemble differential matrix and transpose" << nl;
 
                 SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                 SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                LOG << "...assemble inclusion matrix and transpose" << nl;
+                LOG << "... assemble inclusion matrix and transpose" << nl;
         
                 SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                 SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                LOG << "...compose stiffness and mass matrices" << nl;
+                LOG << "... compose stiffness and mass matrices" << nl;
         
                 // const auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
                 // const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
@@ -245,7 +245,7 @@ int main( int argc, char *argv[] )
                 const auto& stiffness = stiffness_csr;
                 const auto& mass      =      mass_csr;
                 
-                LOG << "...matrices done" << nl;
+                LOG << "... matrices done" << nl;
 
                 {
 

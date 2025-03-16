@@ -78,7 +78,7 @@ int main( int argc, char *argv[] )
             
             LOG << "DIMENSION " << d+1 << " AT LEVEL " << l << nl;
     
-            LOG << "...basic FEEC matrices" << nl;
+            LOG << "... basic FEEC matrices" << nl;
     
             auto feec_broken_mass = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, 1 );
 
@@ -105,7 +105,7 @@ int main( int argc, char *argv[] )
             assert( feec_whitney_inc.is_finite() );
             assert( feec_whitney_inc_t.is_finite() );
                 
-            LOG << "...composed FEEC matrices" << nl;
+            LOG << "... composed FEEC matrices" << nl;
             
             auto feec_broken_stiffness = feec_diff_t & feec_vectormass       & feec_diff;
             auto feec_stiffness        = feec_inc_t  & feec_broken_stiffness & feec_inc;
@@ -122,7 +122,7 @@ int main( int argc, char *argv[] )
             assert( feec_whitney_stiffness.is_finite() );
             assert( feec_whitney_mass.is_finite()      );
             
-            LOG << "...basic Lagrange matrices" << nl;
+            LOG << "... basic Lagrange matrices" << nl;
             
             auto lagr_broken_mass      = LagrangeBrokenMassMatrix( M, 1 );
             auto lagr_broken_stiffness = LagrangeBrokenStiffnessMatrix( M, 1 );
@@ -133,12 +133,12 @@ int main( int argc, char *argv[] )
             auto lagr_inc   = LagrangeInclusionMatrix( M, M.getinnerdimension(), 1 );
             auto lagr_inc_t = lagr_inc.getTranspose();
             
-            LOG << "...composed Lagrange matrices" << nl;
+            LOG << "... composed Lagrange matrices" << nl;
             
             auto lagr_composed_mass      = lagr_inc_t & lagr_broken_mass      & lagr_inc;
             auto lagr_composed_stiffness = lagr_inc_t & lagr_broken_stiffness & lagr_inc;
             
-            LOG << "...COMPARISONS" << nl;
+            LOG << "... COMPARISONS" << nl;
                 
             for( int n = 0; n < number_of_samples; n++ ){
                 auto vec = lagr_inc.createinputvector();

@@ -126,21 +126,21 @@ int main( int argc, char *argv[] )
                 
                 LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                 
-                LOG << "...assemble scalar mass matrices" << nl;
+                LOG << "... assemble scalar mass matrices" << nl;
         
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
 
-                LOG << "...assemble vector mass matrix" << nl;
+                LOG << "... assemble vector mass matrix" << nl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                 
-                LOG << "...assemble inclusion matrix and transpose" << nl;
+                LOG << "... assemble inclusion matrix and transpose" << nl;
         
                 SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                 
                 SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                LOG << "...assemble differential matrix and transpose" << nl;
+                LOG << "... assemble differential matrix and transpose" << nl;
 
                 SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
@@ -148,7 +148,7 @@ int main( int argc, char *argv[] )
 
                 // TODO(martin): update using conjugation 
     
-                LOG << "...assemble stiffness matrix" << nl;
+                LOG << "... assemble stiffness matrix" << nl;
         
                 // auto opr  = diffmatrix & incmatrix;
                 // auto opl  = opr.getTranspose(); 
@@ -162,7 +162,7 @@ int main( int argc, char *argv[] )
 
                 {
 
-                    LOG << "...interpolate explicit solution and rhs" << nl;
+                    LOG << "... interpolate explicit solution and rhs" << nl;
         
                     const auto& function_sol  = experiment_sol;
                     const auto& function_grad = experiment_grad;
@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
                     
                     FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
                     
-                    LOG << "...measure kernel component: ";
+                    LOG << "... measure kernel component: ";
         
                     Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
                     Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
@@ -185,7 +185,7 @@ int main( int argc, char *argv[] )
 
                     FloatVector sol( incmatrix.getdimin(), 0. );
                     
-                    LOG << "...iterative solver" << nl;
+                    LOG << "... iterative solver" << nl;
                     
                     timestamp start = timestampnow();
                     
@@ -198,7 +198,7 @@ int main( int argc, char *argv[] )
                     timestamp end = timestampnow();
                     LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                     
-                    LOG << "...compute error and residual" << nl;
+                    LOG << "... compute error and residual" << nl;
                     
                     auto computed_sol  = incmatrix * sol;
                     auto computed_grad = diffmatrix * incmatrix * sol;

@@ -1367,7 +1367,8 @@ void MinimumResidualMethod::solve( FloatVector& x, const FloatVector& b ) const
     }
     
     /* HOW DID WE FINISH ? */
-    recent_deviation = absolute(r_r);
+    // recent_deviation = absolute(r_r);
+    recent_deviation = absolute( ( b - A * x ).norm_sq() );
     
     if( do_print_finish ) 
         LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance );

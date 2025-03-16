@@ -56,7 +56,7 @@ struct IterativeSolver
         assert( recent_iteration_count >= 0 );
         assert( recent_iteration_count <= max_iteration_count );
 
-        assert( print_modulo >= -1 );
+        // // assert( print_modulo >= -1 );
         
         A.check();
         assert( A.getdimin() == A.getdimout() );

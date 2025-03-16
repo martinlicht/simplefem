@@ -185,7 +185,7 @@ int main( int argc, char *argv[] )
             const auto& function_aux = experiment_aux;
             const auto& function_curl = experiment_curl;
             
-            LOG << "...interpolate explicit solution and rhs" << nl;
+            LOG << "... interpolate explicit solution and rhs" << nl;
             
             FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,    function_sol );
             FloatVector interpol_rhs  = Interpolation( M, M.getinnerdimension(), 1, r,    function_rhs );
@@ -268,7 +268,7 @@ int main( int argc, char *argv[] )
 
             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
             
-            LOG << "...compute error and residual" << nl;
+            LOG << "... compute error and residual" << nl;
 
             auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix * sol;
             auto errornorm_aux_curl = interpol_curl - vector_diffmatrix * vector_incmatrix * sol;

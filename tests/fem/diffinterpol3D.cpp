@@ -144,7 +144,7 @@ int main( int argc, char *argv[] )
             SparseMatrix pseudo_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r );
 
             
-            LOG << "...experiments" << nl;
+            LOG << "... experiments" << nl;
     
             for( int i = 0; i < experiments_scalar_function.size(); i++ ){
 

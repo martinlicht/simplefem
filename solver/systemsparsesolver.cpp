@@ -83,15 +83,16 @@ int HodgeConjugateResidualSolverCSR_diagonal(
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -456,15 +457,16 @@ int HodgeConjugateResidualSolverCSR_SSOR(
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     // const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    // const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    // const bool do_print_warning   = print_modulo >= -2;
     // const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -827,15 +829,16 @@ int HodgeConjugateResidualSolverCSR_textbook(
 
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
 
     /* Build up data */
@@ -1163,15 +1166,16 @@ int HodgeHerzogSoodhalterMethod(
     Float tolerance = 0.;
     for( int i = 0; i < dimension_A; i++ ) tolerance += b_A[i]*b_A[i];
     for( int i = 0; i < dimension_C; i++ ) tolerance += b_C[i]*b_C[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    // const bool do_print_breakdown = print_modulo >=  0;
-    // const bool do_print_warning   = print_modulo >=  0;
+    // const bool do_print_breakdown = print_modulo >= -2;
+    // const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */

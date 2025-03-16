@@ -96,26 +96,26 @@ int main( int argc, char *argv[] )
             
             LOG << "Polynomial degree: " << r << "/" << max_r << " using " << (b==1?"Whitney":"Sullivan") << " forms" << nl;
             
-            LOG << "...assemble matrices" << nl;
+            LOG << "... assemble matrices" << nl;
     
             const auto scalar_massmatrix = MatrixCSR(FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r ));
             
-            LOG << "...assemble vector mass matrix" << nl;
+            LOG << "... assemble vector mass matrix" << nl;
     
             const auto vector_massmatrix = MatrixCSR(FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 ));
             
-            LOG << "...assemble differential matrix and transpose" << nl;
+            LOG << "... assemble differential matrix and transpose" << nl;
 
             const auto diffmatrix = MatrixCSR(FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r ));
 
-            LOG << "...assemble inclusion matrix and transpose" << nl;
+            LOG << "... assemble inclusion matrix and transpose" << nl;
     
             const auto incmatrix = ( b == 0 ) ? 
                                    MatrixCSR(FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r )) 
                                    : 
                                    MatrixCSR(FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r ));
 
-            LOG << "...assemble stiffness matrix" << nl;
+            LOG << "... assemble stiffness matrix" << nl;
             
             const auto stiffness = Conjugation( (vector_massmatrix), (diffmatrix) & (incmatrix) );
             
@@ -130,28 +130,39 @@ int main( int argc, char *argv[] )
             for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
             {
                 
+                /* Draw a random vector with unit mass norm as a candidate */
+
                 FloatVector candidate( SystemMatrix.getdimin(), 0. ); 
                 candidate.random(); 
                 candidate.normalize(mass);
             
+                /* Orthogonalize that vector against previous nullspace vectors */
+
                 {
+                
                     for( int s = 0; s < 2; s++ )
-                    for( const auto& nullvector : nullvectorgallery ) {
+                    for( const auto& nullvector : nullvectorgallery ) 
+                    {
                         Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
                         candidate = candidate - alpha * nullvector;
                     }
                     
-                    Float reduced_mass = candidate.norm(mass);
-                    LOG << "\t\t\t Preprocessed mass: " << reduced_mass << nl;
+                    Float orthogonalized_candidate_mass = candidate.norm(mass);
+                    LOG << "\t\t\t Initial candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
                     
-                    if( reduced_mass < mass_threshold_for_small_vectors ) {
-                        LOG << "**** The candidate already has very small mass" << nl;
-//                                 continue;
+                    if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) 
+                    {
+                        LOG << "\n\t\t\t !!!!! The initial candidate was already in the span\n" << nl;
+                        continue;
                     }
                 }
                 
+                /* Re-normalize the candidate once again */
+
+                candidate.normalize(mass);
                 
                 /* reduce the candidate to its nullspace component */
+                
                 {
                     for( int t = 0; t < max_number_of_purifications; t++ )
                     {
@@ -166,23 +177,23 @@ int main( int argc, char *argv[] )
                             SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
                             residual.raw(),
                             desired_precision,
-                            0
+                            -3
                         );
                         
-//                                 FloatVector zero( candidate.getdimension(), 0. );
-//                                 FloatVector residual( candidate.getdimension(), 0. );
-//                                 
-//                                 ConjugateResidualSolverCSR( 
-//                                     zero.getdimension(), 
-//                                     zero.raw(), 
-//                                     candidate.raw(), 
-//                                     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-//                                     residual.raw(),
-//                                     desired_precision,
-//                                     0
-//                                 );
-//                                 candidate = residual;
+                        // FloatVector zero( candidate.getdimension(), 0. );
                         
+                        // ConjugateResidualSolverCSR( 
+                        //     zero.getdimension(), 
+                        //     zero.raw(), 
+                        //     candidate.raw(), 
+                        //     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+                        //     residual.raw(),
+                        //     desired_precision,
+                        //     0
+                        // );
+                        // candidate = residual;
+                        
+                        /*
                         LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << nl;
                         LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << nl;
                         LOG << "\t\t\t (eucl) res:       " << residual.norm() << nl;
@@ -193,37 +204,41 @@ int main( int argc, char *argv[] )
                         LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
                         LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << nl;
                         LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << nl;
-                        
+                        */
                         
                         candidate.normalize( mass );
 
                         assert( candidate.is_finite() );
                         
+                        /*
                         LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << nl;
                         LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << nl;
                         LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << nl;
                         LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
-                        
+                        */
+
                     }
                 }
                 
-                
-                /* Gram-Schmidt */
-                
+                /* Orthogonalize that candidate once again against nullspace vectors */
+                /* Discard if nothing new is found */
+
                 for( int s = 0; s < 2; s++ )
                 for( const auto& nullvector : nullvectorgallery ) {
                     Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
                     candidate = candidate - alpha * nullvector;
                 }
                 
-                Float reduced_mass = candidate.norm(mass);
-                LOG << "\t\t\t Reduced mass: " << reduced_mass << nl;
-                
-                if( reduced_mass < mass_threshold_for_small_vectors ) {
-                    LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << nl;
+                Float orthogonalized_candidate_mass = candidate.norm(mass);
+                LOG << "\t\t\t Reduced candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
+
+                if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) {
+                    LOG << "\n\t\t\t !!!!! Discard vector because mass is too small!\n" << nl;
                     continue;
                 }
                 
+                /* Normalize and accept */
+
                 candidate.normalize(mass);
                 
                 Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
@@ -231,7 +246,7 @@ int main( int argc, char *argv[] )
                 LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
                 
                 if( residual_mass > mass_threshold_for_small_vectors ) {
-                    LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << nl;
+                    LOG << "\n\t\t\t !!!!!Discard vector because not nullspace enough!\n" << nl;
                     continue;
                 }
                 
@@ -247,10 +262,10 @@ int main( int argc, char *argv[] )
             
             LOG << "How much nullspace are our vectors?" << nl;
             for( const auto& nullvector : nullvectorgallery ) {
-                Float mass_norm = ( SystemMatrix * nullvector ).norm(mass);
-                Assert( mass_norm < mass_threshold_for_small_vectors, mass_norm, mass_threshold_for_small_vectors );
-                // LOGPRINTF( "% 10.5Le\t", (long double)mass_norm );
-                LOG << mass_norm << tab;
+                Float residual_mass = ( SystemMatrix * nullvector ).norm(mass);
+                Assert( residual_mass < mass_threshold_for_small_vectors, residual_mass, mass_threshold_for_small_vectors );
+                // LOGPRINTF( "% 10.5Le\t", (long double)residual_mass );
+                LOG << residual_mass << nl;
             }
             LOG << nl;
             
@@ -260,9 +275,12 @@ int main( int argc, char *argv[] )
                     auto nullvector1 = nullvectorgallery[n1];
                     auto nullvector2 = nullvectorgallery[n2];
                     Float mass_prod = mass * nullvector1 * nullvector2;
-                    // LOGPRINTF( "% 10.5Le\t", (long double)mass_prod );
-                    LOG << mass_prod << tab;
-                    if( n1 != n2 ) assert( is_numerically_small( mass_prod ) );
+                    LOGPRINTF( "% 10.5le\t", (double)(safedouble)mass_prod );
+                    // LOG << mass_prod << tab;
+                    if( n1 != n2 ) 
+                        assert( is_numerically_small( mass_prod ) );
+                    else
+                        assert( is_numerically_one( mass_prod ) );
                     
                 }
                 LOG << nl;

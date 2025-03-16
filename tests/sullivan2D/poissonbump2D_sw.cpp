@@ -116,21 +116,21 @@ int main( int argc, char *argv[] )
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
-                LOG << "...assemble scalar mass matrices" << nl;
+                LOG << "... assemble scalar mass matrices" << nl;
         
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
 
-                LOG << "...assemble vector mass matrix" << nl;
+                LOG << "... assemble vector mass matrix" << nl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
                 
-                LOG << "...assemble differential matrix and transpose" << nl;
+                LOG << "... assemble differential matrix and transpose" << nl;
 
                 SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                 SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                LOG << "...assemble inclusion matrix and transpose" << nl;
+                LOG << "... assemble inclusion matrix and transpose" << nl;
         
                 SparseMatrix incmatrix_s = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
                 
@@ -142,7 +142,7 @@ int main( int argc, char *argv[] )
                 
                 SparseMatrix incmatrix_w_t = incmatrix_w.getTranspose();
 
-                LOG << "...assemble stiffness matrix" << nl;
+                LOG << "... assemble stiffness matrix" << nl;
         
                 auto opr_s  = diffmatrix & incmatrix_s;
                 auto opl_s  = opr_s.getTranspose(); 
@@ -166,7 +166,7 @@ int main( int argc, char *argv[] )
 
                 {
 
-                    LOG << "...interpolate explicit solution and rhs" << nl;
+                    LOG << "... interpolate explicit solution and rhs" << nl;
         
                     const auto& function_sol  = experiment_sol;
                     const auto& function_grad = experiment_grad;
@@ -183,7 +183,7 @@ int main( int argc, char *argv[] )
                     FloatVector sol_w( incmatrix_w.getdimin(), 0. );
                     
 
-                    LOG << "...iterative solver (Sullivan)" << nl;
+                    LOG << "... iterative solver (Sullivan)" << nl;
                     timestamp start_s = timestampnow();
 
                     {
@@ -195,7 +195,7 @@ int main( int argc, char *argv[] )
                     timestamp end_s = timestampnow();
                     LOG << "\t\t\t Time (Sullivan): " << timestamp2measurement( end_s - start_s ) << nl;
 
-                    LOG << "...iterative solver (Whitney)" << nl;
+                    LOG << "... iterative solver (Whitney)" << nl;
                     timestamp start_w = timestampnow();
 
                     {
@@ -209,7 +209,7 @@ int main( int argc, char *argv[] )
 
 
 
-                    LOG << "...compute error and residual (Sullivan)" << nl;
+                    LOG << "... compute error and residual (Sullivan)" << nl;
                     
                     auto computed_sol_s  = incmatrix_s * sol_s;
                     auto computed_grad_s = diffmatrix * incmatrix_s * sol_s;
@@ -236,7 +236,7 @@ int main( int argc, char *argv[] )
 
 
 
-                    LOG << "...compute error and residual (Whitney)" << nl;
+                    LOG << "... compute error and residual (Whitney)" << nl;
                     
                     auto computed_sol_w  = incmatrix_w * sol_w;
                     auto computed_grad_w = diffmatrix * incmatrix_w * sol_w;

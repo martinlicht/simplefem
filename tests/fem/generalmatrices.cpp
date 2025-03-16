@@ -43,7 +43,7 @@ int main( int argc, char *argv[] )
 
         M.shake_interior_vertices();
         
-        LOG << "...assemble matrices" << nl;
+        LOG << "... assemble matrices" << nl;
         
         for( int r = 0; r <= 4; r++ ) 
         for( int k = 0; k <= 1; k++ ) 
@@ -92,7 +92,7 @@ int main( int argc, char *argv[] )
         for( int i = 0; i < number_of_refinements; i++ )
             M.uniformrefinement();
         
-        LOG << "...assemble matrices" << nl;
+        LOG << "... assemble matrices" << nl;
         
         for( int r = 0; r <= 3; r++ ) 
         for( int k = 0; k <= 2; k++ ) 
@@ -141,7 +141,7 @@ int main( int argc, char *argv[] )
         for( int i = 0; i <= number_of_refinements; i++ ) 
             M.uniformrefinement();
         
-        LOG << "...assemble matrices" << nl;
+        LOG << "... assemble matrices" << nl;
         
         for( int r = 0; r <= 3; r++ ) 
         for( int k = 0; k <= 3; k++ ) 

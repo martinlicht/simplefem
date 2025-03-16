@@ -172,32 +172,32 @@ int main( int argc, char *argv[] )
             
             {
                 
-                LOG << "...assemble scalar mass matrix" << nl;
+                LOG << "... assemble scalar mass matrix" << nl;
         
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
-                LOG << "...assemble vector mass matrix" << nl;
+                LOG << "... assemble vector mass matrix" << nl;
         
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
 
-                LOG << "...sort and compress mass matrices" << nl;
+                LOG << "... sort and compress mass matrices" << nl;
         
                 scalar_massmatrix.sortandcompressentries();
                 vector_massmatrix.sortandcompressentries();
 
-                LOG << "...assemble differential matrix and transpose" << nl;
+                LOG << "... assemble differential matrix and transpose" << nl;
 
                 SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
                 SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                LOG << "...assemble inclusion matrix and transpose" << nl;
+                LOG << "... assemble inclusion matrix and transpose" << nl;
         
                 SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                 SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                LOG << "...compose stiffness and mass matrices" << nl;
+                LOG << "... compose stiffness and mass matrices" << nl;
         
                 const auto composed_stiffness = incmatrix_t * diffmatrix_t * vector_massmatrix * diffmatrix * incmatrix;
                 const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
@@ -206,7 +206,7 @@ int main( int argc, char *argv[] )
                 auto opl  = opr.getTranspose(); 
                 auto stiffness_csr_prelim = opl & ( vector_massmatrix & opr );
                 
-                LOG << "...convert to CSR" << nl;
+                LOG << "... convert to CSR" << nl;
         
                 stiffness_csr_prelim.sortentries();
                 auto stiffness_csr = MatrixCSR( stiffness_csr_prelim );
@@ -214,7 +214,7 @@ int main( int argc, char *argv[] )
                 const auto& stiffness = composed_stiffness;
                 const auto& mass      = composed_mass;
                 
-                LOG << "...matrices done" << nl;
+                LOG << "... matrices done" << nl;
 
                 {
 
