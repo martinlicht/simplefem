@@ -91,55 +91,40 @@ int main( int argc, char *argv[] )
                 
                 LOG << "...assemble partial matrices" << nl;
         
-                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
+                auto vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   ) );
                 
-                SparseMatrix vector_massmatrix_inv = FEECBrokenMassMatrix_cellwiseinverse( M, M.getinnerdimension(), 1, r   );
-                
-                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+                auto volume_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 ) );
 
-                SparseMatrix diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
-                SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
+                auto diffmatrix   = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r ) );
+                auto diffmatrix_t = diffmatrix.getTranspose();
 
-                SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
-                SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+                auto vector_incmatrix   = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   ) );
+                auto vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
-                SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
+                auto volume_incmatrix   = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 ) );
+                auto volume_incmatrix_t = volume_incmatrix.getTranspose();
                 
                 LOG << "... assemble full matrices" << nl;
         
-                auto physical_mass = volume_incmatrix_t * volume_massmatrix * volume_incmatrix;
+                auto physical_mass = Conjugation( volume_massmatrix, volume_incmatrix );
 
-                auto mat_A  = vector_incmatrix_t & vector_massmatrix & vector_incmatrix;
-                mat_A.sortandcompressentries();
+                auto A  = Conjugation( vector_massmatrix, vector_incmatrix );
                 
-                auto mat_Bt = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
-                mat_Bt.sortandcompressentries();
+                auto Bt = vector_incmatrix_t & diffmatrix_t & volume_massmatrix & volume_incmatrix; // upper right
                 
-                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
-                mat_B.sortandcompressentries();
+                auto B  = Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
                 
-                auto A  = MatrixCSR( mat_A  );
-                auto Bt = MatrixCSR( mat_Bt );
-                auto B  = MatrixCSR( mat_B  );
+                auto Z  = MatrixCSR( B.getdimout(), B.getdimout() ); // zero matrix
                 
-                auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
-                
-                
-                auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
-                            + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix );
-                auto PC = MatrixCSR( volume_incmatrix_t & volume_massmatrix & volume_incmatrix );
-                            
-                
-                
-//                     auto SystemMatrix = B * inv( A, 1e-10, 0 ) * Bt;
+                auto PA = Conjugation( vector_massmatrix, vector_incmatrix )
+                          + 
+                          Conjugation( volume_massmatrix, diffmatrix & vector_incmatrix );
+
+                auto PC = Conjugation( volume_massmatrix, volume_incmatrix );
+
                 const auto SystemMatrix = B * inv( A, desired_precision, -1 ) * Bt;
                 
                 const auto& mass = physical_mass;
-                
-                
-                
-                
                 
                 
                 std::vector<FloatVector> nullvectorgallery;
@@ -177,12 +162,8 @@ int main( int argc, char *argv[] )
                         for( int t = 0; t < max_number_of_purifications; t++ )
                         {
                             
-                            if( false )
+                            if( /* DISABLES CODE */ (false) )
                             {
-
-                                auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
-                                        + MatrixCSR( vector_incmatrix_t & diffmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix );
-                                auto PC = MatrixCSR( volume_incmatrix_t & volume_massmatrix & volume_incmatrix );
 
                                 const auto PAinv = inv(PA,desired_precision,-1);
                                 const auto PCinv = inv(PC,desired_precision,-1);

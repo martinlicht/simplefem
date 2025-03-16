@@ -11,8 +11,8 @@
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/inv.hpp"
 #include "../../solver/systemsparsesolver.hpp"
@@ -34,7 +34,7 @@ int main( int argc, char *argv[] )
 
         LOG << "Initial mesh..." << nl;
         
-        MeshSimplicial2D Mx = StandardSquare2D();
+        MeshSimplicial3D Mx = UnitCube3D();
         
         Mx.check();
         
@@ -42,12 +42,12 @@ int main( int argc, char *argv[] )
 
         
         
-        MeshSimplicial2D M;
+        MeshSimplicial3D M;
         
         for( int i = 0; i < 1; i++ )
         {
             auto M2 = Mx;
-            M2.getCoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
+            M2.getCoordinates().shift( FloatVector{ i * 3.0, 0.0,0.0 } );
             M.merge( M2 );
         }
                     
@@ -81,7 +81,7 @@ int main( int argc, char *argv[] )
         {
             
             LOG << "Level: " << l << "/" << max_l << nl;
-            LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+            LOG << "# T/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
             for( int r = min_r; r <= max_r; r++ )
             {
@@ -90,58 +90,41 @@ int main( int argc, char *argv[] )
                 
                 LOG << "...assemble partial matrices" << nl;
         
-                SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
-                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
-                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+                const auto scalar_massmatrix = MatrixCSR(FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 ));
+                const auto vector_massmatrix = MatrixCSR(FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   ));
+                const auto volume_massmatrix = MatrixCSR(FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 ));
 
-                SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
-                SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
+                const auto scalar_diffmatrix   = MatrixCSR(FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 ));
+                const auto scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
-                SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
-                SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
+                const auto vector_diffmatrix   = MatrixCSR(FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r ));
+                const auto vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
-                SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
-                SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
+                const auto scalar_incmatrix   = MatrixCSR(FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 ));
+                const auto scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
-                SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
-                SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+                const auto vector_incmatrix   = MatrixCSR(FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   ));
+                const auto vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
-                SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
+                const auto volume_incmatrix   = MatrixCSR(FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 ));
+                const auto volume_incmatrix_t = volume_incmatrix.getTranspose();
                 
                 LOG << "... assemble full matrices" << nl;
         
-                auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
+                auto mass = Conjugation( vector_massmatrix, vector_incmatrix );
 
-                auto mat_A  = scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix;
-                mat_A.sortandcompressentries();
+                auto A  = Conjugation( scalar_massmatrix, scalar_incmatrix );
                 
-                auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
-                mat_Bt.sortandcompressentries();
+                auto Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
                 
-                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
-                mat_B.sortandcompressentries();
+                auto B  = Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
                 
-                auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
-                mat_C.sortandcompressentries();
-                
-                auto A  = MatrixCSR( mat_A  );
-                auto Bt = MatrixCSR( mat_Bt );
-                auto B  = MatrixCSR( mat_B  );
-                auto C  = MatrixCSR( mat_C  );
-                
-                auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
+                auto C  = Conjugation( volume_massmatrix, vector_diffmatrix & vector_incmatrix );
                 
                 auto SystemMatrix = C + B * inv(A,desired_precision, -1) * Bt;
                 
                 
-                
-                
-                
-                
-                
                 std::vector<FloatVector> nullvectorgallery;
-                
                 
                 for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
                 {
@@ -301,7 +284,7 @@ int main( int argc, char *argv[] )
                 contable << static_cast<Float>(nullvectorgallery.size());   
                 
                 
-                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                const auto interpol_matrix = MatrixCSR(FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r ));
 
                 for( const auto& nullvector : nullvectorgallery )
                 {
@@ -331,9 +314,6 @@ int main( int argc, char *argv[] )
         contable.lg();
     
     }
-    
-    
-    
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     

@@ -35,11 +35,6 @@ int main( int argc, char *argv[] )
         
         MeshSimplicial2D Mx = StandardSquare2D();
         
-        Mx.check();
-        
-//             Mx.automatic_dirichlet_flags();
-
-        
         MeshSimplicial2D M;
         
         for( int i = 0; i < 3; i++ )
@@ -48,7 +43,9 @@ int main( int argc, char *argv[] )
             M2.getCoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
             M.merge( M2 );
         }
-                    
+        
+        M.check();
+        
         
         LOG << "Nullspace computation" << nl;
 
@@ -108,42 +105,23 @@ int main( int argc, char *argv[] )
                 SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
                 LOG << "...assemble stiffness matrix" << nl;
-        
-                auto opr  = diffmatrix & incmatrix;
-                auto opl  = opr.getTranspose(); 
+
+                auto stiffness = Conjugation( MatrixCSR(vector_massmatrix), MatrixCSR(diffmatrix) & MatrixCSR(incmatrix) );
                 
-//                     auto stiffness_prelim = opl & ( vector_massmatrix & opr );
-//                     stiffness_prelim.sortentries();
-                auto stiffness = MatrixCSR( opl & ( vector_massmatrix & opr ) ); // MatrixCSR( stiffness_prelim );
+                auto physical_mass = Conjugation( MatrixCSR(scalar_massmatrix), MatrixCSR(incmatrix) );
                 
                 auto physical_mass = MatrixCSR( incmatrix_t & ( scalar_massmatrix & incmatrix ) );
                 
-                auto stiffness_diagonal = SparseMatrix( DiagonalOperator( vector_massmatrix.getDiagonal() ) );
-                assert( stiffness_diagonal.is_square() );
-                assert( stiffness_diagonal.getdimin() == opr.getdimout() );
-                auto simplified_stiffness = MatrixCSR( opl & ( stiffness_diagonal & opr ) );
-                
-                auto idea_prelim = opl & opr;
-                idea_prelim.sortentries();
-                auto idea = MatrixCSR( idea_prelim );
-                
                 const auto& SystemMatrix = stiffness;
-//                     const auto& SystemMatrix = simplified_stiffness;
-                
-                
-                assert( SystemMatrix.getDiagonal().is_finite() );
-                
-//                     LOG << SystemMatrix << nl;
                 
                 std::vector<FloatVector> nullvectorgallery;
                 
                 const auto& mass = physical_mass;
-//                     const auto& mass = IdentityMatrix(physical_mass.getdimin());
                 
                 for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
                 {
                     
-                    FloatVector candidate( opr.getdimin(), 0. ); 
+                    FloatVector candidate( SystemMatrix.getdimin(), 0. ); 
                     candidate.random(); 
                     candidate.normalize(mass);
                     
@@ -170,7 +148,7 @@ int main( int argc, char *argv[] )
                         for( int t = 0; t < max_number_of_purifications; t++ )
                         {
                             
-                            const FloatVector rhs( opr.getdimin(), 0. );
+                            const FloatVector rhs( SystemMatrix.getdimin(), 0. );
                             FloatVector residual( rhs );
                         
                             ConjugateResidualSolverCSR( 
