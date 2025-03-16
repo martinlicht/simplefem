@@ -78,7 +78,6 @@ class FloatVector final
         
         Float getentry( int p ) const;
         
-
         Float& at( int p ) &;
         
         const Float& at( int p ) const &;
@@ -86,9 +85,6 @@ class FloatVector final
         Float& operator[]( int p ) &;
         
         const Float& operator[]( int p ) const &;
-        
-        std::vector<Float> getdata() const;
-        
         
         /* load values */
         
@@ -125,7 +121,7 @@ class FloatVector final
         
         /* inverse */
 
-        FloatVector& inverse();
+        FloatVector& reciprocal();
         
         /* slices */
         
@@ -162,7 +158,7 @@ class FloatVector final
         Float scalarproductwith( const FloatVector& right, const std::vector<bool>& mask ) const;
         
         
-        /* Calculations */
+        /* Simple calculations */
         
         Float min() const;
         
@@ -187,8 +183,6 @@ class FloatVector final
         Float lpnorm( Float p, Float inner_weight = 1. ) const;
         
         
-        
-        
         /* Investigations */
         
         bool is_finite() const;
@@ -206,25 +200,18 @@ class FloatVector final
         
         bool is_numerically_small( Float threshold = desired_closeness ) const;
         
-
-
-        
         
         /* Raw access */
+        
+        std::vector<Float> getdata() const;
         
         Float* raw();
         
         const Float* raw() const;
         
-        
-        
-        
         /* Memory size */
         
         std::size_t memorysize() const;
-        
-        
-        
         
         /* For each semantics */ 
         

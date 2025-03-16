@@ -1,3 +1,22 @@
+# TODO General remarks
+
+The complexity of the project is at a point where reorganization has become the natural and also necessary next step.
+
+This requires a rewriting of the unit tests module by module to ensure that all functionality is being tested
+without relying on the visual inspection of the output. This is particularly relevant for the lower levels of the library.
+
+The higher level parts require more quality time to ensure that the tests are meaningful. What's more, neither benchmarking
+nor production are relevant for testing functionality, and thus should be separated.
+
+In the wake of this, the framework of the library should be progressively extended and polished according to demands
+of the unit tests. That touches upon error handling, logging, output colors, assertions...
+
+Finally, on a larger scale, the file structure of the library as well as the makefile setup should be fixed. The makefile structure is too complicated and at times difficult to understand and maintain, and improvement is due.
+
+None of the above can be done in a day, so it most likely requires regular grinding in order to get it done.
+
+
+
 
 # TOPIC: Paper
 
@@ -14,7 +33,6 @@
 # ----------- HOT FIXES & MINOR FIXES -------------
 
 - [ ] check whether the << and >> and bitwise operations are executed on signed integral types
-- [ ] FEM tests that depend on convergence are not easy to measure but we can at least test for finiteness
 - [ ] Disabled code should be marked accordingly, same for trivially true conditions
 - [ ] lshaped maxwell: correct the computation
 - [ ] Neumann estimate of eigenvalues 
@@ -68,44 +86,44 @@
 
 
 
-# TODO General remarks
-
-The complexity of the project is at a point where reorganization has become the natural and also necessary next step.
-
-This requires a rewriting of the unit tests module by module to ensure that all functionality is being tested
-without relying on the visual inspection of the output. This is particularly relevant for the lower levels of the library.
-
-The higher level parts require more quality time to ensure that the tests are meaningful. What's more, neither benchmarking 
-nor production are relevant for testing functionality, and thus should be separated.
-
-In the wake of this, the framework of the library should be progressively extended and polished according to demands 
-of the unit tests. That touches upon error handling, logging, output colors, assertions...
-
-Finally, on a larger scale, the file structure of the library as well as the makefile setup should be fixed. The makefile structure is too complicated and at times difficult to understand and maintain, and improvement is due.
-
-None of the above can be done in a day, so it most likely requires regular grinding in order to get it done.
 
 
 
 # HIGH: DO THESE NEXT
 
-## (HIGH) All one vector
+## (HIGH) FEM tests
 
-Ensure that all-one vectors are not used for constant functions. That only works if r=1. Name: constant_one
+FEM tests that depend on convergence are not easy to measure but we can at least test for finiteness
 
-## (HIGH/BLOG) _HAS_EXCEPTIONS
+Figure out a scalar product implementation that guarantees positive output.
 
-The macro is defined in MSVC. Should I use it in addition to the GCC/Clang macros in the debug component?
+Reduce the rounding errors in the mass matrix even further
+
+## (HIGH) Nullspace filter
+
+Streamline the matrix construction in the nullspace discussion:
+Develop a general class of methods to filter out nullspaces, either with single matrices or Hodge systems.
+The nullspace tests then merely use that component internally.
+
+- [ ] scalar examples: simplify the construction and unify 
+- [ ] hodge and mixed: simplify the construction and unify
+- [ ] scalar case unified algorithm
+- [ ] switch for either extracting from x or from b
+
+- [ ] general method:
+   * pick random vector
+   * gram-schmidt against previous vectors
+   * extract nullspace (purification steps)
+   * gram-schmidt once again 
+- [ ] output method
+
+
+   
+   
 
 ## (HIGH) Hodge star
 
 Review the Hodge star operations and make them work.
-
-## (HIGH) Nullspace filter
-
-Create a function to filter out nullspaces. That one may use the CRM internally;
-
-## (HIGH) Streamline float vector vs dense matrix: gemeinsame dinge zusammen testen
 
 ## (HIGH) Compare different Herzog-Soodhalter methods
 
@@ -137,8 +155,7 @@ Understand the floating-point comparison functions and import them into this pro
    * [x] Sullivan3D
    * [x] Whitney2D/3D
    * [x] what are poissontransformed old, old2, and the other one? Retire?
-   * [x] lshaped? -> these are maxwell systems. Annotate them
-         For example, the Lagrange test should reflect simple things and additional overhead
+   * [x] lshaped? -> these are maxwell systems. Annotate them. For example, the Lagrange test should reflect simple things and additional overhead
 - [x] Clean up the test for the nullspace computation.
 - [x] FEM tests check assertions more thoroughly
 - [x] Mesh: improve consistency. Include orientation tests in usual tests to save compile time
@@ -153,13 +170,8 @@ Understand the floating-point comparison functions and import them into this pro
 - [ ] Unit tests must check convergence rates
 - [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
 - [ ] mixedsolver should test each variant of Hodge-CRM
-- [ ] Clean up the VTK writer unit tests: a few full tests, proper naming practices, some more complicated meshes.
-      Some parts of this component are also used to output and inspect meshes.
+- [ ] Clean up the VTK writer unit tests: a few full tests, proper naming practices, some more complicated meshes. Some parts of this component are also used to output and inspect meshes.
 - [ ] Clean up the unit tests of the mesh writer
-
-## (HIGH) fem/diffelev3D
-
-## (HIGH) Reduce the rounding errors in the mass matrix even further
 
 ## (HIGH) Try to canonicalize on the go
 
@@ -204,20 +216,6 @@ Q: what happens if warm restarts are disabled in the inner iteration?
 ## (HIGH) Augmented integration
 
 Use augmented integration for checking errors and the rhs 
-
-## (HIGH)
-
-Align different Frobenius norms of vectors and dense matrices.
-Align the entire DenseMatrix and FloatVector classes as much as only possible.
-
-## (HIGH) Speed up computation of conjugation in sparse matrices
-
-`whitney2D/poissonmixedbc2Da.cpp` takes too long to assemble the matrices.
-Try out a subroutine to reduce the computational effort.
-
-- [ ] the compression algorithms for SparseMatrix become static methods that work on the entries 
-- [ ] The conjugation is implemented for the SparseMatrix class
-- [ ] The conjugation is implemented for the CSR Class
 
 
 
@@ -270,7 +268,7 @@ for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
 tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
 ```
 
-## (DONE) Solvers print whether they have been successful
+## (DONE/MEDIUM) Solvers print whether they have been successful
 
 ```cpp
     /* HOW DID WE FINISH ? */
@@ -287,31 +285,7 @@ tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
 
 ## (DONE/MEDIUM) Solvers should abort if Ar_r or Ad_r is negative ?
 
-## (MEDIUM) Simplify the solver component 
-
-The project is suffering from too much complexity in the solver component and the unit tests. The solver component is too complex at this time. The solver component must be simplified considerably.
-
-There shouldn't be several CRM solvers in the CPP component. Furthermore, those are poorly understood and it's not clear which one is more stable or faster: so far, it's only been experimental observations without understanding.
-
-Rather, there should be a template for several variants of the CRM, so that different variations can be studied systematically.
-
-A prerequisite for that endeavor are working notes on the CGM and CRM, even with preconditioners. There are different variants for the numerator and denominator of alpha and beta: the latter even has a possible two-term recursion.
-
-## (MEDIUM) Fix Whatever solvers or fix Wikipedia
-
-- [x] Herzog-Soodhalter funktioniert nun, auch die sparse variant.
-- [ ] Identify the source for MINRES solver; the other ones are known
-- [x] Fix the whatever solver or retire it
-
-## (MEDIUM) Conjugate Residual method: check // rAr = 0.;
-
-## (MEDIUM) Double check Herzog-Soodhalter implementation in systemsparsesolver
-
 ## (MEDIUM) SOLVERS
-
-- [x] solver logging. make the logging more reasonable, e.g., give out iteration numbers at the beginning
-
-- [x] im gesamten code durchweg desired_precision anwenden. das kann in der solver klasse so gesetzt werden
 
 - [ ] vereinfache die verschiedenen CR solver, finde die unterschiede und markiere sie im Code, mache fallunterscheidungen und vereinheitliche
 
@@ -323,12 +297,24 @@ A prerequisite for that endeavor are working notes on the CGM and CRM, even with
   Idee: Zur Not kann man einen Solver dann einer Klasse verpacken
   mittels einer Template-Konstruktion?
   Funktionen sind:
-  
+
   * Matrix, initial guess, rhs
   * residual
   * max steps, desired precision
   * print modus
   * Preconditioner?
+
+## (MEDIUM) mergeelementsinsortedlist should be moved into legacy
+
+## (MEDIUM) test getdimensionclone/loaddimension for the Coordinates class
+
+Generally, we would like to control the output format by some parameter given to each print function.
+We can assume that the parameters belong to some enum class defined within a class declaration and are specifcally tailored to each class.
+They are a purely optional argument for the print method and may be skipped at convenience.
+
+## (MEDIUM) Advanced Solvers
+
+- [ ] Algebraic multigrid
 
 - [ ] Multiplicative Schwarz / Gauss-Seidel algorithms
 
@@ -339,24 +325,30 @@ A prerequisite for that endeavor are working notes on the CGM and CRM, even with
     der DOF, aber allgemein genuegt es, greedy vorzugehen.
     We can restrict to symmetric matrices
 
-- [ ] Schreibe einen solver, welcher das Faerbung verwendet
+- [X] Schreibe einen solver, welcher das Faerbung verwendet
     vielleicht mit einer Gauss-Seidel methode,
     fuer eine multiplicative Schwarz methode.
 
+
+## (THEORY) Double check Herzog-Soodhalter implementation in systemsparsesolver
+
+## (THEORY) Simplify the solver component, CRM in particular
+
+The project is suffering from too much complexity in the solver component and their unit tests.
+There are different variants of the CRM with experimental observation but theoretical understanding about speed/robustness.
+Rather, there should be a template for several variants of the CRM, so that different variations can be studied systematically.
+A prerequisite for that endeavor are working notes on the CGM and CRM, even with preconditioners. There are different variants for the numerator and denominator of alpha and beta: the latter even has a possible two-term recursion.
+
+## (THEORY) Fix Whatever solvers or fix Wikipedia
+
+- [x] Herzog-Soodhalter funktioniert nun, auch die sparse variant.
+- [ ] Identify the source for MINRES solver; the other ones are known
+- [x] Fix the whatever solver or retire it
 - [ ] verstehe die stopping criteria for iterative solvers etwas besser
 - [ ] was ist die richtige variante von CG? (E-Mail Meurant?)
-
 - [ ] Chebyshev iteration: Der Solver scheint zu funktionieren. Als naechstes den mittleren Versuch erasen, dann den externen archivieren. Verstehe den Chebyshev solver von theoretischer Seite und auch die verschiedenen Arten ihn aufzuschreiben
-
 - [ ] Erstelle eine 08/15 FD matrix (square, laplace, Dirichlet/periodisch). Solve that SPD matrix using all available solvers
 
-## (MEDIUM) mergeelementsinsortedlist should be moved into legacy
-
-## (MEDIUM) test getdimensionclone/loaddimension for the Coordinates class
-
-Generally, we would like to control the output format by some parameter given to each print function.
-We can assume that the parameters belong to some enum class defined within a class declaration and are specifcally tailored to each class.
-They are a purely optional argument for the print method and may be skipped at convenience.
 
 
 
@@ -1559,6 +1551,15 @@ In file included from ./basic/.all.cpp:3:
 
 ## (DONE) Fix output of generate multiindices
 
+## (DONE/HIGH) All one vector
+
+Ensure that all-one vectors are not used for constant functions. That only works if r=1. Name: constant_one
+
+## (DONE) Streamline float vector vs dense matrix: gemeinsame dinge zusammen testen
+
+Align different Frobenius norms of vectors and dense matrices.
+Align the entire DenseMatrix and FloatVector classes as much as only possible.
+
 
 
 # (ARTICLES)
@@ -1657,6 +1658,17 @@ k=3	max * mid * min | PF |  max * mid  = max * mid * min / min * mid  = max
  * * parallelism (lots and lots)
  
 
+
+
+
+
+# MSVC compilation
+
+## (MSVC) Compile and run on Windows via MSVC
+
+## (LOW/BLOG) _HAS_EXCEPTIONS
+
+The macro is defined in MSVC. Should I use it in addition to the GCC/Clang macros in the debug component?
 
 
 

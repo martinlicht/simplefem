@@ -212,27 +212,29 @@ Prefixes for code readability
 
 Using prefixes such as `get`, `set`, `find`, `count`, `compute`, and `calculate` should improve the readability of the code. Possible convention:
 
-1. `is` or `has` for checking boolean conditions: **Example**: `bool is_symmetric()`
+* `is` or `has` for checking boolean conditions: **Example**: `bool is_symmetric()`
 
-2. `get` used to retrieve or access a value or object, typically not modifying the state of an object and returning a value or reference (const or non-const) to a member variable. **Example**: `double get_data(int i)`
+* `get` used to retrieve or access a value or object, typically not modifying the state of an object and returning a value or reference (const or non-const) to a member variable. **Example**: `double get_data(int i)`
 
-3. `set` used to assign or update a value or object, typically taking one or more parameters and update the state of an object without returning a value. **Example**: `void set_value(int i, double d)`
+* `set` used to assign or update a value or object, typically taking one or more parameters and update the state of an object without returning a value. **Example**: `void set_value(int i, double d)`
 
-4. `compute` for functions that perform a computation or processing to produce and return a new value, often without side effects. **Example**: `compute_determinant()` 
+* `compute` for functions that perform a computation or processing to produce and return a new value, often without side effects. **Example**: `compute_determinant()`
 
-5. `calculate` is similar to `compute`, mainly used for performing mathematical or logical calculations and returning the result. **Example**: `calculate_average()` 
+* `calculate` is similar to `compute`, mainly used for performing mathematical or logical calculations and returning the result. **Example**: `calculate_average()`
 
-6. `create` or `make` for functions that instantiate objects or values and return them. 
+* `generate` is for functions that involve a lambda, typically for procedural generation of data.
 
-7. `update` should be for functions that modify the internal state of an object, possibly with side effects
+* `create` or `make` for functions that instantiate objects or values and return them.
 
-8. `reset` or `clear` for resetting an object.
+* `update` should be for functions that modify the internal state of an object, possibly with side effects.
 
-9. `add` or `insert` and `remove` or `delete`** for adding or removing objects from a collection.
+* `reset` or `clear` for resetting an object.
 
-10. `count` counts the number of elements that satisfy a particular condition or the total number of elements in a collection. Returns an integer representing the count. **Example**: `countMembers()` 
+* `add` or `insert` and `remove` or `delete`** for adding or removing objects from a collection.
 
-11. `find` for searching for a particular element or condition within a collection or range and returning its position or a reference/pointer to it. It might return a special value or indicator (like end iterator, null pointer) if the search is unsuccessful. **Example**: `findValue( std::vector<int>, int )` 
+* `count` counts the number of elements that satisfy a particular condition or the total number of elements in a collection. Returns an integer representing the count. **Example**: `countMembers()`
+
+* `find` for searching for a particular element or condition within a collection or range and returning its position or a reference/pointer to it. It might return a special value or indicator (like end iterator, null pointer) if the search is unsuccessful. **Example**: `findValue( std::vector<int>, int )`
 
 More prefixes: prefixes: 
 
