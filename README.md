@@ -1,7 +1,7 @@
 [![Compilation](https://github.com/martinlicht/simplefem/actions/workflows/main.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/main.yml)
 [![Base tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests.yml)
 [![FEM 2D tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests_comp.yml)
-[![FEM 3D tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests_3d.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests_3D.yml)
+[![FEM 3D tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests_3D.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests_3D.yml)
 
 ```
                   [ FFFFF EEEEE EEEEE  CCCC    +       +   ]
