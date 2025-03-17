@@ -68,12 +68,16 @@ int main( int argc, char *argv[] )
     
     }
     
+    if(false)
     {
         
         LOG << "3. Bulk testing" << nl;
+
+        const int max_dimout = 20;
+        const int max_dimin  = 20;
         
-        for( int dimout = 1; dimout <= 20; dimout++ )
-        for( int dimin  = 1; dimin  <= 20; dimin ++ )
+        for( int dimout = 1; dimout <= max_dimout; dimout++ )
+        for( int dimin  = 1; dimin  <= max_dimin;  dimin ++ )
         for( int t = 0; t < 7; t++ )
         {
             FloatVector input( dimin );
@@ -107,6 +111,7 @@ int main( int argc, char *argv[] )
 
     }
     
+    if(false)
     {
         
         LOG << "4. Compare sparse and CSR matrix" << nl;
@@ -144,6 +149,29 @@ int main( int argc, char *argv[] )
             assert( (output-A_output).is_numerically_small() );
         }
 
+    }
+    
+    {
+        
+        LOG << "5. Output sparse and CSR matrix" << nl;
+        
+        SparseMatrix M( 20, 20 );
+
+        for( int s = 0; s < 100; s++ )
+        {
+            int   r = random_integer() % M.getdimout();
+            int   c = random_integer() % M.getdimin();
+            Float v = 10 * random_uniform() - 5.;
+
+            M.appendentry( r, c, v );
+        }
+
+        M.save_graphics( "sparsematrix.png" );
+
+        MatrixCSR csr = MatrixCSR( M );
+
+        csr.save_graphics( "csrmatrix.png" );
+        
     }
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;

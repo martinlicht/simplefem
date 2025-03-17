@@ -840,6 +840,8 @@ Float norm_sq_of_vector( const SparseMatrix& A, const FloatVector& vec )
 
 void SparseMatrix::save_graphics( const char* filepath ) const 
 {
+    sortandcompressentries();
+    
     PixelImage pim( getdimout(), getdimin() );
     
     for( int r = 0; r < getdimout(); r++ )
@@ -848,9 +850,32 @@ void SparseMatrix::save_graphics( const char* filepath ) const
         pim( r, c ) = { 255, 255, 255 };
     }
 
-    for( const auto& entry : entries )
-    {
-        pim( entry.row, entry.column ) = ( entry.value > 0. ) ? PixelColor({ 255,128,0 }) : PixelColor({ 255,0,128 });
+    if( entries.size() > 0 ){
+
+        Float min_neg = minimum( 0., entries[0].value );
+        Float max_neg = minimum( 0., entries[0].value );
+        Float min_pos = maximum( 0., entries[0].value );
+        Float max_pos = maximum( 0., entries[0].value );
+
+        for( const auto& entry: entries )
+        {
+            assert( std::isfinite(entry.value) );
+            if( entry.value <= 0. ) min_neg = minimum( min_neg, entry.value );
+            if( entry.value <= 0. ) max_neg = maximum( max_neg, entry.value );
+            if( entry.value >= 0. ) min_pos = minimum( min_pos, entry.value );
+            if( entry.value >= 0. ) max_pos = maximum( max_pos, entry.value );
+        }
+
+        assert( std::isfinite(min_neg) and std::isfinite(max_neg) and std::isfinite(min_pos) and std::isfinite(max_pos) );
+        assert( min_neg <= max_neg and max_neg <= 0. );
+        assert( min_pos <= max_pos and min_pos >= 0. );
+
+        for( const auto& entry : entries )
+        {
+            pim( entry.row, entry.column ) = ( entry.value > 0. ) ? PixelColor({ 255,128,0 }) : PixelColor({ 255,0,128 });
+            pim( entry.row, entry.column ) = rgb_from_scale( entry.value, min_neg, max_neg, min_pos, max_pos );
+        }
+
     }
 
     savePixelImage( pim, filepath );
