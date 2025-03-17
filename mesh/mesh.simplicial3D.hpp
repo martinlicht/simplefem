@@ -396,7 +396,7 @@ class MeshSimplicial3D
 // inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial3D& mt3d )
 // {
 //     mt3d.print( os );
-//     return os;
+//     return std::forward<Stream>(os);
 // }
 
 

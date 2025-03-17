@@ -94,7 +94,7 @@ int main( int argc, char *argv[] )
             if( b == 0 and not do_sullivan ) continue;
             if( b == 1 and not do_whitney  ) continue;
             
-            LOG << "Polynomial degree: " << r << "/" << max_r << " using " << (b==1?"Whitney":"Sullivan") << " forms" << nl;
+            LOG << "Polynomial degree: " << r << "/" << max_r << " using " << (b==0?"Sullivan":"Whitney") << " forms" << nl;
             
             LOG << "... assemble matrices" << nl;
     
@@ -127,7 +127,10 @@ int main( int argc, char *argv[] )
             
             std::vector<FloatVector> nullvectorgallery;
             
-            for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
+            LOG << "... begin sampling candidates" << nl;
+            
+                
+            for( int candidate_number = 0; candidate_number < max_number_of_candidates; candidate_number++ )
             {
                 
                 /* Draw a random vector with unit mass norm as a candidate */
@@ -135,41 +138,36 @@ int main( int argc, char *argv[] )
                 FloatVector candidate( SystemMatrix.getdimin(), 0. ); 
                 candidate.random(); 
                 candidate.normalize(mass);
-            
+                assert( candidate.is_finite() );
+                
                 /* Orthogonalize that vector against previous nullspace vectors */
 
                 {
-                
                     for( int s = 0; s < 2; s++ )
                     for( const auto& nullvector : nullvectorgallery ) 
                     {
                         Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
                         candidate = candidate - alpha * nullvector;
-                    }
-                    
-                    Float orthogonalized_candidate_mass = candidate.norm(mass);
-                    LOG << "\t\t\t Initial candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
-                    
-                    if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) 
-                    {
-                        LOG << "\n\t\t\t !!!!! The initial candidate was already in the span\n" << nl;
-                        continue;
-                    }
+                    }   
                 }
                 
                 /* Re-normalize the candidate once again */
 
                 candidate.normalize(mass);
+
+                assert( candidate.is_finite() );
                 
-                /* reduce the candidate to its nullspace component */
+                /* Reduce the candidate to its nullspace component, orthogonalize, normalize */
                 
                 {
-                    for( int t = 0; t < max_number_of_purifications; t++ )
+                    bool candidate_to_be_discarded = false;
+                    
+                    for( int t = 0; t < max_number_of_purifications and not candidate_to_be_discarded; t++ )
                     {
                         
                         const FloatVector rhs( SystemMatrix.getdimin(), 0. );
                         FloatVector residual( rhs );
-                    
+                     
                         ConjugateResidualSolverCSR( 
                             candidate.getdimension(), 
                             candidate.raw(), 
@@ -206,22 +204,54 @@ int main( int argc, char *argv[] )
                         LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << nl;
                         */
                         
-                        candidate.normalize( mass );
+
+                        /* Orthogonalize that candidate once again against nullspace vectors */
+                        /* Discard if nothing new is found, else re-normalize */
+                       
+                        for( int s = 0; s < 2; s++ )
+                        for( const auto& nullvector : nullvectorgallery ) {
+                            Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
+                            candidate = candidate - alpha * nullvector;
+                        }
+                        
+                        Float orthogonalized_candidate_mass = candidate.norm(mass);
+                        LOG << "\t\t\t Reduced candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
+
+                        if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) {
+                            // LOGPRINTF("\n\t\t\t !!!!! Discard vector %d/%d because mass is too small!\n\n", candidate_number+1, max_number_of_candidates );
+                            candidate_to_be_discarded = true;
+                        }
+                        
+                        candidate.normalize(mass);
 
                         assert( candidate.is_finite() );
                         
                         /*
                         LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << nl;
                         LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << nl;
+                        */
                         LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << nl;
                         LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
-                        */
 
                     }
+
+                    // if( candidate_to_be_discarded ) continue;
+                }
+
+                /* Discard if insufficiently nullspace */ 
+                
+                Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
+                
+                LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
+                
+                if( residual_mass > mass_threshold_for_small_vectors ) {
+                    LOGPRINTF("\n\t\t\t !!!!!Discard vector %d/%d because not nullspace enough!\n\n", candidate_number+1, max_number_of_candidates );
+                    continue;
                 }
                 
                 /* Orthogonalize that candidate once again against nullspace vectors */
-                /* Discard if nothing new is found */
+                
+                LOG << "\t\t\t Reduced candidate non-orthogonalized mass: " << candidate.norm(mass) << nl;
 
                 for( int s = 0; s < 2; s++ )
                 for( const auto& nullvector : nullvectorgallery ) {
@@ -229,26 +259,19 @@ int main( int argc, char *argv[] )
                     candidate = candidate - alpha * nullvector;
                 }
                 
+                /* Discard if nothing new is found */
+
                 Float orthogonalized_candidate_mass = candidate.norm(mass);
                 LOG << "\t\t\t Reduced candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
 
                 if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) {
-                    LOG << "\n\t\t\t !!!!! Discard vector because mass is too small!\n" << nl;
+                    LOGPRINTF("\n\t\t\t !!!!! Discard vector %d/%d because mass is too small!\n\n", candidate_number+1, max_number_of_candidates );
                     continue;
                 }
                 
                 /* Normalize and accept */
 
                 candidate.normalize(mass);
-                
-                Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
-                
-                LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
-                
-                if( residual_mass > mass_threshold_for_small_vectors ) {
-                    LOG << "\n\t\t\t !!!!!Discard vector because not nullspace enough!\n" << nl;
-                    continue;
-                }
                 
                 assert( candidate.is_finite() );
                 

@@ -1012,6 +1012,8 @@ DiagonalOperator InverseDiagonalPreconditioner( const MatrixCSR& mat )
 
 
 
+
+
 void MatrixCSR::save_graphics( const char* filepath ) const 
 {
     PixelImage pim( getdimout(), getdimin() );
@@ -1022,12 +1024,37 @@ void MatrixCSR::save_graphics( const char* filepath ) const
         pim( r, c ) = { 255, 255, 255 };
     }
 
-    for( int r = 0; r < getdimout(); r++ )
-    for( int j = A[r]; j < A[r+1]; j++ )
-    {
-        int c = C[j];
+    if( V.size() > 0 ){
+
+        Float min_neg = minimum( 0., V[0] );
+        Float max_neg = minimum( 0., V[0] );
+        Float min_pos = maximum( 0., V[0] );
+        Float max_pos = maximum( 0., V[0] );
+
+        for( Float value : V )
+        {
+            assert( std::isfinite(value) );
+            if( value <= 0. ) min_neg = minimum( min_neg, value );
+            if( value <= 0. ) max_neg = maximum( max_neg, value );
+            if( value >= 0. ) min_pos = minimum( min_pos, value );
+            if( value >= 0. ) max_pos = maximum( max_pos, value );
+        }
+
+        assert( std::isfinite(min_neg) and std::isfinite(max_neg) and std::isfinite(min_pos) and std::isfinite(max_pos) );
+        assert( min_neg <= max_neg and max_neg <= 0. );
+        assert( min_pos <= max_pos and min_pos >= 0. );
+
         
-        pim( r, c ) = ( V[j] > 0. ) ? PixelColor({ 255,128,0 }) : PixelColor({ 255,0,128 });
+        for( int r = 0; r < getdimout(); r++ )
+        for( int j = A[r]; j < A[r+1]; j++ )
+        {
+            int c = C[j];
+            
+            pim( r, c ) = ( V[j] > 0. ) ? PixelColor({ 255,128,0 }) : PixelColor({ 255,0,128 });
+
+            pim( r, c ) = rgb_from_scale( V[j], min_neg, max_neg, min_pos, max_pos );
+        }
+
     }
 
     savePixelImage( pim, filepath );

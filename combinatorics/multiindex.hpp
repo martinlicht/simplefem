@@ -106,11 +106,11 @@ inline MultiIndex ZeroMultiIndex( const IndexRange& ir )
 
 
 template<typename Stream>
-inline Stream& operator<<( Stream&& os, const MultiIndex& mi )
+inline decltype(auto) operator<<( Stream&& os, const MultiIndex& mi )
 {
     mi.check();
     os << mi.text(); // mi.print( os );
-    return os;
+    return std::forward<Stream>(os);
 }
 
 inline MultiIndex& operator+=( MultiIndex& left, int right )

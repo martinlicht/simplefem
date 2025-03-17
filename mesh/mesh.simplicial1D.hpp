@@ -192,7 +192,7 @@ class MeshSimplicial1D
 // inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial1D& mt1d )
 // {
 //     mt1d.print( os );
-//     return os;
+//     return std::forward<Stream>(os);
 // }
 
 

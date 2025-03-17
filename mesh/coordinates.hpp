@@ -132,11 +132,19 @@ class Coordinates final
             return ! ( coords_left == coords_right );
         }
 
-        friend inline std::ostream& operator<<( std::ostream& os, const Coordinates& co )
+        template<typename Stream>
+        friend inline decltype(auto) operator<<( Stream&& os, const Coordinates& co )
         {
-            os << co.text(); // co.print( os );
-            return os;
+            os << co.text();
+            return std::forward<Stream>(os);
         }
+
+// template<typename Stream>
+//         friend inline std::ostream& operator<<( std::ostream& os, const Coordinates& co )
+//         {
+//             os << co.text(); // co.print( os );
+//             return std::forward<Stream>(os);
+//         }
 
 
 };

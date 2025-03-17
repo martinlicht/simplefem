@@ -162,11 +162,11 @@ inline bool operator<( const IndexMap& left, const IndexMap& right )
 }
 
 template<typename Stream>
-inline Stream& operator<<( Stream&& os, const IndexMap& im )
+inline decltype(auto) operator<<( Stream&& os, const IndexMap& im )
 {
     im.check();
     os << im.text(); // im.print( os );
-    return os;
+    return std::forward<Stream>(os);
 }
 
 

@@ -18,7 +18,7 @@ static thread_local std::uniform_int_distribution<unsigned int> distribution(0, 
 
 const constexpr unsigned int random_integer_modulo = std::numeric_limits<unsigned int>::max() - 10; // magic number
 
-// TODO(martin): This is technically not the maximum...
+
 
 void seed_random_integer()
 {

@@ -228,3 +228,89 @@ void savePixelImage( const PixelImage& pim, const std::string& str )
 
 */
 
+
+
+
+
+
+
+
+PixelColor rgb_from_scale( 
+    Float value, 
+    Float min_neg, 
+    Float max_neg, 
+    Float min_pos, 
+    Float max_pos
+){
+    
+    assert( min_neg <= max_neg and max_neg <= min_pos and min_pos <= max_pos );
+    assert( min_neg <= value and value <= max_pos );
+    assert( std::isfinite(value) );
+
+    // Normalize the value to the range [-1, 1]
+    
+    Float t = 0.;
+    if( value >= 0 ) 
+        t = + ( value - min_pos ) / ( max_pos - min_pos );
+    else 
+        t = - ( value - min_neg ) / ( max_neg - min_neg );
+
+    Assert( ( t <= 0 and value <= 0 ) or ( t >= 0 and value >= 0 ), t, value );
+    
+
+    // Introduce the color scale 
+
+    struct thresholded_color
+    {
+        Float threshold;
+        Float red;
+        Float green;
+        Float blue;
+    };
+    
+    static const int N = 6;
+    static const thresholded_color colors[N] = { 
+        { -1.0, 0.0, 0.0, 1.0 }, // Blue
+        { -0.5, 0.0, 1.0, 1.0 }, // Cyan
+        {  0.0, 0.0, 1.0, 0.0 }, // Green
+        {  0.0, 1.0, 0.0, 1.0 }, // Purple
+        { +0.5, 1.0, 0.5, 0.0 }, // Orange
+        { +1.0, 1.0, 0.0, 0.0 }  // Red
+    };
+
+    assert( colors[  0].threshold == -1. );
+    assert( colors[N-1].threshold ==  1. );
+
+    // Find which segment of the color scale t falls into
+
+    PixelColor ret; 
+
+    for( int i = 0; i < N - 1; i++ ) 
+    {
+        if( t <= colors[i + 1].threshold ) 
+        {
+            // Compute interpolation ratio within this segment
+            Float segment_start = colors[i    ].threshold;
+            Float segment_end   = colors[i + 1].threshold;
+            Float ratio = ( t - segment_start ) / ( segment_end - segment_start );
+
+            // Interpolate between the two segment colors
+            Float R = colors[i].red   + ratio * ( colors[i + 1].red   - colors[i].red   );
+            Float G = colors[i].green + ratio * ( colors[i + 1].green - colors[i].green );
+            Float B = colors[i].blue  + ratio * ( colors[i + 1].blue  - colors[i].blue  );
+
+            // Convert float/double color to 8-bit
+            ret.red   = (unsigned char)(R * 255);
+            ret.green = (unsigned char)(G * 255);
+            ret.blue  = (unsigned char)(B * 255);
+            return ret;
+        }
+    }
+
+    // If for some reason t is 1.0 (or very close), then assign the last color.
+    ret.red   = (unsigned char)( colors[N - 1].red   * 255 );
+    ret.green = (unsigned char)( colors[N - 1].green * 255 );
+    ret.blue  = (unsigned char)( colors[N - 1].blue  * 255 );
+
+    return ret;
+}

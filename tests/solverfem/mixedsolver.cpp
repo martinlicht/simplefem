@@ -114,14 +114,20 @@ int main( int argc, char *argv[] )
         contable_time.display_convergence_rates  = false;
         contable_res.display_convergence_rates   = false;
         
-        bool do_crmcsr = true;
-        bool do_crmcpp = true; 
-        bool do_hersooblock = true; 
-        bool do_minresblock = false; // comparable to Herzog-Soodhalter 
+        bool do_crmcsr       = true;
+        bool do_crmcsr_dia   = false; // TODO(martin): fix bug  
+        bool do_crmcsr_tb    = false; // TODO(martin): convergence deteriorates 
+        bool do_crmcsr_ssor  = true;
+        bool do_crmcpp       = true; 
+        bool do_hersooblock  = true; 
+        bool do_minresblock  = false; // comparable to Herzog-Soodhalter 
         bool do_systemherzog = true;
         bool do_sparseherzog = true;
         
         if( do_crmcsr )       { contable_sigma << "CRMcsr"; contable_u << "CRMcsr"; contable_du << "CRMcsr"; contable_iter << "CRMcsr"; contable_time << "CRMcsr"; contable_res << "CRMcsr"; } 
+        if( do_crmcsr_dia )   { contable_sigma << "CRMcsrD"; contable_u << "CRMcsrD"; contable_du << "CRMcsrD"; contable_iter << "CRMcsrD"; contable_time << "CRMcsrD"; contable_res << "CRMcsrD"; } 
+        if( do_crmcsr_tb )    { contable_sigma << "CRMcsrT"; contable_u << "CRMcsrT"; contable_du << "CRMcsrT"; contable_iter << "CRMcsrT"; contable_time << "CRMcsrT"; contable_res << "CRMcsrT"; } 
+        if( do_crmcsr_ssor )  { contable_sigma << "CRMcsrS"; contable_u << "CRMcsrS"; contable_du << "CRMcsrS"; contable_iter << "CRMcsrS"; contable_time << "CRMcsrS"; contable_res << "CRMcsrS"; } 
         if( do_crmcpp )       { contable_sigma << "CRMcpp"; contable_u << "CRMcpp"; contable_du << "CRMcpp"; contable_iter << "CRMcpp"; contable_time << "CRMcpp"; contable_res << "CRMcpp"; } 
         if( do_hersooblock )  { contable_sigma << "Herzog"; contable_u << "Herzog"; contable_du << "Herzog"; contable_iter << "Herzog"; contable_time << "Herzog"; contable_res << "Herzog"; } 
         if( do_minresblock )  { contable_sigma << "Minres"; contable_u << "Minres"; contable_du << "Minres"; contable_iter << "Minres"; contable_time << "Minres"; contable_res << "Minres"; } 
@@ -222,7 +228,7 @@ int main( int argc, char *argv[] )
 
                     assert( do_crmcsr or do_crmcpp or do_hersooblock or do_minresblock or do_systemherzog or do_sparseherzog );
                     
-                    for( int k = 0; k <= 5; k++ )
+                    for( int k = 0; k <= 8; k++ )
                     {
 
                         sol.zero();
@@ -230,14 +236,113 @@ int main( int argc, char *argv[] )
                         Float runtime = -1.;
                         int iteration_count = -1;
 
-                        if( k == 0 and not do_crmcsr ) continue;
-                        if( k == 1 and not do_crmcpp ) continue;
-                        if( k == 2 and not do_hersooblock ) continue;
-                        if( k == 3 and not do_minresblock ) continue;
-                        if( k == 4 and not do_systemherzog ) continue;
-                        if( k == 5 and not do_sparseherzog ) continue;
+                        if( k == 0 and not do_crmcsr       ) continue;
+                        if( k == 1 and not do_crmcsr_dia   ) continue;
+                        if( k == 2 and not do_crmcsr_tb    ) continue;
+                        if( k == 3 and not do_crmcsr_ssor  ) continue;
+                        if( k == 4 and not do_crmcpp       ) continue;
+                        if( k == 5 and not do_hersooblock  ) continue;
+                        if( k == 6 and not do_minresblock  ) continue;
+                        if( k == 7 and not do_systemherzog ) continue;
+                        if( k == 8 and not do_sparseherzog ) continue;
                         
                         if( k == 0 and do_crmcsr )
+                        {
+                            sol.zero();
+                            
+                            FloatVector res = rhs;
+
+                            timestamp start = timestampnow();
+
+                            iteration_count = 
+                            HodgeConjugateResidualSolverCSR(
+                                B.getdimout(), 
+                                A.getdimout(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                A.getA(),    A.getC(),    A.getV(), 
+                                B.getA(),    B.getC(),    B.getV(), 
+                                Bt.getA(),   Bt.getC(),   Bt.getV(), 
+                                C.getA(),    C.getC(),    C.getV(),
+                                res.raw(),
+                                desired_precision,
+                                100,
+                                desired_precision,
+                                -1
+                            );
+    
+                            timestamp end = timestampnow();
+                            
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            runtime  = static_cast<Float>( end - start );
+                        }
+
+
+                        if( k == 1 and do_crmcsr_dia )
+                        {
+                            sol.zero();
+                            
+                            FloatVector res = rhs;
+
+                            timestamp start = timestampnow();
+
+                            iteration_count = 
+                            HodgeConjugateResidualSolverCSR_diagonal(
+                                B.getdimout(), 
+                                A.getdimout(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                A.getA(),    A.getC(),    A.getV(), 
+                                B.getA(),    B.getC(),    B.getV(), 
+                                Bt.getA(),   Bt.getC(),   Bt.getV(), 
+                                C.getA(),    C.getC(),    C.getV(),
+                                res.raw(),
+                                desired_precision,
+                                100,
+                                desired_precision,
+                                -1
+                            );
+    
+                            timestamp end = timestampnow();
+                            
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            runtime  = static_cast<Float>( end - start );
+                        }
+
+
+                        if( k == 2 and do_crmcsr_tb )
+                        {
+                            sol.zero();
+                            
+                            FloatVector res = rhs;
+
+                            timestamp start = timestampnow();
+
+                            iteration_count = 
+                            HodgeConjugateResidualSolverCSR_textbook(
+                                B.getdimout(), 
+                                A.getdimout(), 
+                                sol.raw(), 
+                                rhs.raw(), 
+                                A.getA(),    A.getC(),    A.getV(), 
+                                B.getA(),    B.getC(),    B.getV(), 
+                                Bt.getA(),   Bt.getC(),   Bt.getV(), 
+                                C.getA(),    C.getC(),    C.getV(),
+                                res.raw(),
+                                desired_precision,
+                                100,
+                                desired_precision,
+                                -1
+                            );
+    
+                            timestamp end = timestampnow();
+                            
+                            LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
+                            runtime  = static_cast<Float>( end - start );
+                        }
+
+
+                        if( k == 3 and do_crmcsr_ssor )
                         {
                             sol.zero();
                             
@@ -269,7 +374,7 @@ int main( int argc, char *argv[] )
                         }
 
 
-                        if( k == 1 and do_crmcpp )
+                        if( k == 4 and do_crmcpp )
                         {
                             sol.zero();
                             
@@ -288,7 +393,7 @@ int main( int argc, char *argv[] )
                         }
 
 
-                        if( k == 2 and do_hersooblock )
+                        if( k == 5 and do_hersooblock )
                         {
                             sol.zero();
                             
@@ -318,7 +423,7 @@ int main( int argc, char *argv[] )
                         }
 
 
-                        if( k == 3 and do_minresblock )
+                        if( k == 6 and do_minresblock )
                         {   
                             sol.zero();
                             
@@ -348,7 +453,7 @@ int main( int argc, char *argv[] )
                         }
 
 
-                        if( k == 4 and do_systemherzog )
+                        if( k == 7 and do_systemherzog )
                         {   
                             sol.zero();
                             
@@ -382,7 +487,7 @@ int main( int argc, char *argv[] )
                         }
 
 
-                        if( k == 5 and do_sparseherzog )
+                        if( k == 8 and do_sparseherzog )
                         {   
                             sol.zero();
                             

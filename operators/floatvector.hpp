@@ -434,10 +434,10 @@ inline Float operator*( const FloatVector& left, const FloatVector& right )
 // inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
 template<typename Stream>
 // inline std::ostream& operator<<( std::ostream& out, const FloatVector& vec )
-inline Stream& operator<<( Stream&& out, const FloatVector& vec )
+inline decltype(auto) operator<<( Stream&& out, const FloatVector& vec )
 {
     out << vec.text(); // vec.print( out );
-    return out;
+    return std::forward<Stream>(out);
 }
 
 

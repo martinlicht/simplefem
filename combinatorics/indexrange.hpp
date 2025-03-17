@@ -130,10 +130,10 @@ class IndexRange final
 };
 
 template<typename Stream>
-inline Stream& operator<<( Stream&& os, const IndexRange& ir )
+inline decltype(auto) operator<<( Stream&& os, const IndexRange& ir )
 {
     os << ir.text(); // ir.print( os );
-    return os;
+    return std::forward<Stream>(os);
 }
 
 inline bool operator==( const IndexRange& ir1, const IndexRange& ir2 )

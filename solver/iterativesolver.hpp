@@ -83,10 +83,10 @@ struct IterativeSolver
 
 
 template<typename Stream>
-inline Stream& operator<<( Stream&& os, const IterativeSolver& solver )
+inline decltype(auto) operator<<( Stream&& os, const IterativeSolver& solver )
 {
     os << solver.text();
-    return os;
+    return std::forward<Stream>(os);
 }
 
 

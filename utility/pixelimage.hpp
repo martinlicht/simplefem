@@ -127,6 +127,13 @@ PixelImage readPixelImage( const std::string& str );
 void savePixelImage( const PixelImage& pim, const std::string& str );
 
 
+PixelColor rgb_from_scale( 
+    Float value, 
+    Float min_neg, 
+    Float max_neg, 
+    Float min_pos, 
+    Float max_pos
+);
 
 
 #endif

@@ -303,7 +303,7 @@ class MeshSimplicial2D
 // inline std::ostream& operator<<( std::ostream& os, const MeshSimplicial2D& mt2d )
 // {
 //     mt2d.print( os );
-//     return os;
+//     return std::forward<Stream>(os);
 // }
 
 

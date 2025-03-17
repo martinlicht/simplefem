@@ -262,7 +262,7 @@ int main( int argc, char *argv[] )
                     LOG << "\t\t\t Reduced candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
 
                     if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) {
-                        LOG << "\n\t\t\t !!!!! Discard vector because mass is too small!\n" << nl;
+                        LOGPRINTF("\n\t\t\t !!!!! Discard vector %d/%d because mass is too small!\n\n", candidate_number+1, max_number_of_candidates );
                         continue;
                     }
                     
@@ -277,7 +277,7 @@ int main( int argc, char *argv[] )
                     LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
                     
                     if( residual_mass > mass_threshold_for_small_vectors ) {
-                        LOG << "\n\t\t\t !!!!!Discard vector because not nullspace enough!\n" << nl;
+                        LOGPRINTF("\n\t\t\t !!!!!Discard vector %d/%d because not nullspace enough!\n\n", candidate_number+1, max_number_of_candidates );
                         continue;
                     }
                     
