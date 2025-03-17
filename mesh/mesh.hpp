@@ -291,10 +291,10 @@ class Mesh
 #endif
         
         template<typename Stream>
-        friend inline Stream& operator<<( Stream&& os, const Mesh& mesh )
+        friend inline decltype(auto) operator<<( Stream&& os, const Mesh& mesh )
         {
             os << mesh.text(); // mesh.print( os );
-            return os;
+            return std::forward<Stream>(os);
         }
 
 };

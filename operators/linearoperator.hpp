@@ -49,7 +49,7 @@ class LinearOperator
 
         virtual std::string text() const = 0;
         
-        void print( std::ostream& os ) const;
+        // void print( std::ostream& os ) const;
 
         // // void lg() const { LOG << text() << nl; };
         
@@ -95,12 +95,12 @@ inline FloatVector operator*( const LinearOperator& op, const FloatVector& vec )
 }
   
 template<typename Stream>
-inline Stream& operator<<( Stream&& os, const LinearOperator& op )
+inline decltype(auto) operator<<( Stream&& os, const LinearOperator& op )
 {
     op.check();
     os << op.text(); // op.print( os );
     op.check();
-    return os;
+    return std::forward<Stream>(os);
 }
   
 
