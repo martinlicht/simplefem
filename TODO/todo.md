@@ -1,3 +1,4 @@
+
 # TODO General remarks
 
 The complexity of the project is at a point where reorganization has become the natural and also necessary next step.
@@ -83,6 +84,32 @@ None of the above can be done in a day, so it most likely requires regular grind
    * [x] git repo transferieren
    * [x] job framework aufsetzen
 
+## Clean up unit tests
+
+- [x] Don't use MINRES whenever you can use another solver
+- [x] convergence tables can compute convergence rates
+- [x] Don't compute the norms of the solutions and the rhs unless necessary
+- [x] Decide what the purpose each test, remove overhead, clarify output strings
+   * [x] Sullivan2D
+   * [x] Sullivan3D
+   * [x] Whitney2D/3D
+   * [x] what are poissontransformed old, old2, and the other one? Retire?
+   * [x] lshaped? -> these are maxwell systems. Annotate them. For example, the Lagrange test should reflect simple things and additional overhead
+- [x] Clean up the test for the nullspace computation.
+- [x] FEM tests check assertions more thoroughly
+- [x] Mesh: improve consistency. Include orientation tests in usual tests to save compile time
+- [x] VTK: different outputs
+- [x] Combinatorics: make tests independent of screen output
+- [x] Dense: test everything thoroughly, even up to smaller rounding errors
+- [x] Operators: make things independent of screen output
+- [x] mixedsolver should test each variant of Hodge-CRM
+- [ ] Sparse: check that composition does not change the outcome
+- [ ] Solver: meaningful convergence tests?
+- [ ] include visualization script
+- [ ] Unit tests must check convergence rates
+- [ ] Clean up the VTK writer unit tests: a few full tests, proper naming practices, some more complicated meshes. Some parts of this component are also used to output and inspect meshes.
+- [ ] Clean up the unit tests of the mesh writer
+
 
 
 
@@ -91,12 +118,30 @@ None of the above can be done in a day, so it most likely requires regular grind
 
 # HIGH: DO THESE NEXT
 
+## (HIGH) Colored matrix output
+
+The matrix output auto adapts 
+
+## (HIGH) Algebraic Preconditioners 
+
+These preconditioners are intended for the basis blocks such as stiffness and mass matrices. 
+They are possible alternatives to Gauss-Seidel with Eisenstatt and graph coloring.
+
+- [ ] Partitioning into disjoint blocks, then block diagonal preconditioning.
+      * Make every node a root node of itself 
+      * For each level Loop 
+        * For each cluster 
+          * Take the one with lowest-rank and extend patch to the ones with who have not been updated before 
+      * For each cluster 
+        * compute the inverse of that cluster.
+        
+- [ ] Overlapping blocks, then color the blocks, then Gauss-Seidel. Multiplicative Schwarz / Gauss-Seidel algorithms
+- [ ] Algebraic multigrid. Read the article on the topic
+
 ## (HIGH) FEM tests
 
 FEM tests that depend on convergence are not easy to measure but we can at least test for finiteness
-
 Figure out a scalar product implementation that guarantees positive output.
-
 Reduce the rounding errors in the mass matrix even further
 
 ## (HIGH) Nullspace filter
@@ -110,16 +155,13 @@ The nullspace tests then merely use that component internally.
 - [ ] scalar case unified algorithm
 - [ ] switch for either extracting from x or from b
 
-- [ ] general method:
-   * pick random vector
-   * gram-schmidt against previous vectors
-   * extract nullspace (purification steps)
-   * gram-schmidt once again 
-- [ ] output method
-
-
-   
-   
+The general method looks like this:
+  1. Grab some random vector with unit mass 
+        OPTIONAL Orthogonalize against the previous nullspace vectors 
+  2. Filter out a nullspace vector 
+  5. Orthogonalize against the previous nullspace vectors 
+  3. Check whether the result is a nullspace vector 
+  4. Check whether the result is too small 
 
 ## (HIGH) Hodge star
 
@@ -144,34 +186,6 @@ Understand the floating-point comparison functions and import them into this pro
 - [ ] Implement them
 - [ ] Compare the condition numbers of the bases.
 - [ ] Compare the sparsity on standard triangles: rectangular, regular, split-symmetry
-
-## (HIGH) Clean up unit tests
-
-- [x] Don't use MINRES whenever you can use another solver
-- [x] convergence tables can compute convergence rates
-- [x] Don't compute the norms of the solutions and the rhs unless necessary
-- [x] Decide what the purpose each test, remove overhead, clarify output strings
-   * [x] Sullivan2D
-   * [x] Sullivan3D
-   * [x] Whitney2D/3D
-   * [x] what are poissontransformed old, old2, and the other one? Retire?
-   * [x] lshaped? -> these are maxwell systems. Annotate them. For example, the Lagrange test should reflect simple things and additional overhead
-- [x] Clean up the test for the nullspace computation.
-- [x] FEM tests check assertions more thoroughly
-- [x] Mesh: improve consistency. Include orientation tests in usual tests to save compile time
-- [x] VTK: different outputs
-- [x] Combinatorics: make tests independent of screen output
-- [x] Dense: test everything thoroughly, even up to smaller rounding errors
-- [x] Operators: make things independent of screen output
-- [ ] Sparse: check that composition does not change the outcome
-- [ ] Solver: meaningful convergence tests?
-- [ ] Clean up the nullspace computation in the solver module.
-- [ ] include visualization script
-- [ ] Unit tests must check convergence rates
-- [ ] Streamline the main loop in the different solverfem tests to reduce code redundancy
-- [ ] mixedsolver should test each variant of Hodge-CRM
-- [ ] Clean up the VTK writer unit tests: a few full tests, proper naming practices, some more complicated meshes. Some parts of this component are also used to output and inspect meshes.
-- [ ] Clean up the unit tests of the mesh writer
 
 ## (HIGH) Try to canonicalize on the go
 
@@ -292,17 +306,16 @@ tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
 - [ ] alle C++ solvers mit preconditioner
 
 - [ ] Unified solver interface:
-  Es macht wenig Sinn, einen solver als Klasse aufzuziehen.
-  Besser altmodisch mit Parametern, eventuell mit speziellen Default-Werten
-  Idee: Zur Not kann man einen Solver dann einer Klasse verpacken
-  mittels einer Template-Konstruktion?
-  Funktionen sind:
+      Es macht wenig Sinn, einen solver als Klasse aufzuziehen.
+      Besser altmodisch mit Parametern, eventuell mit speziellen Default-Werten
+      Idee: Zur Not kann man einen Solver dann einer Klasse verpacken mittels einer Template-Konstruktion?
+      Argumente sind:
 
-  * Matrix, initial guess, rhs
-  * residual
-  * max steps, desired precision
-  * print modus
-  * Preconditioner?
+        * Matrix, initial guess, rhs
+        * residual
+        * max steps, desired precision
+        * print modus
+        * Preconditioner?
 
 ## (MEDIUM) mergeelementsinsortedlist should be moved into legacy
 
@@ -312,13 +325,13 @@ Generally, we would like to control the output format by some parameter given to
 We can assume that the parameters belong to some enum class defined within a class declaration and are specifcally tailored to each class.
 They are a purely optional argument for the print method and may be skipped at convenience.
 
-## (MEDIUM) Advanced Solvers
+## (MEDIUM) Graph coloring and Gauss-Seidel iteration 
 
 - [ ] Algebraic multigrid
 
 - [ ] Multiplicative Schwarz / Gauss-Seidel algorithms
 
-- [ ] DOF partitioning
+- [x] DOF partitioning
     Schreibe einen Algorithmus welcher zu gegebener CSR-Matrix
     die DOF partitioniert. Das ist eine Instanz des graph coloring problem.
     Die max. Zahl der Farben kann man nach oben abschaetzen durch die Anzahl
@@ -330,6 +343,12 @@ They are a purely optional argument for the print method and may be skipped at c
     fuer eine multiplicative Schwarz methode.
 
 
+
+
+
+
+
+
 ## (THEORY) Double check Herzog-Soodhalter implementation in systemsparsesolver
 
 ## (THEORY) Simplify the solver component, CRM in particular
@@ -337,7 +356,8 @@ They are a purely optional argument for the print method and may be skipped at c
 The project is suffering from too much complexity in the solver component and their unit tests.
 There are different variants of the CRM with experimental observation but theoretical understanding about speed/robustness.
 Rather, there should be a template for several variants of the CRM, so that different variations can be studied systematically.
-A prerequisite for that endeavor are working notes on the CGM and CRM, even with preconditioners. There are different variants for the numerator and denominator of alpha and beta: the latter even has a possible two-term recursion.
+A prerequisite for that endeavor are working notes on the CGM and CRM, even with preconditioners. 
+There are different variants for the numerator and denominator of alpha and beta: the latter even has a possible two-term recursion.
 
 ## (THEORY) Fix Whatever solvers or fix Wikipedia
 

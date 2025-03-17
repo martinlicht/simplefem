@@ -24,21 +24,54 @@ int main( int argc, char *argv[] )
         
         FloatVector rhs(10), x(10);
 
+        ConjugateGradientMethod CGM(A);
+        
         x.random(); rhs.zero();
-        LOG << x << nl;
+        // LOG << x << nl << A * x << nl;
+        CGM.solve( x, rhs );
+        // LOG << x << nl;
+        
         ConjugateResidualMethod CRM(A);
+        
+        x.random(); rhs.zero();
+        // LOG << x << nl << A * x << nl;
         CRM.solve( x, rhs );
         // LOG << x << nl;
         
         x.random(); rhs.zero();
-        LOG << x << nl;
-        MinimumResidualMethod MINRES(A);
-        MINRES.solve( x, rhs );
+        // LOG << x << nl << A * x << nl;
+        CRM.solve_explicit( x, rhs );
         // LOG << x << nl;
         
         x.random(); rhs.zero();
-        LOG << x << nl;
+        // LOG << x << nl << A * x << nl;
+        CRM.solve_fast( x, rhs );
+        // LOG << x << nl;
+        
+        x.random(); rhs.zero();
+        // LOG << x << nl << A * x << nl;
+        CRM.solve_robust( x, rhs );
+        // LOG << x << nl;
+        
+        MinimumResidualMethod MINRES(A);
+        
+        x.random(); rhs.zero();
+        // LOG << x << nl;
+        MINRES.solve( x, rhs );
+        // LOG << x << nl;
+        
+        PreconditionedConjugateGradientMethod PCGM(A,M);
+        
+        x.random(); rhs.zero();
+        // LOG << x << nl << A * x << nl;
+        PCGM.solve( x, rhs );
+        // LOG << x << nl;
+        
+        
         PreconditionedConjugateResidualMethod PCRM(A,M);
+        
+        x.random(); rhs.zero();
+        // LOG << x << nl;
         PCRM.solve( x, rhs );
         // LOG << x << nl;
         
@@ -46,7 +79,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        LOG << "Now something more complicated:\n Tridiagonal with very weak diagonal dominance." << nl;
+        LOG << "Now something more complicated:\n\tTridiagonal with very weak diagonal dominance." << nl;
         
         int dimension = 100;
         
@@ -75,7 +108,7 @@ int main( int argc, char *argv[] )
         // }
         // // M.sortentries();
         
-        LOG << "Compute stuff." << nl;
+        LOG << "\t... computing." << nl;
         
         FloatVector b = A * x;
 
