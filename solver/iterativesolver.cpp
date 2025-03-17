@@ -548,7 +548,8 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
         /* Perform iteration step */
         {
 
-            if( rAr < 0. ) LOG << rAr << nl;
+            if( rAr < 0. ) 
+            // LOG << rAr << nl;
             assert( rAr >= 0. );
             
             AAd = A * Ad;
@@ -603,7 +604,7 @@ void ConjugateResidualMethod::solve_explicit( FloatVector& x, const FloatVector&
     }
     
     /* HOW DID WE FINISH ? */
-    recent_deviation = rAr;
+    recent_deviation = ( b - A * x ).norm_sq();
     
     if( do_print_finish ) 
         LOGPRINTF( "(%d/%d) %9s: "    "Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, recent_deviation < tolerance ? "SUCCESS" : "FAIL", (double)(safedouble) std::sqrt(recent_deviation), (double)(safedouble)tolerance ); 
@@ -687,13 +688,14 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
             
         {
             p = A * Ad;
-            Float Ad_Ad = Ad * Ad; assert( Ad_Ad >= 0 ); 
+            Float Ad_Ad = Ad * Ad; Assert( Ad_Ad >= 0, A, Ad_Ad, Ad, A * Ad ); 
             
             Float Ad_r  = Ad * r; // fast/explicit uses and maintains Ar_r
             Float alpha = Ad_r / Ad_Ad;
             
             bool numerator_is_unreasonable   = not std::isfinite(Ad_r) or Ad_r < 0.;
             bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
+            bool numerator_is_small          = std::sqrt(absolute(Ad_r)) < machine_epsilon;
             bool denominator_is_small        = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( numerator_is_unreasonable or denominator_is_unreasonable ) {
@@ -701,7 +703,7 @@ void ConjugateResidualMethod::solve_robust( FloatVector& x, const FloatVector& b
                 break;
             }
             
-            if( denominator_is_small ) {
+            if( numerator_is_small or denominator_is_small ) {
                 if( do_print_warning ) LOGPRINTF( "(%d/%d)   WARNING: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt( Ar * r ), (double)(safedouble)tolerance ); 
                 if( do_print_warning ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
@@ -815,6 +817,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
             
             bool numerator_is_unreasonable   = not std::isfinite(Ar_r) or Ar_r < 0.;
             bool denominator_is_unreasonable = not std::isfinite(Ad_Ad) or Ad_Ad < 0.;
+            bool numerator_is_small          = std::sqrt(absolute(Ar_r)) < machine_epsilon;
             bool denominator_is_small        = std::sqrt(absolute(Ad_Ad)) < machine_epsilon;
             
             if( numerator_is_unreasonable or denominator_is_unreasonable ) {
@@ -822,7 +825,7 @@ void ConjugateResidualMethod::solve_fast( FloatVector& x, const FloatVector& b )
                 break;
             }
             
-            if( denominator_is_small ) {
+            if( numerator_is_small or denominator_is_small ) {
                 if( do_print_warning ) LOGPRINTF( "(%d/%d)   WARNING: Residual norm is %.9le < %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble) std::sqrt( Ar * r ), (double)(safedouble)tolerance );
                 if( do_print_warning ) LOGPRINTF( "(%d/%d)   WARNING: Gradient double energy is small with %.9le\n", recent_iteration_count, max_iteration_count, (double)(safedouble)Ad_Ad );
                 break;
