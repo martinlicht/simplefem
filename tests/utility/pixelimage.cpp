@@ -25,7 +25,7 @@ int main( int argc, char** argv )
         pim(row,col).blue  = random_integer() % 256;
     }
 
-    savePixelImage(pim,"temp.tiff");
+    savePixelImage(pim,"temp.png");
 
     for( size_t row = 0; row < pim.getheight(); row++ )
     for( size_t col = 0; col < pim.getwidth();  col++ )
@@ -35,7 +35,7 @@ int main( int argc, char** argv )
         pim(row,col).blue  = 255 - pim(row,col).blue;
     }
 
-    savePixelImage(pim,"reverse.tiff");
+    savePixelImage(pim,"reverse.png");
 
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
 
