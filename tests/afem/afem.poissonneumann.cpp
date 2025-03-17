@@ -107,31 +107,31 @@ int main( int argc, char *argv[] )
             LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
             
-            LOG << "...assemble scalar mass matrices" << nl;
+            LOG << "... assemble scalar mass matrices" << nl;
     
             SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
             
             SparseMatrix scalar_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 0, r );
             
-            LOG << "...assemble vector mass matrix" << nl;
+            LOG << "... assemble vector mass matrix" << nl;
     
             SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 );
             
             SparseMatrix vector_massmatrix_fac = FEECBrokenMassMatrixRightFactor( M, M.getinnerdimension(), 1, r-1 );
             
-            LOG << "...assemble differential matrix and transpose" << nl;
+            LOG << "... assemble differential matrix and transpose" << nl;
 
             SparseMatrix diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
             SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-            LOG << "...assemble inclusion matrix and transpose" << nl;
+            LOG << "... assemble inclusion matrix and transpose" << nl;
     
             SparseMatrix incmatrix = LagrangeInclusionMatrix( M, M.getinnerdimension(), r );
 
             SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-            LOG << "...assemble stiffness matrix" << nl;
+            LOG << "... assemble stiffness matrix" << nl;
     
             auto opr1 = diffmatrix & incmatrix;
             auto opr  = vector_massmatrix_fac & opr1;
@@ -149,7 +149,7 @@ int main( int argc, char *argv[] )
             const auto& function_grad= experiments_grad[0];
             const auto& function_rhs = experiments_rhs[0];
             
-            LOG << "...interpolate explicit solution and rhs" << nl;
+            LOG << "... interpolate explicit solution and rhs" << nl;
 
             FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, r,   function_sol  );
             FloatVector interpol_grad = Interpolation( M, M.getinnerdimension(), 1, r-1, function_grad );
@@ -157,20 +157,20 @@ int main( int argc, char *argv[] )
             
             FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
             
-            LOG << "...measure kernel component: ";
+            LOG << "... measure kernel component: ";
 
             Float average_sol = interpol_one * ( scalar_massmatrix * interpol_sol );
             Float average_rhs = interpol_one * ( scalar_massmatrix * interpol_rhs );
             
             LOG << average_sol << space << average_rhs << nl;
 
-            LOG << "...create RHS vector" << nl;
+            LOG << "... create RHS vector" << nl;
 
             FloatVector rhs = incmatrix_t * ( scalar_massmatrix * interpol_rhs );
 
             FloatVector sol( M.count_simplices(0), 0. );
             
-            LOG << "...iterative solver" << nl;
+            LOG << "... iterative solver" << nl;
             
             {
                 sol.zero();
@@ -194,7 +194,7 @@ int main( int argc, char *argv[] )
                 LOG << "\t\t\t " << timestamp2measurement( end - start ) << nl;
             }
                     
-            LOG << "...compute error and residual" << nl;
+            LOG << "... compute error and residual" << nl;
 
             Float errornorm     = ( scalar_massmatrix_fac * ( interpol_sol  - incmatrix * sol ) ).norm();
             Float graderrornorm = ( vector_massmatrix_fac * ( interpol_grad - diffmatrix * incmatrix * sol ) ).norm();

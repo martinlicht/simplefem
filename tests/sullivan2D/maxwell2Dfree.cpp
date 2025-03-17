@@ -208,7 +208,7 @@ int main( int argc, char *argv[] )
                     const auto& function_curl = experiment_curl;
                     const auto& function_rhs  = experiment_rhs;
                     
-                    LOG << "...interpolate explicit solution and rhs" << nl;
+                    LOG << "... interpolate explicit solution and rhs" << nl;
                     
                     FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r+1, function_ndiv  );
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   function_sol  );
@@ -226,7 +226,7 @@ int main( int argc, char *argv[] )
                     
                     {
                         
-                        LOG << "...iterative solver" << nl;
+                        LOG << "... iterative solver" << nl;
                         
                         auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
                                     + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
@@ -292,7 +292,7 @@ int main( int argc, char *argv[] )
                     
                     auto curl = vector_diffmatrix * vector_incmatrix * sol;
                     
-                    LOG << "...compute error and residual" << nl;
+                    LOG << "... compute error and residual" << nl;
 
                     auto errornorm_aux_ndiv = interpol_ndiv - scalar_incmatrix * ndiv;
                     auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;

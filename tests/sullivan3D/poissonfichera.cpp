@@ -108,7 +108,7 @@ int main( int argc, char *argv[] )
             LOG << "Level: " << l << "/" << max_l << nl;
             LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
-            LOG << "...assemble matrices" << nl;
+            LOG << "... assemble matrices" << nl;
     
             LOG << "... assemble mass matrices" << nl;
 
@@ -156,7 +156,7 @@ int main( int argc, char *argv[] )
             auto aug_stiffness_csr = Conjugation( aug_vector_massmatrix_csr, aug_diffmatrix_csr & (                         MatrixCSR(aug_incmatrix) ) );
 
             
-            LOG << "...interpolate explicit solution and rhs" << nl;
+            LOG << "... interpolate explicit solution and rhs" << nl;
             
             const auto& function_sol  = experiment_sol;
             const auto& function_rhs  = experiment_rhs;
@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
             timestamp start = timestampnow();
 
             {
-                LOG << "...iterative solver 1" << nl;
+                LOG << "... iterative solver 1" << nl;
             
                 sol.zero();
                 
@@ -195,7 +195,7 @@ int main( int argc, char *argv[] )
             }
 
             {
-                LOG << "...iterative solver augmented" << nl;
+                LOG << "... iterative solver augmented" << nl;
             
                 aug_sol.zero();
                 
@@ -219,7 +219,7 @@ int main( int argc, char *argv[] )
             timestamp end = timestampnow();
             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
 
-            LOG << "...compute error and residual" << nl;
+            LOG << "... compute error and residual" << nl;
 
             FloatVector error     = aug_incmatrix * aug_sol - elevmatrix * incmatrix * sol;
             FloatVector graderror = aug_diffmatrix * ( aug_incmatrix * aug_sol - elevmatrix * incmatrix * sol );

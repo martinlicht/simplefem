@@ -41,19 +41,20 @@ int ConjugateGradientSolverCSR(
     assert( csrvalues );
     assert( residual );
     assert( precision > 0 );
-    assert( print_modulo >= -1 );
+    // assert( print_modulo >= -1 );
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -236,20 +237,21 @@ int ConjugateGradientSolverCSR_DiagonalPreconditioner(
     assert( csrvalues );
     assert( residual );
     assert( precision > 0 );
-    assert( print_modulo >= -1 );
+    // assert( print_modulo >= -1 );
     assert( precon );
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -461,20 +463,21 @@ int ConjugateGradientSolverCSR_SSOR(
     assert( csrvalues );
     assert( residual );
     assert( precision > 0 );
-    assert( print_modulo >= -1 );
+    // assert( print_modulo >= -1 );
     assert( diagonal );
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -744,20 +747,21 @@ int ConjugateGradientSolverCSR_SSOR_Eisenstat(
     assert( csrvalues );
     assert( residual );
     assert( precision > 0 );
-    assert( print_modulo >= -1 );
+    // assert( print_modulo >= -1 );
     assert( diagonal );
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -1016,7 +1020,7 @@ int ConjugateGradientSolverCSR_Rainbow(
     assert( csrvalues );
     assert( residual );
     assert( precision > 0 );
-    assert( print_modulo >= -1 );
+    // assert( print_modulo >= -1 );
     assert( diagonal );
 
     assert( num_colors >= 0 );
@@ -1026,15 +1030,16 @@ int ConjugateGradientSolverCSR_Rainbow(
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -1355,7 +1360,7 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     assert( csrvalues );
     assert( residual );
     assert( precision > 0 );
-    assert( print_modulo >= -1 );
+    // assert( print_modulo >= -1 );
     assert( diagonal );
 
     assert( num_colors >= 0 );
@@ -1365,15 +1370,16 @@ int ConjugateGradientSolverCSR_Eisenstat_Rainbow(
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -1696,19 +1702,20 @@ int ConjugateResidualSolverCSR(
     assert( csrvalues );
     assert( res );
     assert( precision > 0 );
-    assert( print_modulo >= -1 );
+    // assert( print_modulo >= -1 );
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -1926,19 +1933,20 @@ int ConjugateResidualSolverCSR_textbook(
     assert( csrvalues );
     assert( res );
     assert( precision > 0 );
-    assert( print_modulo >= -1 );
+    // assert( print_modulo >= -1 );
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    const bool do_print_breakdown = print_modulo >=  0;
-    const bool do_print_warning   = print_modulo >=  0;
+    const bool do_print_breakdown = print_modulo >= -2;
+    const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -2166,19 +2174,20 @@ int MINRESCSR(
     assert( csrvalues );
     assert( res );
     assert( precision > 0 );
-    assert( print_modulo >= -1 );
+    // assert( print_modulo >= -1 );
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    // const bool do_print_breakdown = print_modulo >=  0;
-    // const bool do_print_warning   = print_modulo >=  0;
+    // const bool do_print_breakdown = print_modulo >= -2;
+    // const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */
@@ -2441,15 +2450,16 @@ int ChebyshevIteration_DiagonalPreconditioner(
     
     Float tolerance = 0.;
     for( int i = 0; i < N; i++ ) tolerance += b[i]*b[i];
-    tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
+    tolerance = precision * sqrt( tolerance );
+    tolerance = maximum( tolerance, desired_precision );
 
     /* Determine the print flags */
 
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     // const bool do_print_restart   = print_modulo >=  0;
-    // const bool do_print_breakdown = print_modulo >=  0;
-    // const bool do_print_warning   = print_modulo >=  0;
+    // const bool do_print_breakdown = print_modulo >= -2;
+    // const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */

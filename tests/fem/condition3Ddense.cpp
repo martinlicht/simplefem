@@ -192,7 +192,7 @@ int main( int argc, char *argv[] )
                 
                 LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-                LOG << "...assemble mass matrices" << nl;
+                LOG << "... assemble mass matrices" << nl;
                 
                 auto massmatrix_scalar = DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r ) );
                 auto massmatrix_vector = DenseMatrix( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r ) );

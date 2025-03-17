@@ -187,29 +187,29 @@ int main( int argc, char *argv[] )
             
             {
                 
-                LOG << "...assemble scalar mass matrix" << nl;
+                LOG << "... assemble scalar mass matrix" << nl;
         
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
                 
-                LOG << "...assemble Sullivan inclusion matrix" << nl;
+                LOG << "... assemble Sullivan inclusion matrix" << nl;
         
                 SparseMatrix incmatrix = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r );
 
                 SparseMatrix incmatrix_t = incmatrix.getTranspose();
 
-                // LOG << "...compose mass matrix" << nl;
+                // LOG << "... compose mass matrix" << nl;
                 // const auto composed_mass      = incmatrix_t * scalar_massmatrix * incmatrix;
 
                 auto mass_prelim_csr = incmatrix_t & ( scalar_massmatrix & incmatrix );
                 mass_prelim_csr.sortentries();
                 
-                LOG << "...convert to CSR" << nl;
+                LOG << "... convert to CSR" << nl;
 
                 auto mass_csr = MatrixCSR( mass_prelim_csr );
                 
                 const auto& mass      = mass_csr;
                 
-                LOG << "...matrices done" << nl;
+                LOG << "... matrices done" << nl;
 
                 {
 

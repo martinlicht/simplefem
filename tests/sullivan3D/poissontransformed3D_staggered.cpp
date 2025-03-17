@@ -303,21 +303,21 @@ int main( int argc, char *argv[] )
 
             LOGPRINTF("Polynomial degrees: r=%d w=%d \n", r, w );
             
-            LOG << "...assemble scalar mass matrices" << nl;
+            LOG << "... assemble scalar mass matrices" << nl;
     
             // auto     scalar_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 0, r,   w, weight_scalar ) );
             auto     scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r ) );
 
-            LOG << "...assemble vector mass matrix" << nl;
+            LOG << "... assemble vector mass matrix" << nl;
     
             // auto     vector_massmatrix = MatrixCSR( FEECBrokenCoefficientMassMatrix( M, M.getinnerdimension(), 1, r-1, w, weight_vector ) );
             auto     vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r-1 ) );
             
-            LOG << "...assemble differential matrix and transpose" << nl;
+            LOG << "... assemble differential matrix and transpose" << nl;
 
             auto     diffmatrix = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r ) );
 
-            LOG << "...assemble inclusion matrix and transpose" << nl;
+            LOG << "... assemble inclusion matrix and transpose" << nl;
     
             auto     incmatrix = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r ) );
 
@@ -331,7 +331,7 @@ int main( int argc, char *argv[] )
 
             {
 
-                LOG << "...interpolate explicit solution and rhs" << nl;
+                LOG << "... interpolate explicit solution and rhs" << nl;
     
                 FloatVector     interpol_rhs  = Interpolation(     M,     M.getinnerdimension(), 0, r, parametric_f  );
 
@@ -343,7 +343,7 @@ int main( int argc, char *argv[] )
                 
                 timestamp solver_time;
 
-                LOG << "...iterative solver" << nl;
+                LOG << "... iterative solver" << nl;
                 
                 {
                     LOG << "[0]" << nl;
@@ -395,7 +395,7 @@ int main( int argc, char *argv[] )
                 LOG << "time:      " << Float( solver_time ) << nl;
                 
                 
-                LOG << "...update saved old solutions:" << nl; // TODO(martinlicht): remove std::move and replace it with std::transform
+                LOG << "... update saved old solutions:" << nl; // TODO(martinlicht): remove std::move and replace it with std::transform
                 if( l > min_l )
                 {
                     std::vector<FloatVector> new_solutions; new_solutions.reserve( solutions.size() );
@@ -420,7 +420,7 @@ int main( int argc, char *argv[] )
 
 
 
-                LOG << "...compute errors against previous solutions:" << nl;
+                LOG << "... compute errors against previous solutions:" << nl;
                 
                 ConvergenceTable contable( printf_into_string("Mass error (l=%d)", l ) );
                 

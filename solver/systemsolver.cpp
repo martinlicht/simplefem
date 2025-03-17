@@ -58,8 +58,8 @@ int BlockHerzogSoodhalterMethod(
     const bool do_print_begin     = print_modulo >= -1;
     const bool do_print_interim   = print_modulo >=  1;
     const bool do_print_restart   = print_modulo >=  0;
-    // const bool do_print_breakdown = print_modulo >=  0;
-    // const bool do_print_warning   = print_modulo >=  0;
+    // const bool do_print_breakdown = print_modulo >= -2;
+    // const bool do_print_warning   = print_modulo >= -2;
     const bool do_print_finish    = print_modulo >= -1;
     
     /* Build up data */

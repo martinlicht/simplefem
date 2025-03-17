@@ -152,7 +152,7 @@ int main( int argc, char *argv[] )
                 
                 {
                     
-                    LOG << "...interpolate explicit solution and rhs" << nl;
+                    LOG << "... interpolate explicit solution and rhs" << nl;
                     
                     const auto& function_sol  = experiment_sol;
                     const auto& function_grad = experiment_grad;
@@ -167,7 +167,7 @@ int main( int argc, char *argv[] )
                     FloatVector sol( volume_incmatrix.getdimin(), 0. );
                     sol.zero();
                     
-                    LOG << "...iterative solver" << nl;
+                    LOG << "... iterative solver" << nl;
                     
                     timestamp start = timestampnow();
 
@@ -233,7 +233,7 @@ int main( int argc, char *argv[] )
                     
                     auto grad = x_A; // inv(A,desired_precision) * Bt * sol;
 
-                    LOG << "...compute error and residual" << nl;
+                    LOG << "... compute error and residual" << nl;
 
                     
                     // improved error estimation 

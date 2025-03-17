@@ -80,7 +80,7 @@ int main( int argc, char *argv[] )
             SparseMatrix scalar_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
 
             
-            LOG << "...experiments" << nl;
+            LOG << "... experiments" << nl;
     
             for( int i = 0; i < experiments_scalar_function.size(); i++ ){
 

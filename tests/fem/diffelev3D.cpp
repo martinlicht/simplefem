@@ -99,7 +99,7 @@ int main( int argc, char *argv[] )
         for( int r_plus =     0; r_plus <=            r_plus_max; r_plus++ ) 
         {
             
-            LOG << "...assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus << nl;
+            LOG << "... assemble matrices: l=" << l << " k=" << k << " r=" << r << " rplus=" << r_plus << nl;
     
             SparseMatrix lower_diffmatrix = FEECBrokenDiffMatrix( M, M.getinnerdimension(), k, r          );
 

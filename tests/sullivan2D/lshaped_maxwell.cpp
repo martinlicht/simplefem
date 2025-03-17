@@ -145,7 +145,7 @@ int main( int argc, char *argv[] )
                     
                     timestamp start = timestampnow();
                     
-                        LOG << "...iterative solver" << nl;
+                        LOG << "... iterative solver" << nl;
                         
                         auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
                                     + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix );
@@ -203,7 +203,7 @@ int main( int argc, char *argv[] )
                     
                     assert( sol.is_finite() );
 
-                    LOG << "...compute residual" << nl;
+                    LOG << "... compute residual" << nl;
 
                     Float residualnorm      = ( rhs - B * inv(A,desired_precision) * Bt * sol - C * sol ).norm();
 

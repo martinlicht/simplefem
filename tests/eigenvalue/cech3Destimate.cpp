@@ -148,7 +148,7 @@ int main( int argc, char *argv[] )
         for( int k = 0; k <= n-1; k++ )
         {
             
-            LOG << "...begin inverse iteration: " << k << nl;
+            LOG << "... begin inverse iteration: " << k << nl;
             
             const int max_attempts = 1;
 
@@ -167,7 +167,7 @@ int main( int argc, char *argv[] )
                 for( int t = 0; t < max_inverseiterations; t++ )
                 {
 
-                    LOG << "...purification: " << t << nl;
+                    LOG << "... purification: " << t << nl;
             
                     FloatVector sol( A[k].getdimout(), 0. ); sol = candidate;
                     FloatVector aux( B[k].getdimout(), 0. );
@@ -219,7 +219,7 @@ int main( int argc, char *argv[] )
 
                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                 
-                LOG << "...compute error and residual" << nl;
+                LOG << "... compute error and residual" << nl;
 
                 auto eigenvector = candidate; 
 

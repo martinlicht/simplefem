@@ -11,10 +11,11 @@
 #include "../../operators/composedoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
-#include "../../mesh/mesh.simplicial2D.hpp"
-#include "../../mesh/examples2D.hpp"
+#include "../../mesh/mesh.simplicial3D.hpp"
+#include "../../mesh/examples3D.hpp"
 #include "../../vtk/vtkwriter.hpp"
 #include "../../solver/inv.hpp"
+#include "../../solver/systemsolver.hpp"
 #include "../../solver/systemsparsesolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -34,7 +35,7 @@ int main( int argc, char *argv[] )
 
         LOG << "Initial mesh..." << nl;
         
-        MeshSimplicial2D Mx = StandardSquare2D();
+        MeshSimplicial3D Mx = UnitCube3D();
         
         Mx.check();
         
@@ -42,21 +43,18 @@ int main( int argc, char *argv[] )
 
         
         
-        MeshSimplicial2D M;
+        MeshSimplicial3D M;
         
         for( int i = 0; i < 1; i++ )
         {
             auto M2 = Mx;
-            M2.getCoordinates().shift( FloatVector{ i * 3.0, 0.0 } );
+            M2.getCoordinates().shift( FloatVector{ i * 3.0, 0.0,0.0 } );
             M.merge( M2 );
         }
                     
         
-        LOG << "Nullspace computation" << nl;
-
-        ConvergenceTable contable("Number of nullvectors");
         
-        contable << "#nullvec" << nl;
+        const Float desired_precision = 100 * machine_epsilon;
         
 
         const int min_l = 0; 
@@ -74,6 +72,16 @@ int main( int argc, char *argv[] )
         assert( 0 <= min_l and min_l <= max_l );
         assert( 0 <= min_r and min_r <= max_r );
         
+        ConvergenceTable contable("Nullvectors found");
+        for( int r = min_r; r <= max_r; r++ )
+        {
+            contable << printf_into_string("#nullvec%i", r );
+        }
+        contable << nl;
+        
+        
+        LOG << "Nullspace computation" << nl;
+
         for( int l = 0; l < min_l; l++ )
             M.uniformrefinement();
 
@@ -81,93 +89,87 @@ int main( int argc, char *argv[] )
         {
             
             LOG << "Level: " << l << "/" << max_l << nl;
-            LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+            LOG << "# T/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
             for( int r = min_r; r <= max_r; r++ )
             {
                 
                 LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                 
-                LOG << "...assemble partial matrices" << nl;
+                LOG << "... assemble partial matrices" << nl;
         
-                SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
-                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
-                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+                const auto scalar_massmatrix = MatrixCSR(FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 ));
+                const auto vector_massmatrix = MatrixCSR(FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   ));
+                const auto volume_massmatrix = MatrixCSR(FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 ));
 
-                SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
-                SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
+                const auto scalar_diffmatrix   = MatrixCSR(FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 ));
+                const auto scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
-                SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
-                SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
+                const auto vector_diffmatrix   = MatrixCSR(FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r ));
+                const auto vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
-                SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
-                SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
+                const auto scalar_incmatrix   = MatrixCSR(FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 ));
+                const auto scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
-                SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
-                SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+                const auto vector_incmatrix   = MatrixCSR(FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   ));
+                const auto vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
-                SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
+                const auto volume_incmatrix   = MatrixCSR(FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 ));
+                const auto volume_incmatrix_t = volume_incmatrix.getTranspose();
                 
                 LOG << "... assemble full matrices" << nl;
         
-                auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
+                auto mass = Conjugation( vector_massmatrix, vector_incmatrix );
 
-                auto mat_A  = scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix;
-                mat_A.sortandcompressentries();
+                auto A  = Conjugation( scalar_massmatrix, scalar_incmatrix );
                 
-                auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
-                mat_Bt.sortandcompressentries();
+                auto Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
                 
-                auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
-                mat_B.sortandcompressentries();
+                auto B  = Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & diffmatrix & vector_incmatrix; // lower left
                 
-                auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
-                mat_C.sortandcompressentries();
+                auto C  = Conjugation( volume_massmatrix, vector_diffmatrix & vector_incmatrix );
                 
-                auto A  = MatrixCSR( mat_A  );
-                auto Bt = MatrixCSR( mat_Bt );
-                auto B  = MatrixCSR( mat_B  );
-                auto C  = MatrixCSR( mat_C  );
-                
-                auto Z  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
-                
-                auto SystemMatrix = C + B * inv(A,desired_precision, -1) * Bt;
-                
-                
-                
-                
-                
+                auto SystemMatrix = C + B * inv(A,100*machine_epsilon,-2) * Bt;
                 
                 
                 std::vector<FloatVector> nullvectorgallery;
                 
-                
-                for( int no_candidate = 0; no_candidate < max_number_of_candidates; no_candidate++ )
+                for( int candidate_number = 0; candidate_number < max_number_of_candidates; candidate_number++ )
                 {
                     
+                    /* Draw a random vector with unit mass norm as a candidate */
+
                     FloatVector candidate( Bt.getdimin(), 0. ); 
                     candidate.random(); 
                     candidate.normalize(mass);
                     
+                    /* Orthogonalize that vector against previous nullspace vectors */
+
                     {
+                
                         for( int s = 0; s < 2; s++ )
-                        for( const auto& nullvector : nullvectorgallery ) {
+                        for( const auto& nullvector : nullvectorgallery ) 
+                        {
                             Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
                             candidate = candidate - alpha * nullvector;
                         }
                         
-                        Float reduced_mass = candidate.norm(mass);
-                        LOG << "\t\t\t Preprocessed mass: " << reduced_mass << nl;
+                        Float orthogonalized_candidate_mass = candidate.norm(mass);
+                        LOG << "\t\t\t Initial candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
                         
-                        if( reduced_mass < mass_threshold_for_small_vectors ) {
-                            LOG << "**** The candidate already has very small mass" << nl;
-//                                 continue;
+                        if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) 
+                        {
+                            LOG << "\n\t\t\t !!!!! The initial candidate was already in the span\n" << nl;
+                            continue;
                         }
                     }
                     
+                    /* Re-normalize the candidate once again */
+
+                    candidate.normalize(mass);
                     
                     /* reduce the candidate to its nullspace component */
+                    
                     {
                         const FloatVector rhs( Bt.getdimin(), 0. );
                     
@@ -176,8 +178,36 @@ int main( int argc, char *argv[] )
                         for( int t = 0; t < max_number_of_purifications; t++ )
                         {
                             
-                            const auto& X = SystemMatrix;
+                            if( /* DISABLES CODE */ (false) )
+                            {
 
+                                auto PA = Conjugation( scalar_massmatrix, scalar_incmatrix ); 
+                                            + Conjugation( vector_massmatrix, scalar_diffmatrix & scalar_incmatrix ); 
+                                auto PC = Conjugation( vector_massmatrix, vector_incmatrix );
+                                            + Conjugation( volume_massmatrix, vector_diffmatrix & vector_incmatrix );
+                                
+                                const auto PAinv = inv(PA,desired_precision,-3);
+                                const auto PCinv = inv(PC,desired_precision,-3);
+
+                                FloatVector  x_A( A.getdimin(),  0. ); 
+                                FloatVector& x_C = candidate;
+                                
+                                const FloatVector  b_A( A.getdimin(),  0. ); 
+                                const FloatVector& b_C = rhs; 
+                                
+                                BlockHerzogSoodhalterMethod( 
+                                    x_A, 
+                                    x_C, 
+                                    b_A, 
+                                    b_C, 
+                                    -A, Bt, B, C, 
+                                    desired_precision,
+                                    -3,
+                                    PAinv, PCinv
+                                );
+
+                            }
+                            
                             HodgeConjugateResidualSolverCSR_SSOR(
                                 B.getdimout(), 
                                 A.getdimout(), 
@@ -188,97 +218,105 @@ int main( int argc, char *argv[] )
                                 Bt.getA(), Bt.getC(), Bt.getV(), 
                                 C.getA(),   C.getC(),  C.getV(), 
                                 residual.raw(),
-                                desired_precision, 
-                                0,
                                 desired_precision,
-                                -1
+                                -3,
+                                desired_precision,
+                                -3
                             );
-                            
+
                             // ConjugateResidualSolverCSR( 
                             //     candidate.getdimension(), 
                             //     candidate.raw(), 
                             //     rhs.raw(), 
                             //     C.getA(), C.getC(), C.getV(),
                             //     residual.raw(),
-                            //     desired_precision, 
+                            //     desired_precision,
                             //     0
                             // );
-                            
+
                             // ConjugateResidualMethod solver( X );
                             // solver.precision           = desired_precision;
-                            // solver.print_modulo        = 100;
-                            // solver.max_iteration_count = 4 * candidate.getdimension();
+                            // solver.print_modulo        = 0;
+                            // solver.max_iteration_count = 1 * candidate.getdimension();
                             // solver.solve( candidate, rhs );
-                        
-                            assert( candidate.is_finite() );
+
                             
-                            LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + X * candidate ).norm() << nl;
-                            LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + X * candidate ).norm( mass ) << nl;
+                            /*
+                            LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << nl;
+                            LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << nl;
                             LOG << "\t\t\t (eucl) res:       " << residual.norm() << nl;
                             LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << nl;
                             LOG << "\t\t\t (eucl) x:         " << candidate.norm() << nl;
                             LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << nl;
-                            LOG << "\t\t\t (eucl) Ax:        " << ( X * candidate ).norm() << nl;
-                            LOG << "\t\t\t (mass) Ax:        " << ( X * candidate ).norm( mass ) << nl;
-                            LOG << "\t\t\t (eucl) b - Ax:    " << ( X * candidate - rhs ).norm() << nl;
-                            LOG << "\t\t\t (mass) b - Ax:    " << ( X * candidate - rhs ).norm( mass ) << nl;
+                            LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix * candidate ).norm() << nl;
+                            LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
+                            LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << nl;
+                            LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << nl;
+                            */
                             
                             candidate.normalize( mass );
                             
                             assert( candidate.is_finite() );
                             
-                            LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << nl;
-                            LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << nl;
-                            LOG << "\t\t\t (norm eucl) Ax:        " << ( X * candidate ).norm() << nl;
-                            LOG << "\t\t\t (norm mass) Ax:        " << ( X * candidate ).norm( mass ) << nl;
-                            
+                            /*
+                            LOG << "\t\t\t (eucl) x:         " << candidate.norm() << nl;
+                            LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << nl;
+                            LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << nl;
+                            LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
+                            */
+
                         }
                     }
                     
-                    
-                    /* Gram-Schmidt */
-                    
+                    /* Orthogonalize that candidate once again against nullspace vectors */
+                    /* Discard if nothing new is found */
+
                     for( int s = 0; s < 2; s++ )
                     for( const auto& nullvector : nullvectorgallery ) {
                         Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
                         candidate = candidate - alpha * nullvector;
                     }
                     
-                    Float reduced_mass = candidate.norm(mass);
-                    LOG << "\t\t\t Reduced mass: " << reduced_mass << nl;
-                    
-                    if( reduced_mass < mass_threshold_for_small_vectors ) {
-                        LOG << "!!!!!!!!!!!!!Discard vector because mass is too small!" << nl;
+                    Float orthogonalized_candidate_mass = candidate.norm(mass);
+                    LOG << "\t\t\t Reduced candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
+
+                    if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) {
+                        LOG << "\n\t\t\t !!!!! Discard vector because mass is too small!\n" << nl;
                         continue;
                     }
                     
+                    /* Normalize and accept */
+
                     candidate.normalize(mass);
                     
-                    Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
+                    // Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
                     
+                    Float residual_mass = sqrt( ( C * candidate ).norm_sq( mass ) + ( Bt * candidate ).norm_sq( A ) );
+
                     LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
                     
                     if( residual_mass > mass_threshold_for_small_vectors ) {
-                        LOG << "!!!!!!!!!!!!!Discard vector because not nullspace enough!" << nl;
+                        LOG << "\n\t\t\t !!!!!Discard vector because not nullspace enough!\n" << nl;
                         continue;
                     }
                     
                     assert( candidate.is_finite() );
                     
-                    LOG << "Accept vector #" << nullvectorgallery.size() + 1 << nl;
+                    LOG << "Accept vector: " << nullvectorgallery.size() + 1 << nl;
                 
                     
                     nullvectorgallery.push_back( candidate );
                 }
-                
-                
-                
+            
+            
+            
                 LOG << "How much nullspace are our vectors?" << nl;
                 for( const auto& nullvector : nullvectorgallery ) {
-                    Float mass_norm = ( SystemMatrix * nullvector ).norm(mass);
-                    Assert( mass_norm < mass_threshold_for_small_vectors, mass_norm, mass_threshold_for_small_vectors );
-                    // LOGPRINTF( "% 10.5Le\t", (long double)mass_norm );
-                    LOG << mass_norm << tab;
+                    // Float residual_mass = ( SystemMatrix * nullvector ).norm(mass);
+                    Float residual_mass = sqrt( ( C * nullvector ).norm_sq( mass ) + ( Bt * nullvector ).norm_sq( A ) );
+                    Assert( residual_mass < mass_threshold_for_small_vectors, residual_mass, mass_threshold_for_small_vectors );
+                    // LOGPRINTF( "% 10.5Le\t", (long double)residual_mass );
+                    LOG << residual_mass << nl;
                 }
                 LOG << nl;
                 
@@ -288,20 +326,22 @@ int main( int argc, char *argv[] )
                         auto nullvector1 = nullvectorgallery[n1];
                         auto nullvector2 = nullvectorgallery[n2];
                         Float mass_prod = mass * nullvector1 * nullvector2;
-                        // LOGPRINTF( "% 10.5Le\t", (long double)mass_prod );
-                        LOG << mass_prod << tab;
-                        if( n1 != n2 ) assert( is_numerically_small( mass_prod ) );
+                        LOGPRINTF( "% 10.5le\t", (double)(safedouble)mass_prod );
+                        // LOG << mass_prod << tab;
+                        if( n1 != n2 ) 
+                            assert( is_numerically_small( mass_prod ) );
+                        else
+                            assert( is_numerically_one( mass_prod ) );
                         
                     }
                     LOG << nl;
                 }
                 
                 
+                contable << static_cast<Float>(nullvectorgallery.size());
                 
-                contable << static_cast<Float>(nullvectorgallery.size());   
                 
-                
-                const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r );
+                const auto interpol_matrix = MatrixCSR(FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 1, 0, r ));
 
                 for( const auto& nullvector : nullvectorgallery )
                 {
@@ -331,9 +371,6 @@ int main( int argc, char *argv[] )
         contable.lg();
     
     }
-    
-    
-    
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     

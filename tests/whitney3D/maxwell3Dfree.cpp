@@ -228,7 +228,7 @@ int main( int argc, char *argv[] )
             
                 {
 
-                    LOG << "...interpolate explicit solution and rhs" << nl;
+                    LOG << "... interpolate explicit solution and rhs" << nl;
                     
                     const auto& function_ndiv = experiment_ndiv;
                     const auto& function_sol  = experiment_sol;
@@ -251,7 +251,7 @@ int main( int argc, char *argv[] )
                     const FloatVector  b_A( A.getdimin(),  0. ); 
                     const FloatVector& b_C = rhs; 
                     
-                    LOG << "...iterative solver" << nl;
+                    LOG << "... iterative solver" << nl;
                         
                     timestamp start = timestampnow();
 
@@ -304,7 +304,7 @@ int main( int argc, char *argv[] )
                     
                     auto curl = pseudo_elevationmatrix * vector_diffmatrix * vector_incmatrix * sol;
                     
-                    LOG << "...compute error and residual" << nl;
+                    LOG << "... compute error and residual" << nl;
 
                     auto errornorm_aux_ndiv = interpol_ndiv - scalar_incmatrix * ndiv;
                     auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;

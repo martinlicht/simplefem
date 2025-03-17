@@ -77,7 +77,7 @@ int main( int argc, char *argv[] )
             
             LOG << "DIMENSION " << d+1 << " AT LEVEL " << l << nl;
     
-            LOG << "...basic FEEC matrices" << nl;
+            LOG << "... basic FEEC matrices" << nl;
     
             auto feec_vectormass = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, 0 );
             
@@ -101,7 +101,7 @@ int main( int argc, char *argv[] )
             auto feec_inc_t_csr = MatrixCSR( feec_inc_t );
         
 
-            LOG << "...composed FEEC matrices" << nl;
+            LOG << "... composed FEEC matrices" << nl;
             
             auto stiffness_cpp  = feec_inc_t * feec_diff_t * feec_vectormass * feec_diff * feec_inc;
             auto stiffness_coo1 = feec_inc_t & feec_diff_t & feec_vectormass & feec_diff & feec_inc;
@@ -113,7 +113,7 @@ int main( int argc, char *argv[] )
             auto stiffness_csr3 = feec_inc_t_csr & ( feec_diff_t_csr & feec_vectormass_csr & feec_diff_csr ) & feec_inc_csr;
 
             
-            LOG << "...COMPARISONS" << nl;
+            LOG << "... COMPARISONS" << nl;
                 
             for( int n = 0; n < number_of_samples; n++ ){
                 auto vec = stiffness_cpp.createinputvector();

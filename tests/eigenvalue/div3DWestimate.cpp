@@ -193,7 +193,7 @@ int main( int argc, char *argv[] )
             // LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
                         
 
-            LOG << "...begin inverse iteration" << nl;
+            LOG << "... begin inverse iteration" << nl;
             
             const int max_attempts = 1;
 
@@ -268,7 +268,7 @@ int main( int argc, char *argv[] )
 
                 LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
                 
-                LOG << "...compute error and residual" << nl;
+                LOG << "... compute error and residual" << nl;
 
                 auto sol = candidate; 
 

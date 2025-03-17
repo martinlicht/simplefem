@@ -156,7 +156,7 @@ int main( int argc, char *argv[] )
                 
                 LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                 
-                LOG << "...assemble partial matrices" << nl;
+                LOG << "... assemble partial matrices" << nl;
         
                 SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r   );
                 SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
@@ -210,7 +210,7 @@ int main( int argc, char *argv[] )
                 
                 {
 
-                    LOG << "...interpolate explicit solution and rhs" << nl;
+                    LOG << "... interpolate explicit solution and rhs" << nl;
                     
                     FloatVector interpol_ndiv = Interpolation( M, M.getinnerdimension(), 0, r, experiment_ndiv  );
                     FloatVector interpol_sol  = Interpolation( M, M.getinnerdimension(), 1, r,   experiment_sol  );
@@ -429,7 +429,7 @@ int main( int argc, char *argv[] )
                         
                         auto curl = vector_diffmatrix * vector_incmatrix * sol;
                         
-                        LOG << "...compute error and residual:" << k << nl;
+                        LOG << "... compute error and residual:" << k << nl;
 
                         auto errornorm_aux_ndiv = interpol_ndiv - scalar_incmatrix * ndiv;
                         auto errornorm_aux_sol  = interpol_sol  - vector_incmatrix *  sol;

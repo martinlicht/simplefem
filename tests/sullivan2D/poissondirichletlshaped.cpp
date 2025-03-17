@@ -119,11 +119,11 @@ int main( int argc, char *argv[] )
 
             LOGPRINTF("Polynomial degrees: r=%d w=%d \n", r, w );
             
-            LOG << "...assemble scalar mass matrices" << nl;
+            LOG << "... assemble scalar mass matrices" << nl;
     
             auto mass = MatrixCSR( LagrangeMassMatrix( M, r ) );
 
-            LOG << "...assemble vector mass matrix" << nl;
+            LOG << "... assemble vector mass matrix" << nl;
     
             auto stiffness = MatrixCSR( LagrangeStiffnessMatrix( M, r ) );
             
@@ -140,7 +140,7 @@ int main( int argc, char *argv[] )
 
             {
 
-                LOG << "...interpolate explicit solution and rhs" << nl;
+                LOG << "... interpolate explicit solution and rhs" << nl;
     
                 FloatVector      sol( M.count_vertices(), 0. );
                 
@@ -179,7 +179,7 @@ int main( int argc, char *argv[] )
                 assert( rhs.is_finite() );
 
                 
-                LOG << "...iterative solver" << nl;
+                LOG << "... iterative solver" << nl;
                 
                 auto& stiffness_csr = stiffness;
 
@@ -216,7 +216,7 @@ int main( int argc, char *argv[] )
                 LOG << "time:      " << Float( solver_time ) << nl;
                 
                 
-                LOG << "...update saved old solutions:" << nl;
+                LOG << "... update saved old solutions:" << nl;
                 if( l > min_l )
                 {
                     std::vector<FloatVector> new_solutions; new_solutions.reserve( solutions.size() );
@@ -241,7 +241,7 @@ int main( int argc, char *argv[] )
 
 
 
-                LOG << "...compute errors against previous solutions:" << nl;
+                LOG << "... compute errors against previous solutions:" << nl;
                 
                 ConvergenceTable contable( printf_into_string("Mass error (l=%d)", l ) );
                 

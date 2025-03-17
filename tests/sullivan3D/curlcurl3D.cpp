@@ -320,7 +320,7 @@ int main( int argc, char *argv[] )
             LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
                         
                         
-            LOG << "...interpolate explicit solution and rhs" << nl;
+            LOG << "... interpolate explicit solution and rhs" << nl;
             
             const auto& function_sol  = experiment_sol;
             const auto& function_rhs  = experiment_rhs;
@@ -341,7 +341,7 @@ int main( int argc, char *argv[] )
             // compute the solution ....
 
 
-            LOG << "...iterative solver" << nl;
+            LOG << "... iterative solver" << nl;
                         
             timestamp start = timestampnow();
 
@@ -366,7 +366,7 @@ int main( int argc, char *argv[] )
 
             LOG << "\t\t\t Time: " << timestamp2measurement( end - start ) << nl;
             
-            LOG << "...compute error and residual" << nl;
+            LOG << "... compute error and residual" << nl;
 
             auto errornorm_aux_sol  = interpol_sol  - vector_elevmatrix * vector_incmatrix * sol;
             auto errornorm_aux_curl = interpol_curl - pseudo_elevmatrix * vector_diffmatrix * vector_incmatrix * sol;

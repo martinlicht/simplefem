@@ -156,7 +156,7 @@ int main( int argc, char *argv[] )
         
         LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
 
-        LOG << "...assemble mass matrices" << nl;
+        LOG << "... assemble mass matrices" << nl;
 
         SparseMatrix massmatrix_scalar = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r_ref );
         
@@ -176,7 +176,7 @@ int main( int argc, char *argv[] )
             
             LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
 
-            LOG << "...assemble degree elevation matrices" << nl;
+            LOG << "... assemble degree elevation matrices" << nl;
             
             SparseMatrix elevation_scalar = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 0, r, r_ref - r );
             
