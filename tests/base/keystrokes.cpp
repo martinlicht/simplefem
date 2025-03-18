@@ -46,7 +46,7 @@ void terminal_mode_into_raw()
     atexit( &terminal_mode_restore );
 
     // Disable echo (ECHO) and canonical mode (ICANON)
-    raw.c_lflag &= ~(ECHO | ICANON); // TODO(martin): double check whether this is well-defined
+    raw.c_lflag &= ~(ECHO | ICANON); // This is well-defined because the sign bit is never set. We are using two's complement anyways.
 
     // Configure non-blocking read behavior
     raw.c_cc[VMIN]  = 1;  // Minimum number of characters to read

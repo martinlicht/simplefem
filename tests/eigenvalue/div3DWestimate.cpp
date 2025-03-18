@@ -179,7 +179,6 @@ int main( int argc, char *argv[] )
             
             auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
             
-            // TODO(martinlicht): develop preconditioners 
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
 

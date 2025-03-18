@@ -14,9 +14,9 @@ std::vector<FloatVector> computeNullspace(
     const LinearOperator& ResidualMassMatrix,
     const int max_number_of_candidates,
     //
-    const Float tolerance_residual, 
+    const Float mass_threshold_for_small_residual, 
     const Float mass_threshold_for_small_vectors,
-    std::function<void(FloatVector&)> purifier
+    const std::function<void(FloatVector&)>& purifier
 );
 
 #endif

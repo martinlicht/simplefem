@@ -231,7 +231,7 @@ std::string printf_into_string( const char* formatstring, ... )
 
 
 
-// TODO(martinlicht): move to utility 
+// TODO(martinlicht): simplify the time stamp interface and move it to logging, even with code duplication.
 
 static_assert( std::is_integral< decltype( std::chrono::time_point_cast< std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
 

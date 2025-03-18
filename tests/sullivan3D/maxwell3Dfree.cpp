@@ -188,8 +188,6 @@ int main( int argc, char *argv[] )
                 
                 
                 
-                // TODO(martin): update using conjugation 
-    
                 // auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
 
                 LOG << "... compose system matrices" << nl;

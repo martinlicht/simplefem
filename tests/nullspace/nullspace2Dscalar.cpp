@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
     
     const int max_number_of_candidates = 6;
 
-    const int max_number_of_purifications = 2;
+    // const int max_number_of_purifications = 2;
 
     assert( 0 <= min_l and min_l <= max_l );
     assert( 0 <= min_r and min_r <= max_r );

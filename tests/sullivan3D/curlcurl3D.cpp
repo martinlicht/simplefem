@@ -268,8 +268,6 @@ int main( int argc, char *argv[] )
 
             LOG << "... compose system matrices" << nl;
 
-            // TODO(martin): update using conjugation 
-    
             // auto mat_A  = vector_incmatrix_t & vector_diffmatrix_t & ( pseudo_elevmatrix_t & pseudo_massmatrix & pseudo_elevmatrix ) & vector_diffmatrix & vector_incmatrix;
             // mat_A.sortandcompressentries();
                 
@@ -284,10 +282,7 @@ int main( int argc, char *argv[] )
             // auto B  = MatrixCSR( mat_B  );
             
             // auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
-
-
-
-
+            
             // auto A = Conjugation( Conjugation( MatrixCSR(pseudo_massmatrix), MatrixCSR(pseudo_elevmatrix) ) , MatrixCSR(vector_diffmatrix) & MatrixCSR(vector_incmatrix) );
             auto A = Conjugation( MatrixCSR(pseudo_massmatrix), MatrixCSR(pseudo_elevmatrix) & ( MatrixCSR(vector_diffmatrix) & MatrixCSR(vector_incmatrix) ) );
             
@@ -306,7 +301,6 @@ int main( int argc, char *argv[] )
             
             LOG << "... compose preconditioner data" << nl;
     
-            // TODO(martinlicht): develop preconditioners 
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
             

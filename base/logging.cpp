@@ -11,8 +11,46 @@ bool log_has_a_fresh_line = true;
 
 // For controlling the floating-point behavior
 #include <cfenv>
-#include <xmmintrin.h>
-#include <cfloat>
+#include <cfloat> // _controlfp_s on Windows 
+
+#if defined(__SSE__)
+#include <xmmintrin.h> // _MM_SET_FLUSH_ZERO_MODE
+#endif
+#if defined(__SSE3__)
+#include <pmmintrin.h> // _MM_SET_DENORMALS_ZERO_MODE
+#endif
+
+#include <chrono>
+#include <string>
+
+
+static_assert( std::is_integral< decltype( std::chrono::time_point_cast< std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , 
+                "Time measurement must be integral" );
+
+static std::string get_current_time_as_string()
+{
+    static const auto start = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
+    
+    const auto          now = std::chrono::time_point_cast<std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count();
+    
+    auto t = now - start;
+
+    Assert( t >= 0 );
+    Assert( t < 99999'99999 ); // ca. 115 days 
+
+    int numdigits = 10;
+    
+    char digits[numdigits+1];
+    digits[numdigits] = '\0';
+
+    numdigits--;
+    do { digits[numdigits--] = '0' + ( t % 10 ); t /= 10; } while( t > 0 );
+    while( numdigits >= 0 ) digits[numdigits--] = '_';
+    
+    return std::string(digits);
+}
+
+
 
 
 
@@ -77,7 +115,7 @@ Logger::~Logger() noexcept
 
     // complete the prefix string 
 
-    const std::string time_code = digitalcodenow(); 
+    const std::string time_code = get_current_time_as_string(); // digitalcodenow(); 
 
     #ifdef USE_COLORED_OUTPUT
     const std::string colorcode_begin = "\033[96m";
@@ -159,45 +197,76 @@ Logger::~Logger() noexcept
 #include <omp.h>
 #endif // #if defined(_OPENMP)
 
-System_Reporter::System_Reporter() noexcept
+SystemSetup::SystemSetup() noexcept
 {
-    output();
+    initialize();
 }
 
-System_Reporter::~System_Reporter() noexcept
-{
-    #if defined(_OPENMP)
-    // LOG << "###\tSystem Reporter: finished\n";
-    #endif
-}   
-
-void System_Reporter::output()
+void SystemSetup::initialize()
 {
     
     #if defined(GIT_COMMIT_ID)
-    LOG << "###\tCurrent Git commit ID: " << GIT_COMMIT_ID << nl;
+    LOG << "---\tCurrent Git commit ID: " << GIT_COMMIT_ID << nl;
     #endif
 
     const time_t t = std::time(nullptr);
     const tm zeit = *std::localtime(&t);
-    LOGPRINTF("###\t%d-%02d-%02d %02d:%02d:%02d\n", zeit.tm_year + 1900, zeit.tm_mon + 1, zeit.tm_mday, zeit.tm_hour, zeit.tm_min, zeit.tm_sec );
+    LOGPRINTF("---\t%d-%02d-%02d %02d:%02d:%02d\n", zeit.tm_year + 1900, zeit.tm_mon + 1, zeit.tm_mday, zeit.tm_hour, zeit.tm_min, zeit.tm_sec );
     
-    #if defined(_OPENMP)
-    LOG << "###\tOpenMP Value: " << _OPENMP << nl;
-    LOG << "###\tMaximum number of threads: " << omp_get_max_threads() << nl;
-    LOG << "###\tMaximum active levels: " << omp_get_max_active_levels() << nl;
-    // LOG << "###\tNested parallelism supported: " << ( omp_get_nested() ? "Yes" : "No" ) << nl;
-    LOG << "###\tDynamic adjustment of the number of threads enabled: " << ( omp_get_dynamic() ? "Yes" : "No" ) << nl;
-    LOG << "###\tThread limit: " << omp_get_thread_limit() << nl;
-    LOG << "###\tNumber of processors available: " << omp_get_num_procs() << nl;
-    LOG << "###\tDefault thread affinity: " << ( omp_get_proc_bind() == omp_proc_bind_false ? "No affinity" : "Affinity" ) << nl;
-    // LOG << "###\tMaximum number of processors: " << p << " -> " << omp_get_place_num_procs() << nl;
-    LOG << "###\tMaximum number of places: " << omp_get_num_places() << nl;
-    for( int p = 0; p < omp_get_num_places(); p++ ) {
-        LOG << "###\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
-    }
+    LOGPRINTF("---\tCompiler version: %s\n", __VERSION__);
+
+    #ifdef _DEBUG
+    LOGPRINTF("---\tMSVC Debugging flags enabled.\n");
     #else
-    LOG << "###\tOpenMP is not enabled.\n";
+    LOGPRINTF("---\tMSVC Debugging flags not enabled.\n");
+    #endif
+
+    #ifdef NDEBUG
+    LOGPRINTF("---\tNDEBUG enabled.\n");
+    #else
+    LOGPRINTF("---\tNDEBUG not enabled.\n");
+    #endif
+
+    #ifdef __OPTIMIZE__
+    LOGPRINTF("---\tCompiler optimization level: %d\n", __OPTIMIZE__);
+    // Add more performance-related information here
+    #endif
+
+    #ifdef __unix__
+    LOGPRINTF("---\tOS: Unix\n");
+    #elif defined(_WIN32)
+    LOGPRINTF("---\tOS: Windows\n");
+    #else
+    #error "Unknown platform"
+    #endif
+
+
+    #if defined(_OPENMP)
+    
+    LOG << "---\tOpenMP Value                   : " << _OPENMP                                                                     << nl;
+    LOG << "---\tMaximum number of threads      : " << omp_get_max_threads()                                                       << nl;
+    LOG << "---\tMaximum active levels          : " << omp_get_max_active_levels()                                                 << nl;
+    LOG << "---\tThread limit                   : " << omp_get_thread_limit()                                                      << nl;
+    LOG << "---\tNumber of processors available : " << omp_get_num_procs()                                                         << nl;
+    LOG << "---\tDefault thread affinity        : " << ( omp_get_proc_bind() == omp_proc_bind_false ? "No affinity" : "Affinity" ) << nl;
+    LOG << "---\tmax num nested active parallel : " << omp_get_max_active_levels()                                                 << nl;
+    // omp_get_nested is deprecated
+    // LOG << "---\tNested parallelism supported:   " << ( omp_get_nested() ? "Yes" : "No" )                                         << nl;
+    LOG << "---\tMaximum number of places       : " << omp_get_num_places()                                                        << nl;
+    LOG << "---\tDynamic adjustment of the number of threads enabled: " << ( omp_get_dynamic() ? "Yes" : "No" ) << nl;
+    for( int p = 0; p < omp_get_num_places(); p++ ) {
+        LOG << "---\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
+    }
+    
+    // // provoke the spawning of the OpenMP threads with some parallel block
+    // #pragma omp parallel
+    // {
+    //     printf("<%d/%d>", omp_get_thread_num(), omp_get_num_threads() );
+    // }
+    // printf("\n");
+    
+    #else
+    LOG << "---\tOpenMP is not enabled.\n";
     #endif
 
     // #ifdef _OPENMP
@@ -211,38 +280,10 @@ void System_Reporter::output()
     // LOGPRINTF("OpenMP is not enabled.\n");
     // #endif
 
-    LOGPRINTF("###\tCompiler version: %s\n", __VERSION__);
-
-    #ifdef _DEBUG
-    LOGPRINTF("###\tMSVC Debugging flags enabled.\n");
-    #else
-    LOGPRINTF("###\tMSVC Debugging flags not enabled.\n");
-    #endif
-
-    #ifdef NDEBUG
-    LOGPRINTF("###\tNDEBUG enabled.\n");
-    #else
-    LOGPRINTF("###\tNDEBUG not enabled.\n");
-    #endif
-
-    #ifdef __OPTIMIZE__
-    LOGPRINTF("###\tCompiler optimization level: %d\n", __OPTIMIZE__);
-    // Add more performance-related information here
-    #endif
-
-    #ifdef __unix__
-    LOGPRINTF("###\tOS: Unix\n");
-    #elif defined(_WIN32)
-    LOGPRINTF("###\tOS: Windows\n");
-    #else
-    #error "Unknown platform"
-    #endif
+    
 
 
-
-
-
-    LOG << "###\tFLT_EVAL_METHOD: " << FLT_EVAL_METHOD << space;
+    LOG << "---\tFLT_EVAL_METHOD: " << FLT_EVAL_METHOD << space;
 
     switch (FLT_EVAL_METHOD) {
         case -1:
@@ -267,7 +308,7 @@ void System_Reporter::output()
     }
 
 
-    LOG << "###\tFLT_ROUNDS: " << FLT_ROUNDS << space;
+    LOG << "---\tFLT_ROUNDS: " << FLT_ROUNDS << space;
 
     switch (FLT_ROUNDS) {
         case std::round_indeterminate:
@@ -292,7 +333,7 @@ void System_Reporter::output()
 
 
     #if __cplusplus >= 201703L
-    LOG << "###\tFLT_HAS_SUBNORM: " << FLT_HAS_SUBNORM << space;
+    LOG << "---\tFLT_HAS_SUBNORM: " << FLT_HAS_SUBNORM << space;
     switch (FLT_HAS_SUBNORM) {
         case -1:
             LOG << "Support for subnormal numbers in float is indeterminable." << nl;
@@ -308,7 +349,7 @@ void System_Reporter::output()
             break;
     }
 
-    LOG << "###\tDBL_HAS_SUBNORM: " << DBL_HAS_SUBNORM << space;
+    LOG << "---\tDBL_HAS_SUBNORM: " << DBL_HAS_SUBNORM << space;
     switch (DBL_HAS_SUBNORM) {
         case -1:
             LOG << "Support for subnormal numbers in double is indeterminable." << nl;
@@ -324,7 +365,7 @@ void System_Reporter::output()
             break;
     }
 
-    LOG << "###\tLDBL_HAS_SUBNORM: " << LDBL_HAS_SUBNORM << space;
+    LOG << "---\tLDBL_HAS_SUBNORM: " << LDBL_HAS_SUBNORM << space;
     switch (LDBL_HAS_SUBNORM) {
         case -1:
             LOG << "Support for subnormal numbers in long double is indeterminable." << nl;
@@ -350,33 +391,64 @@ void System_Reporter::output()
         // Check precision control bits
         switch(currentControlWord & _MCW_PC) {
             case _PC_24: 
-                LOG << "###\tPrecision control: 24-bit." << nl;
+                LOG << "---\tPrecision control: 24-bit." << nl;
                 break;
             case _PC_53:
-                LOG << "###\tPrecision control: 53-bit." << nl;
+                LOG << "---\tPrecision control: 53-bit." << nl;
                 break;
             case _PC_64:
-                LOG << "###\tPrecision control: 64-bit." << nl;
+                LOG << "---\tPrecision control: 64-bit." << nl;
                 break;
             default:
-                LOG << "###\tPrecision control: unknown." << nl;
+                LOG << "---\tPrecision control: unknown." << nl;
                 break;
         }
     }    
     #endif
 
-    #if true and defined(_WIN32)
-    LOGPRINTF("###\tFlushing subnormal numbers\n");
-    _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN ); // Flush denormals, both operands and results, to zero 
-    #elif false and defined(__SSE__) // TODO(martinlicht): fix this stuff in gcc
-    LOGPRINTF("###\tFlushing subnormal numbers\n"); // ??? xmmintrin.h
-    _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-    _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+
+    // The following settings enable the flushing of denormals, both operands and results, to zero
+    // 
+    // If OpenMP is active, then we execute it in a parallel region, 
+    // so that each thread sets the flushing mode 
+    //  1. We assume that the main thread participates in the parallel regions, and that
+    //  2. the threads are persistent between parallel regions
+    // If OpenMP is active, we notify on the main thread
+    // 
+    // Generally, we use the floating-point intrinsics headers. 
+    // On Windows, however, we use the native headers
+
+    #if defined(_OPENMP)
+    #pragma omp parallel
+    {
+        if( omp_get_thread_num() == 0 )
+    #endif    
+
+    #if defined(_WIN32)
+        LOGPRINTF("---\tFlushing subnormal numbers\n");
+        _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN );        // Use the native Windows interface
+    #elif defined(__SSE__)
+        LOGPRINTF("---\tFlushing subnormal numbers\n");     // xmmintrin.h
+        _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+        #ifdef __SSE3__
+            _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON); // pmmintrin.h
+        #endif
     #endif
+
+    #if defined(_OPENMP)
+        (void)0; }
+    #endif    
 
 }
 
-const System_Reporter system_reporter;
+SystemSetup::~SystemSetup() noexcept
+{
+    #if defined(_OPENMP)
+    // LOG << "---\tSystem Reporter: finished\n";
+    #endif
+}   
+
+const SystemSetup system_setup;
 
 
 

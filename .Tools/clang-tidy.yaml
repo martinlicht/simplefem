@@ -124,7 +124,8 @@ HeaderFileExtensions: ['h','hpp','hxx']
 ImplementationFileExtensions: ['c','cpp','cxx']
 
 # Extra arguments 
-ExtraArgs: ['--std=c++14','-fno-exceptions -fno-rtti']
+ExtraArgs: ['--std=c++14']
+# ExtraArgs: ['--std=c++14','-fno-exceptions -fno-rtti']
 
 
 CheckOptions:

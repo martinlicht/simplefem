@@ -331,22 +331,18 @@ class Logger final
 
 ////////////////////////////////////////////
 // 
-//      OMP reporter
+//      System setup
 // 
 ////////////////////////////////////////////
 
-// #ifdef _OPENMP
-
-struct System_Reporter final
+struct SystemSetup final
 {
-    System_Reporter() noexcept;
-    ~System_Reporter() noexcept;
-    static void output();
+    SystemSetup() noexcept;
+    ~SystemSetup() noexcept;
+    static void initialize();
 };
 
-extern const System_Reporter system_reporter;
-
-// #endif // _OPENMP
+extern const SystemSetup system_setup;
 
 
 

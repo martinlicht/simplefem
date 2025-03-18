@@ -146,8 +146,6 @@ int main( int argc, char *argv[] )
 
                 SparseMatrix diffmatrix_t = diffmatrix.getTranspose();
 
-                // TODO(martin): update using conjugation 
-    
                 LOG << "... assemble stiffness matrix" << nl;
         
                 // auto opr  = diffmatrix & incmatrix;

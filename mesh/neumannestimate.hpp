@@ -100,7 +100,6 @@ static Float NeumannEstimate( const Mesh& M ) {
         
         // we will construct the tree coming from that root 
         
-        // TODO(martinlicht): Double check correctness
         // Comparator for the priority queue (min-heap, based on weights). 
         // Use > to prioritize the pair with the smaller weight
         struct Compare {

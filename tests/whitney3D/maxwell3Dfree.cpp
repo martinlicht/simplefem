@@ -198,8 +198,6 @@ int main( int argc, char *argv[] )
                 
                 LOG << "... compose system matrices" << nl;
 
-                // TODO(martin): update using conjugation 
-    
                 auto A  = Conjugation( MatrixCSR(scalar_massmatrix), MatrixCSR(scalar_incmatrix) );
 
                 auto Bt = MatrixCSR(scalar_incmatrix_t) & MatrixCSR(scalar_diffmatrix_t) & MatrixCSR(vector_elevationmatrix_t) & MatrixCSR(vector_massmatrix) & MatrixCSR(vector_incmatrix); // upper right

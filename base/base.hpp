@@ -772,7 +772,7 @@ typedef uintmax_t timestamp;
 
 timestamp timestampnow();
 
-// TODO(martinlicht): move to utility 
+// TODO(martinlicht): simplify the time stamp interface and move it to logging, even with code duplication.
 
 std::string timestamp2measurement( const timestamp& t );
 
@@ -803,7 +803,7 @@ std::string digitalcodenow();
 //                                             //
 /////////////////////////////////////////////////
 
-// TODO(martinlicht): Move to utilities 
+// TODO(martinlicht): These functions are not used in the base. Move to utilities 
 
 /******************************************************/
 /*      count the white space within STL string       */
@@ -891,7 +891,6 @@ __attribute__ (( format (printf,1,2) ));
 //     return operator<< <Stream,const char*>( stream, container.c_str() ); 
 // }
 
-// // TODO(martinlicht): Move into separate include file 
 // template <typename StreamType, typename T, size_t N>
 // inline StreamType& operator<<( StreamType& stream, const std::array<T, N>& v)
 // // Define a helper structure template to check for to_text existence
@@ -919,7 +918,6 @@ __attribute__ (( format (printf,1,2) ));
 //     return stream;
 // }
 
-// // TODO(martinlicht): Move into separate include file 
 // template <typename StreamType, typename T, size_t N>
 // inline StreamType& operator<<( StreamType&& stream, const std::array<T, N>& v)
 // {
