@@ -9,11 +9,14 @@
 #include "../../utility/convergencetable.hpp"
 #include "../../utility/files.hpp"
 #include "../../operators/composedoperators.hpp"
+#include "../../operators/simpleoperators.hpp"
 #include "../../sparse/sparsematrix.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../mesh/mesh.simplicial2D.hpp"
 #include "../../mesh/examples2D.hpp"
 #include "../../vtk/vtkwriter.hpp"
+#include "../../solver/iterativesolver.hpp"
+#include "../../solver/nullspace.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
@@ -66,6 +69,8 @@ int main( int argc, char *argv[] )
     assert( 0 <= min_r and min_r <= max_r );
     
     ConvergenceTable contable("Nullvectors found");
+    contable.display_convergence_rates = false;
+
     for( int r = min_r; r <= max_r; r++ )
     for( int b = 0; b <= 1; b++ )
     {
@@ -125,189 +130,69 @@ int main( int argc, char *argv[] )
             
             const auto& mass = physical_mass;
             
-            std::vector<FloatVector> nullvectorgallery;
+            const auto precon = InverseDiagonalPreconditioner(SystemMatrix);
+
+            auto purifier_cpp = [&]( FloatVector& candidate ){
+                ConjugateResidualMethod CRM(SystemMatrix);
+                CRM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
+
+                FloatVector solution( candidate.getdimension(), 0. );
+                CRM.solve( solution, SystemMatrix * candidate );
+                candidate -= solution;
+            };
             
-            LOG << "... begin sampling candidates" << nl;
-            
+            auto purifier_csr = [&]( FloatVector& candidate ){
                 
-            for( int candidate_number = 0; candidate_number < max_number_of_candidates; candidate_number++ )
-            {
+                FloatVector solution( candidate.getdimension(), 0. );
                 
-                /* Draw a random vector with unit mass norm as a candidate */
-
-                FloatVector candidate( SystemMatrix.getdimin(), 0. ); 
-                candidate.random(); 
-                candidate.normalize(mass);
-                assert( candidate.is_finite() );
-                
-                /* Orthogonalize that vector against previous nullspace vectors */
-
-                {
-                    for( int s = 0; s < 2; s++ )
-                    for( const auto& nullvector : nullvectorgallery ) 
-                    {
-                        Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
-                        candidate = candidate - alpha * nullvector;
-                    }   
-                }
-                
-                /* Re-normalize the candidate once again */
-
-                candidate.normalize(mass);
-
-                assert( candidate.is_finite() );
-                
-                /* Reduce the candidate to its nullspace component, orthogonalize, normalize */
-                
-                {
-                    bool candidate_to_be_discarded = false;
-                    
-                    for( int t = 0; t < max_number_of_purifications and not candidate_to_be_discarded; t++ )
-                    {
-                        
-                        const FloatVector rhs( SystemMatrix.getdimin(), 0. );
-                        FloatVector residual( rhs );
+                const FloatVector rhs( SystemMatrix.getdimin(), 0. );
+                FloatVector residual( rhs );
                      
-                        ConjugateResidualSolverCSR( 
-                            candidate.getdimension(), 
-                            candidate.raw(), 
-                            rhs.raw(), 
-                            SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-                            residual.raw(),
-                            desired_precision,
-                            -3
-                        );
-                        
-                        // FloatVector zero( candidate.getdimension(), 0. );
-                        
-                        // ConjugateResidualSolverCSR( 
-                        //     zero.getdimension(), 
-                        //     zero.raw(), 
-                        //     candidate.raw(), 
-                        //     SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
-                        //     residual.raw(),
-                        //     desired_precision,
-                        //     0
-                        // );
-                        // candidate = residual;
-                        
-                        /*
-                        LOG << "\t\t\t (eucl) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm() << nl;
-                        LOG << "\t\t\t (mass) delta:     " << ( residual - rhs + SystemMatrix * candidate ).norm( mass ) << nl;
-                        LOG << "\t\t\t (eucl) res:       " << residual.norm() << nl;
-                        LOG << "\t\t\t (mass) res:       " << residual.norm( mass ) << nl;
-                        LOG << "\t\t\t (eucl) x:         " << candidate.norm() << nl;
-                        LOG << "\t\t\t (mass) x:         " << candidate.norm( mass ) << nl;
-                        LOG << "\t\t\t (eucl) Ax:        " << ( SystemMatrix * candidate ).norm() << nl;
-                        LOG << "\t\t\t (mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
-                        LOG << "\t\t\t (eucl) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm() << nl;
-                        LOG << "\t\t\t (mass) b - Ax:    " << ( SystemMatrix * candidate - rhs ).norm( mass ) << nl;
-                        */
-                        
-
-                        /* Orthogonalize that candidate once again against nullspace vectors */
-                        /* Discard if nothing new is found, else re-normalize */
-                       
-                        for( int s = 0; s < 2; s++ )
-                        for( const auto& nullvector : nullvectorgallery ) {
-                            Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
-                            candidate = candidate - alpha * nullvector;
-                        }
-                        
-                        Float orthogonalized_candidate_mass = candidate.norm(mass);
-                        LOG << "\t\t\t Reduced candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
-
-                        if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) {
-                            // LOGPRINTF("\n\t\t\t !!!!! Discard vector %d/%d because mass is too small!\n\n", candidate_number+1, max_number_of_candidates );
-                            candidate_to_be_discarded = true;
-                        }
-                        
-                        candidate.normalize(mass);
-
-                        assert( candidate.is_finite() );
-                        
-                        /*
-                        LOG << "\t\t\t (norm eucl) x:         " << candidate.norm() << nl;
-                        LOG << "\t\t\t (norm mass) x:         " << candidate.norm( mass ) << nl;
-                        */
-                        LOG << "\t\t\t (norm eucl) Ax:        " << ( SystemMatrix* candidate ).norm() << nl;
-                        LOG << "\t\t\t (norm mass) Ax:        " << ( SystemMatrix * candidate ).norm( mass ) << nl;
-
-                    }
-
-                    // if( candidate_to_be_discarded ) continue;
-                }
-
-                /* Discard if insufficiently nullspace */ 
+                ConjugateResidualSolverCSR( 
+                    candidate.getdimension(), 
+                    candidate.raw(), 
+                    rhs.raw(), 
+                    SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+                    residual.raw(),
+                    desired_precision,
+                    -3
+                );
                 
-                Float residual_mass = ( SystemMatrix * candidate ).norm(mass);
-                
-                LOG << "\t\t\t Numerical residual: " << residual_mass << nl;
-                
-                if( residual_mass > mass_threshold_for_small_vectors ) {
-                    LOGPRINTF("\n\t\t\t !!!!!Discard vector %d/%d because not nullspace enough!\n\n", candidate_number+1, max_number_of_candidates );
-                    continue;
-                }
-                
-                /* Orthogonalize that candidate once again against nullspace vectors */
-                
-                LOG << "\t\t\t Reduced candidate non-orthogonalized mass: " << candidate.norm(mass) << nl;
-
-                for( int s = 0; s < 2; s++ )
-                for( const auto& nullvector : nullvectorgallery ) {
-                    Float alpha = (mass*candidate*nullvector) / (mass*nullvector*nullvector);
-                    candidate = candidate - alpha * nullvector;
-                }
-                
-                /* Discard if nothing new is found */
-
-                Float orthogonalized_candidate_mass = candidate.norm(mass);
-                LOG << "\t\t\t Reduced candidate orthogonalized mass: " << orthogonalized_candidate_mass << nl;
-
-                if( orthogonalized_candidate_mass < mass_threshold_for_small_vectors ) {
-                    LOGPRINTF("\n\t\t\t !!!!! Discard vector %d/%d because mass is too small!\n\n", candidate_number+1, max_number_of_candidates );
-                    continue;
-                }
-                
-                /* Normalize and accept */
-
-                candidate.normalize(mass);
-                
-                assert( candidate.is_finite() );
-                
-                LOG << "Accept vector: " << nullvectorgallery.size() + 1 << nl;
+                // candidate -= solution;
+            };
             
+            auto purifier_csr2 = [&]( FloatVector& candidate ){
                 
-                nullvectorgallery.push_back( candidate );
-            }
+                FloatVector solution( candidate.getdimension(), 0. );
+                
+                const FloatVector rhs = SystemMatrix * candidate;
+                FloatVector residual( rhs );
+                     
+                ConjugateResidualSolverCSR( 
+                    solution.getdimension(), 
+                    solution.raw(), 
+                    rhs.raw(), 
+                    SystemMatrix.getA(), SystemMatrix.getC(), SystemMatrix.getV(),
+                    residual.raw(),
+                    desired_precision,
+                    -3
+                );
+                
+                candidate -= solution;
+            };
             
+            std::vector<FloatVector> nullvectorgallery = computeNullspace(
+                SystemMatrix,
+                physical_mass,
+                physical_mass,
+                max_number_of_candidates,
+                //
+                mass_threshold_for_small_vectors,
+                mass_threshold_for_small_vectors,
+                purifier_csr2
+            );
+
             
-            
-            LOG << "How much nullspace are our vectors?" << nl;
-            for( const auto& nullvector : nullvectorgallery ) {
-                Float residual_mass = ( SystemMatrix * nullvector ).norm(mass);
-                Assert( residual_mass < mass_threshold_for_small_vectors, residual_mass, mass_threshold_for_small_vectors );
-                // LOGPRINTF( "% 10.5Le\t", (long double)residual_mass );
-                LOG << residual_mass << nl;
-            }
-            LOG << nl;
-            
-            LOG << "How orthonormal are our vectors?" << nl;
-            for( int n1 = 0; n1 < nullvectorgallery.size(); n1++ ) {
-                for( int n2 = 0; n2 < nullvectorgallery.size(); n2++ ) {
-                    auto nullvector1 = nullvectorgallery[n1];
-                    auto nullvector2 = nullvectorgallery[n2];
-                    Float mass_prod = mass * nullvector1 * nullvector2;
-                    LOGPRINTF( "% 10.5le\t", (double)(safedouble)mass_prod );
-                    // LOG << mass_prod << tab;
-                    if( n1 != n2 ) 
-                        assert( is_numerically_small( mass_prod ) );
-                    else
-                        assert( is_numerically_one( mass_prod ) );
-                    
-                }
-                LOG << nl;
-            }
             
             
             contable << static_cast<Float>(nullvectorgallery.size());

@@ -166,11 +166,11 @@ int main( int argc, char *argv[] )
             M.appendentry( r, c, v );
         }
 
-        M.save_graphics( "sparsematrix.png" );
+        M.save_graphics( "sparsematrix.bmp" );
 
         MatrixCSR csr = MatrixCSR( M );
 
-        csr.save_graphics( "csrmatrix.png" );
+        csr.save_graphics( "csrmatrix.bmp" );
         
     }
     

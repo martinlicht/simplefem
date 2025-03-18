@@ -72,7 +72,8 @@ void savePixelImage( const PixelImage& pim, const std::string& str )
         image[ channels * ( row * width + col ) + 2 ] = pim(row,col).blue;
     }
 
-    const bool output_success = stbi_write_png( str.c_str(), width, height, channels, image, width * channels );
+    // const bool output_success = stbi_write_png( str.c_str(), width, height, channels, image, width * channels );
+    const bool output_success = stbi_write_bmp( str.c_str(), width, height, channels, image );
     
     Assert( output_success );
     

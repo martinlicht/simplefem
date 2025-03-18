@@ -28,7 +28,7 @@
 
 
 
-Float NeumannEstimate( const Mesh& M ) {
+static Float NeumannEstimate( const Mesh& M ) {
 
     // estimate the Neumann eigenvalue using one of the recursive estimates 
 

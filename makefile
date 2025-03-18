@@ -16,17 +16,20 @@ SHELL = /bin/sh
 #  - tests
 # The default target builds all files  
 
+.PHONY: default all
+
 default: build
 
 all: build tests
 	@echo "Finished all"
 
-.PHONY: default all build tests
 
 
 
 
-# Prints the help message: a list of possible makefile targets
+#####################################################################################
+# Prints the help message: a list of possible makefile targets                       
+#####################################################################################
 
 .PHONY: help 
 help:
@@ -57,13 +60,15 @@ help:
 
 
 
-################################################################## 
-################################################################## 
-################################################################## 
-################################################################## 
+############################################################################ 
+############################################################################
+############################################################################
+############################################################################ 
 
-# Describe the different modules of the software
-# Define all targets for the different modules in building the modules 
+############################################################################
+# Describe the different modules of the software							
+# Define all targets for the different modules in building the modules   
+############################################################################
 
 modules:=
 modules+=external
@@ -132,13 +137,14 @@ include common.module.mk
 
 
 
-################################################################## 
-################################################################## 
-################################################################## 
-################################################################## 
+############################################################################## 
+############################################################################## 
+############################################################################## 
+############################################################################## 
 
-# The 'build' target depends on the builds of modules, tests, and benchmarks
-
+##############################################################################
+# The 'build' target depends on the builds of modules, tests, and benchmarks  
+##############################################################################
 
 .PHONY: build .buildmodules .buildtests # .buildbenchmarks
 
@@ -151,11 +157,11 @@ build: .buildmodules .buildtests # .buildbenchmarks
 	@cd ./tests/ && $(MAKE) --no-print-directory build
 	@echo Built tests
 
-
-
-
-
+##############################################################################
 # The target 'test' runs all the tests in the test directory 
+##############################################################################
+
+.PHONY: test # benchmarks
 
 test:
 	@cd ./tests && $(MAKE) --no-print-directory run
@@ -164,27 +170,28 @@ test:
 # benchmarks:
 # 	@cd ./benchmarks && $(MAKE) --no-print-directory 
 
-.PHONY: test # benchmarks
 
 
 
 
 
 
+#######################################################################################
 # Upkeep targets that remove clutter and temporary files 
 # Also commands for source code checking 
 # More targets are defined in each module 
+#######################################################################################
 
 .PHONY: clean
 clean: 
 	@cd ./tests && $(MAKE) --no-print-directory clean
-	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex
+	@rm -f ./*.bmp ./*/*.bmp ./*/*/*.bmp ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
 	@echo "Finished cleaning."
 
 .PHONY: outputclean
 outputclean:
 	@cd ./tests && $(MAKE) --no-print-directory outputclean
-	@rm -f ./*.vtk ./*/*.vtk ./*/*/*.vtk ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex
+	@rm -f ./*.bmp ./*/*.bmp ./*/*/*.bmp ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
 	@echo "Finished cleaning output files."
 
 .PHONY: dependclean
@@ -215,29 +222,31 @@ check:
 
 
 
-###############################################################################################
-####   Apply cpplint to all cpp and hpp files in the entire source directory. Read-only.   ####
-###############################################################################################
+###########################################################################################
+#   Apply cpplint to all cpp and hpp files in the entire source directory. Read-only.   
+###########################################################################################
 
 .PHONY: cpplint
 cpplint:
-	( $(projectdir)/.Tools/cpplint.py \
+	( cpplint \
 	--exclude=$(projectdir)/PACKAGE/* --exclude=$(projectdir)/.private/* --exclude=$(projectdir)/.legacy/* --exclude=$(projectdir)/.stuff/* --exclude=$(projectdir)/.CUDA/* --exclude=$(projectdir)/.playground/* --exclude=$(projectdir)/external/* \
 	--filter=-runtime/int,-runtime/references,-whitespace,-legal,-build/namespace,-readability/alt_tokens,-readability/fn_size,-readability/todo,-readability/inheritance,-readability/braces,-runtime/arrays,-build/header_guard,-build/include,-build/c++11 \
 	--recursive --quiet $(projectdir) 2>&1 ) | \
 	sort | uniq | \
 	cat > $(projectdir)/OUTPUT_CPPLINT.txt; \
 	cat $(projectdir)/OUTPUT_CPPLINT.txt
+# ( $(projectdir)/.Tools/cpplint.py \
 
 
 
 
-###############################################################################################
-#######    Display the value of all variables defined after parsing this makefile     #########
-###############################################################################################
+#########################################################################################
+#    Display the value of all variables defined after parsing this makefile     
+#########################################################################################
 
-# Display the value of a variable
+# Display information on a specific variable
 
+.PHONY: print-%
 print-%:
 	$(info [ variable name]: $*)
 	$(info [         value]: $(value $*))
@@ -246,7 +255,7 @@ print-%:
 	$(info )
 	@true
 
-# Display the value of all variables.
+# Display information on all variables.
 
 .PHONY: printall
-printall: $(subst :,\:,$(foreach variable,$(.VARIABLES),print-$(variable)))
+printall: $(sort $(subst :,\:,$(foreach variable,$(.VARIABLES),print-$(variable))))
