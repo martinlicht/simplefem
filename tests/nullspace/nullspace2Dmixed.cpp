@@ -137,22 +137,39 @@ int main( int argc, char *argv[] )
                 
                 FloatVector residual( rhs );
                      
-                HodgeConjugateResidualSolverCSR_SSOR(
-                    B.getdimout(), 
-                    A.getdimout(), 
-                    candidate.raw(), 
-                    rhs.raw(), 
-                    A.getA(),   A.getC(),  A.getV(), 
-                    B.getA(),   B.getC(),  B.getV(), 
-                    Bt.getA(), Bt.getC(), Bt.getV(), 
-                    C.getA(),   C.getC(),  C.getV(), 
-                    residual.raw(),
+                // HodgeConjugateResidualSolverCSR_SSOR(
+                //     B.getdimout(), 
+                //     A.getdimout(), 
+                //     candidate.raw(), 
+                //     rhs.raw(), 
+                //     A.getA(),   A.getC(),  A.getV(), 
+                //     B.getA(),   B.getC(),  B.getV(), 
+                //     Bt.getA(), Bt.getC(), Bt.getV(), 
+                //     C.getA(),   C.getC(),  C.getV(), 
+                //     residual.raw(),
+                //     desired_precision,
+                //     -3,
+                //     desired_precision,
+                //     -3
+                // );
+
+                const auto PAinv = inv(PA,desired_precision,-3);
+                const auto PCinv = inv(PC,desired_precision,-3);
+                FloatVector  x_A( A.getdimin(),  0. ); 
+                FloatVector& x_C = candidate;
+                const FloatVector  b_A( A.getdimin(),  0. ); 
+                const FloatVector& b_C = rhs; 
+                BlockHerzogSoodhalterMethod( 
+                    x_A, 
+                    x_C, 
+                    b_A, 
+                    b_C, 
+                    -A, Bt, B, C, 
                     desired_precision,
                     -3,
-                    desired_precision,
-                    -3
+                    PAinv, PCinv
                 );
-
+                
             };
             
             std::vector<FloatVector> nullvectorgallery = computeNullspace(
@@ -170,29 +187,6 @@ int main( int argc, char *argv[] )
                 purifier
             );
 
-            // auto PA = Conjugation( scalar_massmatrix, scalar_incmatrix ); 
-            //             +
-            //             Conjugation( vector_massmatrix, scalar_diffmatrix & scalar_incmatrix ); 
-            // auto PC = Conjugation( vector_massmatrix, vector_incmatrix );
-            //             + 
-            //             Conjugation( volume_massmatrix, vector_diffmatrix & vector_incmatrix );
-            // const auto PAinv = inv(PA,desired_precision,-3);
-            // const auto PCinv = inv(PC,desired_precision,-3);
-            // FloatVector  x_A( A.getdimin(),  0. ); 
-            // FloatVector& x_C = candidate;
-            // const FloatVector  b_A( A.getdimin(),  0. ); 
-            // const FloatVector& b_C = rhs; 
-            // BlockHerzogSoodhalterMethod( 
-            //     x_A, 
-            //     x_C, 
-            //     b_A, 
-            //     b_C, 
-            //     -A, Bt, B, C, 
-            //     desired_precision,
-            //     -3,
-            //     PAinv, PCinv
-            // );
-            
             // HodgeConjugateResidualSolverCSR_SSOR(
             //     B.getdimout(), 
             //     A.getdimout(), 

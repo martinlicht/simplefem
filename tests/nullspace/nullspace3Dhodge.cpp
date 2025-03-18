@@ -35,10 +35,41 @@ int main( int argc, char *argv[] )
     LOG << "Initial mesh..." << nl;
     
     MeshSimplicial3D Mx = UnitCube3D();
+    for( int l = 0; l < 1; l++ ) Mx.uniformrefinement();
     
     Mx.check();
     
-    Mx.automatic_dirichlet_flags();
+    {
+        int counter = 0;
+        while( counter < 2 )
+        {
+            // draw a random face 
+            int f = random_integer() % Mx.count_faces();
+
+            // if not a boundary face, re-try
+            if( Mx.count_face_tetrahedron_parents(f) != 1 ) continue;
+
+            // if already touching a Dirichlet face, re-try
+            if( Mx.get_flag( 0, Mx.get_face_vertex(f,0) ) == SimplexFlag::SimplexFlagDirichlet ) continue;
+            if( Mx.get_flag( 0, Mx.get_face_vertex(f,1) ) == SimplexFlag::SimplexFlagDirichlet ) continue;
+            if( Mx.get_flag( 0, Mx.get_face_vertex(f,2) ) == SimplexFlag::SimplexFlagDirichlet ) continue;
+
+            // Good, we can set the flags 
+            Mx.set_flag( 0, Mx.get_face_vertex(f,0), SimplexFlag::SimplexFlagDirichlet );
+            Mx.set_flag( 0, Mx.get_face_vertex(f,1), SimplexFlag::SimplexFlagDirichlet );
+            Mx.set_flag( 0, Mx.get_face_vertex(f,2), SimplexFlag::SimplexFlagDirichlet );
+            
+            Mx.set_flag( 1, Mx.get_face_edge(f,0), SimplexFlag::SimplexFlagDirichlet );
+            Mx.set_flag( 1, Mx.get_face_edge(f,1), SimplexFlag::SimplexFlagDirichlet );
+            Mx.set_flag( 1, Mx.get_face_edge(f,2), SimplexFlag::SimplexFlagDirichlet );
+            
+            Mx.set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet );
+            
+            counter++;
+        }
+    }
+
+    Mx.check_dirichlet_flags(false);
 
     
     
@@ -192,7 +223,8 @@ int main( int argc, char *argv[] )
             //     -3,
             //     PAinv, PCinv
             // );
-            
+                        
+                        
             // HodgeConjugateResidualSolverCSR_SSOR(
             //     B.getdimout(), 
             //     A.getdimout(), 
