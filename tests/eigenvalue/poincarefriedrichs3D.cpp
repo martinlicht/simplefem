@@ -75,9 +75,11 @@ int main( int argc, char *argv[] )
 
         LOG << shellings_found.size() << nl;
 
-        typedef decltype(shellings_found[0]) shelling;
+        // typedef decltype(shellings_found[0]) shelling;
 
-        std::sort( shellings_found.begin(), shellings_found.end(), [=]( const shelling& s1, const shelling& s2 ){ return s1.weight_reflection < s2.weight_reflection; } );
+        std::sort( shellings_found.begin(), shellings_found.end(), 
+                    []( const shelling& s1, const shelling& s2 ) -> bool{ return s1.weight_reflection < s2.weight_reflection; } 
+                    );
 
         for( int t = 0; t < shellings_found.size(); t++ )
         {

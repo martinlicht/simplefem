@@ -293,27 +293,30 @@ int main( int argc, char *argv[] )
             
                 LOG << "How much nullspace are our vectors?" << nl;
                 for( const auto& nullvector : nullvectorgallery ) {
-                    // Float residual_mass = ( SystemMatrix * nullvector ).norm(mass);
+                    
                     Float residual_mass = sqrt( ( C * nullvector ).norm_sq( mass ) + ( Bt * nullvector ).norm_sq( A ) );
+                    
                     Assert( residual_mass < mass_threshold_for_small_vectors, residual_mass, mass_threshold_for_small_vectors );
-                    // LOGPRINTF( "% 10.5Le\t", (long double)residual_mass );
-                    LOG << residual_mass << nl;
+                    
+                    LOGPRINTF( "% 10.5le\t", (double)(safedouble)residual_mass );
                 }
                 LOG << nl;
                 
                 LOG << "How orthonormal are our vectors?" << nl;
                 for( int n1 = 0; n1 < nullvectorgallery.size(); n1++ ) {
                     for( int n2 = 0; n2 < nullvectorgallery.size(); n2++ ) {
+                        
                         auto nullvector1 = nullvectorgallery[n1];
                         auto nullvector2 = nullvectorgallery[n2];
+                        
                         Float mass_prod = mass * nullvector1 * nullvector2;
+                        
                         LOGPRINTF( "% 10.5le\t", (double)(safedouble)mass_prod );
-                        // LOG << mass_prod << tab;
+                        
                         if( n1 != n2 ) 
                             assert( is_numerically_small( mass_prod ) );
                         else
                             assert( is_numerically_one( mass_prod ) );
-                        
                     }
                     LOG << nl;
                 }

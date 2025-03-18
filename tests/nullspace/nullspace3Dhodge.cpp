@@ -331,7 +331,7 @@ int main( int argc, char *argv[] )
 
                     }
 
-                    // if( candidate_to_be_discarded ) continue;
+                    if( candidate_to_be_discarded ) continue;
                 }
                 
                 /* Discard if insufficiently nullspace */ 
@@ -384,8 +384,7 @@ int main( int argc, char *argv[] )
                 // Float residual_mass = ( SystemMatrix * nullvector ).norm(mass);
                 Float residual_mass = sqrt( ( C * nullvector ).norm_sq( mass ) + ( Bt * nullvector ).norm_sq( A ) );
                 Assert( residual_mass < mass_threshold_for_small_vectors, residual_mass, mass_threshold_for_small_vectors );
-                // LOGPRINTF( "% 10.5Le\t", (long double)residual_mass );
-                LOG << residual_mass << nl;
+                LOGPRINTF( "% 10.5le\t", (double)(safedouble)residual_mass );
             }
             LOG << nl;
             

@@ -33,12 +33,6 @@ None of the above can be done in a day, so it most likely requires regular grind
 
 # ----------- HOT FIXES & MINOR FIXES -------------
 
-- [ ] check whether the << and >> and bitwise operations are executed on signed integral types
-- [ ] Disabled code should be marked accordingly, same for trivially true conditions
-- [ ] lshaped maxwell: correct the computation
-- [ ] Neumann estimate of eigenvalues 
-- [ ] add Neumann BC to mixed FEM for Poisson
-
 - [x] ensure that self-assignment is handled _explicitly_ whenever assignment operators are defined
 - [x] all destructors noexcept 
       <https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-destructor.html>
@@ -109,6 +103,12 @@ None of the above can be done in a day, so it most likely requires regular grind
 - [ ] Unit tests must check convergence rates
 - [ ] Clean up the VTK writer unit tests: a few full tests, proper naming practices, some more complicated meshes. Some parts of this component are also used to output and inspect meshes.
 - [ ] Clean up the unit tests of the mesh writer
+- [ ] check whether the << and >> and bitwise operations are executed on signed integral types
+- [ ] Disabled code should be marked accordingly, same for trivially true conditions
+- [ ] lshaped maxwell: correct the computation
+- [ ] Neumann estimate of eigenvalues 
+- [ ] try out Neumann BC to mixed FEM for Poisson
+
 
 
 
@@ -156,6 +156,7 @@ The nullspace tests then merely use that component internally.
 - [ ] switch for either extracting from x or from b
 
 The general method looks like this:
+
   1. Grab some random vector with unit mass 
         OPTIONAL Orthogonalize against the previous nullspace vectors 
   2. Filter out a nullspace vector 
@@ -773,14 +774,14 @@ Similarly, the errors should be computed with augmented integration.
 
 ## (INFRASTRUCTURE) MAKEFILE
 
-- [ ] de-clutter the makefiles
+- [ ] lint and polish the makefiles 
 - [ ] include links to the manual in the makefiles for quicker reference
 - [ ] Die automatische dependency generation funktioniert noch nicht. Werden alte dependency angaben erased?
-- [ ] Question: how to manage makefiles? what dependencies to make explicit?
+- [ ] Question: best practices in managing makefiles? what dependencies to make explicit?
 
 ## (INFRASTRUCTURE) namespaces for the project
 
-So far the project has been isolated. Package everything into a project namespace. 
+So far the project has been isolated. For wider usage, pack everything into a project namespace. 
 
 ## (INFRASTRUCTURE) Redesign source code organization: library files
 
@@ -793,33 +794,6 @@ In particular, no cleaning is necessary in those directories.
 The makefile in each source directory puts its output into the common build directory.
 
 There is only one cleaning command for the entire build directory.
-
-## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
-
-Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include 
-
-- base 
-- common 
-- commons
-- core 
-- general
-- global
-- shared
-- std
-
-Survey a few important projects to get a sense of what name you should use for this one.
-That will give you a sense of what you should do.
-
-- Examples: base, common, core, general, std
-- MFEM:     general
-- Feelpp:   core
-- Lifev:    core
-- ngsolve:  std
-- Fenics:   common
-- ??!!!!:   base 
-- Hermes:   common
-- concepts: ...
-- <https://en.wikipedia.org/wiki/List_of_finite_element_software_packages>
 
 ## (INFRASTRUCTURE) General infrastructure and layout of unit tests / Unit test framework
 
@@ -1025,7 +999,6 @@ astyle --dry-run --mode=c --options=none --ascii --project=path/to/astylerc --re
 --convert-tabs
 ```
 
-
 ## (INACTIVE/ARTICLE) Static analyzer
 
 What static analyzers are available by the different compilers?
@@ -1108,6 +1081,33 @@ Should smart pointers be employed throughout the library to make it more robust 
 ## (INFRASTRUCTURE) Unreal engine 
 
 Revisit the Unreal engine for ideas 
+
+## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
+
+Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include 
+
+- base 
+- common 
+- commons
+- core 
+- general
+- global
+- shared
+- std
+
+Survey a few important projects to get a sense of what name you should use for this one.
+That will give you a sense of what you should do.
+
+- Examples: base, common, core, general, std
+- MFEM:     general
+- Feelpp:   core
+- Lifev:    core
+- ngsolve:  std
+- Fenics:   common
+- ??!!!!:   base 
+- Hermes:   common
+- concepts: ...
+- <https://en.wikipedia.org/wiki/List_of_finite_element_software_packages>
 
 
 
