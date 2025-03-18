@@ -323,7 +323,7 @@ endif
 # - dependclean: delete .deps directories and their content
 
 CMD_CLEAN       = rm -f .all.o .all.json .json *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.orig *.out.stackdump 
-CMD_OUTPUTCLEAN = rm -f ./*.png ./*/*.png ./*/*/*.png ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
+CMD_OUTPUTCLEAN = rm -f ./*.bmp ./*/*.bmp ./*/*/*.bmp ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
 CMD_DEPCLEAN    = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
 
 .PHONY: clean outputclean dependclean

@@ -185,13 +185,13 @@ test:
 .PHONY: clean
 clean: 
 	@cd ./tests && $(MAKE) --no-print-directory clean
-	@rm -f ./*.png ./*/*.png ./*/*/*.png ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
+	@rm -f ./*.bmp ./*/*.bmp ./*/*/*.bmp ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
 	@echo "Finished cleaning."
 
 .PHONY: outputclean
 outputclean:
 	@cd ./tests && $(MAKE) --no-print-directory outputclean
-	@rm -f ./*.png ./*/*.png ./*/*/*.png ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
+	@rm -f ./*.bmp ./*/*.bmp ./*/*/*.bmp ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
 	@echo "Finished cleaning output files."
 
 .PHONY: dependclean
