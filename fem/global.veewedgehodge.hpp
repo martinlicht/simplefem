@@ -28,6 +28,10 @@ FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r );
 
 FloatVector FEECScalarIntegral( const Mesh& mesh, int n, int r );
 
+DenseMatrix EuclideanHodgeStar( int n, int k );
+
+SparseMatrix FEECBrokenHodgeStarPairingMatrix( const Mesh& mesh, int n, int k, int r );
+
 
 
 #endif

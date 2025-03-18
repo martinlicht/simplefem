@@ -245,6 +245,8 @@ int main( int argc, char *argv[] )
     {
         // if( r < r_max || l < 8 ) continue;
     
+        // TODO(Martin): This test depends on convergence and cannot be exact
+        
         for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
             Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
         
