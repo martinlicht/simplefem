@@ -6,6 +6,10 @@
 
 #include "../../base/include.hpp"
 
+// ============================================================================
+// Assesses square root computation, comparing the C implementation std::sqrt
+// to the contexpr C++ implementation Sqrt.
+// ============================================================================
 
 template<typename NumericalType>
 struct SqrtTest
@@ -226,9 +230,11 @@ struct ThirdRootTest
 
 
 
-int main() 
+int main( int argc, char *argv[] )
 {
 
+    LOG << "Unit Test: Sqrt implementation" << nl;
+    
     static_assert( sizeof(float) == sizeof(int), "sizeof(float) == sizeof(int) failed" );
 
     #if __cplusplus >= 201703L
@@ -249,17 +255,16 @@ int main()
     test_sqrt_longdouble.check();
     
     
-/*
-    ThirdRootTest<float> test_thirdroot_float;
-    test_thirdroot_float.check();
+    // ThirdRootTest<float> test_thirdroot_float;
+    // test_thirdroot_float.check();
     
-    ThirdRootTest<double> test_thirdroot_double;
-    test_thirdroot_double.check();
+    // ThirdRootTest<double> test_thirdroot_double;
+    // test_thirdroot_double.check();
     
-    ThirdRootTest<long double> test_thirdroot_longdouble;
-    test_thirdroot_longdouble.check();
-*/    
+    // ThirdRootTest<long double> test_thirdroot_longdouble;
+    // test_thirdroot_longdouble.check();
     
-
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
+    
     return 0;
 }

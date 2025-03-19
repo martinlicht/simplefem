@@ -724,6 +724,18 @@ There should be a parameter 'r_plus' to control the added interpolation quality 
 Notably, if 'r_plus == 0', then there should be a fallback that avoid repeated computation of the mass matrix.
 Similarly, the errors should be computed with augmented integration.
 
+## (INACTIVE) Unreal engine 
+
+Revisit the Unreal engine for ideas 
+
+## (INACTIVE) Signal handlers 
+
+SIGINT handler einbauen: im falle eines abbruchs geben den namen des tests aus
+
+## (INACTIVE) Smart Pointers
+
+Consider adopting smart pointers for the allocation of sparse matrices because you rarely want to deep copy these matrices.
+That being said, doing so would introduce a notable difference to dense matrices, for which that would be too much overhead.
 
 
 
@@ -772,116 +784,29 @@ Similarly, the errors should be computed with augmented integration.
 
 # INFRASTRUCTURE 
 
-## (INFRASTRUCTURE) MAKEFILE
-
-- [ ] lint and polish the makefiles 
-- [ ] include links to the manual in the makefiles for quicker reference
-- [ ] Die automatische dependency generation funktioniert noch nicht. Werden alte dependency angaben erased?
-- [ ] Question: best practices in managing makefiles? what dependencies to make explicit?
-
 ## (INFRASTRUCTURE) namespaces for the project
 
-So far the project has been isolated. For wider usage, pack everything into a project namespace. 
-
-## (INFRASTRUCTURE) Redesign source code organization: library files
-
-The compilation should place no temporary, build, or output files in the source directories.
-In particular, all files built should be put into a designated 'build' directory.
-
-The different source directories should specify the various makefile rules but otherwise not specify anything.
-In particular, no cleaning is necessary in those directories.
-
-The makefile in each source directory puts its output into the common build directory.
-
-There is only one cleaning command for the entire build directory.
-
-## (INFRASTRUCTURE) General infrastructure and layout of unit tests / Unit test framework
-
-Agree to a common style for the unit tests. The existing unit tests should be streamlined and polished.
-Generally speaking, they should be reduced to tests only: benchmarks should be put into a folder of their own;
-examples should be a folder of their own as well. Do not shy away from bringing a few tests out of retirement.
-
-As tests get more complicated, it will pay off to introduce parameters more abundantly throughout the code.
-One possible way to rewrite the unit tests.
-
-```cpp
-#define TESTNAME( c_str ) const char* testname = c_str;
-#define TESTPROCEDURE TestProcedure
-TESTNAME( "IndexRange" );
-TestProcedure()
-```
-
-```cpp
-// logstream that is reference to std::cout
-TEST_DECL_MODULE( str );
-TEST_DECL_CLASS ( str );
-TEST_DECL_BASIC (     );
-TEST_DECL_TOPIC ( str );
-TEST_ANNOUNCE();
-```
-
-Each test should be included in a wrapper function. Each unit test has got a separate main function, and those main functions should all look exactly the same, to the point where you can include them from a unit test header file.
-
-The point is that you should be able to easily change the Unit test header file for all available tests at once, or maybe integrate it with a unit test framework.
-The individual tests should only contain a bool valued function that takes command line arguments, and a few strings that explain the function.
-The header file should forward declare the test function and the strings and pass the command line arguments.
-The final goal is to transition to catch2 at some point, so that should be the obvious goal.
-
-Verstehe die command line options von catch2
-Wie kann man unit tests verwenden, welche eine exception werfen? Vielleicht im Catch2 forum anfragen.
-Also have a look at the following unit test frameworks:
-
-- <http://unitpp.sourceforge.net/>
-- <https://github.com/burner/sweet.hpp/blob/master/options.hpp>
-- <https://github.com/burner/sweet.hpp/blob/master/filesystemtest/filesystemtest.cpp>
-- <https://github.com/burner/sweet.hpp/blob/master/fector.hpp>
-- <https://github.com/ccosmin/tinytest/blob/master/examples/code1.c>
-- <https://github.com/greg-white/sTest>
-
-Rewrite the unit tests: use meaningful names for each test, introduced as a variable, and put the setup code into a single header. 
-
-SIGINT handler einbauen: im falle eines abbruchs geben den namen des tests aus
-
-Question: how to manage unit test for a software library?
-
-## (INFRASTRUCTURE) Question: what are best practices to keep the unit tests up to date with the code?
-
-## (INFRASTRUCTURE) pseudo-unit tests 
-
-Some unit tests are not actually unit tests but merely check the compilation environment, e.g.: basic/ benchmark helloworld leak logging
-These should be put somewhere else 
-
-## (INFRASTRUCTURE) Layout & Comment
-
-- [ ] Layout of class declarations
-    Which constructors are declared and in which order?
-    What is the order of the different methods?
-    Which should be explicitly deleted or defaulted?
-
-    This concerns the classes in
-    * combinatorics
-    * meshes
-    * operators, dense, sparse
-
-- [ ] Gehe allen Klassen durch und kommentiere das grundlegende Interface:
-   * custom constructors
-   * the standard six
-   * your personal standard interface
-   * everything else
-     Dabei beobachtest du auch die copy und move semantics,
-     und lieferst eventuell implementierung nach.
-     Falls Abweichungen auftauchen, fuegst du kommentare ein
-     oder behebst die Abweichungen, insb. Move semantics
-
-- [ ] Gleiche das Interface von Sparse und CSR Matrix ab wo sinnvoll
-
-- [ ] Abgleichen der FloatVector und DenseMatrix class interfaces. Vereinfache soweit es geht
+For wider usage, pack everything into a project namespace. 
 
 ## (INFRASTRUCTURE) Rename include guards
 
-zeige die ersten zeilen aller header dateien an
+Find a format for the inlucde guards that is in line with common practices. 
+Write a script that checks whether these practices are upheld. 
+
+How to show the first 2 lines of all hpp files:
 for datei in ./*/*.hpp; do head -n 2 $datei; done
-include guards umbenennen
+
+## (INFRASTRUCTURE) Question: what are best practices to keep the unit tests up to date with the code?
+
+- The unit test file structure should mirror the source code structure. 
+- For each component, the tests should focus on the public interface. 
+- Keep the tests independent from the code base. 
+- Test-driven development: write the test first and then see to implement the source. 
+- Code Coverage tools measure what parts of the code are executed during the tests. 
+  *Tools include* gcov+lcov, Bullseye Coverage, Codecov, Clang
+- CI/CD integration (long-term)
+
+
 
 ## (INFRASTRUCTURE) LICENSE File and Copyright notice
 
@@ -904,52 +829,12 @@ through the use of some simple text manipulation programs.
 
 So for the unit tests, it's more important to have a common structure ready to go.
 
-## (DONE/INFRASTRUCTURE) remove code from parent directory
-
-rename base/include.hpp in the main folder, move to basic subfolder, and have all exec.s include it
-
-## (INFRASTRUCTURE) Documentation:
-
-  Sphinx seems viable <http://www.sphinx-doc.org/en/stable/>, videos via <https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)>.
-  This software could be used for personal websites.
-
-## (INFRASTRUCTURE) Command line interface
-
-The h andling of command line arguments will be facilitated
-by a set of functions/classes written precisely for that purpose.
-
-This should be a mere extractor class
-and be written in the C-conforming subset of C++.
-
-The project comes with unit tests whose behavior can be controlled via commandline.
-Generally, there should only be a few commands to describe what is happening.
-
-```
-   *-help
-    Display a few helpful lines
-
-   *-verbose
-    output as much as possible
-
-   *-quiet
-    Only output warnings or errors
-
-   *-logfile
-    specify the file were the logging should be directed to
-
-   *-errfile
-    specify the file were the logging should be directed to
-
-   *-outfile
-    specify the file were the output should be directed to
-```
-
 ## (INFRASTRUCTURE) Style checker and configuration
 
 Include a style checker and add the necessary configuration files:
 
-- [ ] KWstyle
-- [x] astyle
+- [ ] KWstyle: active but not widespread. Offers CDash and CTest integration 
+- [x] astyle: useful for smaller projects like this 
 - [ ] clang-format
 - [ ] uncrustify
 
@@ -1026,45 +911,76 @@ What static analyzers are available by the different compilers?
 
 TODO: write an email to the mailing list about the static analyzer.
 
+
+
+
+## (INFRASTRUCTURE) Makefile improvements 
+
+- [ ] lint and polish the makefiles 
+- [ ] include links to the manual in the makefiles for quicker reference
+- [ ] Die automatische dependency generation funktioniert noch nicht. Werden alte dependency angaben erased?
+- [ ] Question: best practices in managing makefiles? what dependencies to make explicit?
+
 ## (INFRASTRUCTURE) Makefile with implicit rules
 
 The makefile has implicit rules for cpp files which can greatly simplify the entire make process.
 So we may replace the handwritten rules by the implicitly defined rules in many cases.
 We merely need to specify the compiler flags.
 
-## (INFRASTRUCTURE) Fixed-size dynamic array and adoption
 
-Define a template class for a dynamically allocated array whose size cannot be changed after allocation.
+
+## (INFRASTRUCTURE) Redesign source code organization: library files
+
+The compilation should place no temporary, build, or output files in the source directories.
+In particular, all files built should be put into a designated 'build' directory.
+The makefile in each source directory puts its output into the common build directory.
+
+## (INFRASTRUCTURE) General infrastructure and layout of unit tests / Unit test framework
+
+Agree to a common style for the unit tests. The existing unit tests should be streamlined and polished.
+Generally speaking, they should be reduced to tests only: benchmarks should be put into a folder of their own;
+examples should be a folder of their own as well. Do not shy away from bringing a few tests out of retirement.
+Each test should be included in a wrapper function, the main function provided via inclusion from a unified template.
+The header file should forward declare the test function and the strings and pass the command line arguments.
+The individual tests should only contain a bool valued function that takes command line arguments, and a few strings that explain the function.
+
+The point is that you should be able to easily change the Unit test header file for all available tests at once, or maybe integrate it with a unit test framework. Finally, the project should transition to catch2 at some point.
+
+Also have a look at the following unit test frameworks:
+
+- <http://unitpp.sourceforge.net/>
+- <https://github.com/burner/sweet.hpp/blob/master/options.hpp>
+- <https://github.com/burner/sweet.hpp/blob/master/filesystemtest/filesystemtest.cpp>
+- <https://github.com/burner/sweet.hpp/blob/master/fector.hpp>
+- <https://github.com/ccosmin/tinytest/blob/master/examples/code1.c>
+- <https://github.com/greg-white/sTest>
+
+## (INFRASTRUCTURE) Command line interface
+
+The handling of command line options should be localized. This requires the common format for the unit tests. Preferably written, in the C-conforming subset of C++.
+Some ideas for command line options:
+
+- [ ] Printing help: --help
+- [ ] Controlling output verbosity: --quiet, --verbosity
+- [ ] Output, log and error output locations
+- [ ] Parameters such as polynomial degree, depending on the program 
+
+## (INFRASTRUCTURE) Documentation:
+
+Sphinx seems viable <http://www.sphinx-doc.org/en/stable/>, videos via <https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)>.
+This software could be used for personal websites.
+
+
+
+
+## (INFRASTRUCTURE) Replace C++ standard library 
+
+**Custom string and output library** as a thin wrapper around the C functionality. 
+
+**Custom printf implementation** that handles long doubles
+
+**Fixed-size vector** template whose size cannot be changed after allocation. 
 Copy the std::vector interface but do not provide resizing and capacity information.
-
-Use that fixed-size array throughout your code whenever appropriate, replacing the old std::vector variables with the new ones.
-This applies in particular to the linear algebra classes.
-
-## (INFRASTRUCTURE) DECOUPLE FROM C++ STANDARD LIBRARY
-
-[ ] Remove precision from the test files and benchmarks
-
-- [x] remove iostream when possible
-- [ ] seems to reduce compile time, by a few seconds
-- [!] take care of the ./basic test modules
-
-[x] Remove std::fstream
-
-[x] Remove iomanip in each test module
-
-[ ] In each module, reduce includes in header files to bare minimum, use forward declarations
-
-[ ] Move STL references to where they are needed, away from basic to the cpp file
-
-[ ] replace 'assert' by 'Assert's
-
-[ ] Custom Strings library, Custom Output library
-
-[ ] Use custom printf implementation for that handles long doubles
-
-[ ] Change to makefile to save a few seconds and make it more reasonable: as in the test folder, use inclusions
-
-## (INFRASTRUCTURE) Code Coverage: background and application
 
 ## (INFRASTRUCTURE) What are common formats for meshes in FEM software
 
@@ -1073,46 +989,6 @@ This applies in particular to the linear algebra classes.
 - Gambit:           <http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf>
 
 Learn more about Gmsh and how to utilize it for this project.
-
-## (INFRASTRUCTURE) Smart Pointers
-
-Should smart pointers be employed throughout the library to make it more robust against user malpractice?
-
-## (INFRASTRUCTURE) Unreal engine 
-
-Revisit the Unreal engine for ideas 
-
-## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
-
-Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include 
-
-- base 
-- common 
-- commons
-- core 
-- general
-- global
-- shared
-- std
-
-Survey a few important projects to get a sense of what name you should use for this one.
-That will give you a sense of what you should do.
-
-- Examples: base, common, core, general, std
-- MFEM:     general
-- Feelpp:   core
-- Lifev:    core
-- ngsolve:  std
-- Fenics:   common
-- ??!!!!:   base 
-- Hermes:   common
-- concepts: ...
-- <https://en.wikipedia.org/wiki/List_of_finite_element_software_packages>
-
-
-
-
-
 
 
 
@@ -1579,6 +1455,60 @@ Ensure that all-one vectors are not used for constant functions. That only works
 
 Align different Frobenius norms of vectors and dense matrices.
 Align the entire DenseMatrix and FloatVector classes as much as only possible.
+
+## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
+
+Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include 
+
+- base 
+- common 
+- commons
+- core 
+- general
+- global
+- shared
+- std
+
+Survey a few important projects to get a sense of what name you should use for this one.
+That will give you a sense of what you should do.
+
+- Examples: base, common, core, general, std
+- MFEM:     general
+- Feelpp:   core
+- Lifev:    core
+- ngsolve:  std
+- Fenics:   common
+- ??!!!!:   base 
+- Hermes:   common
+- concepts: ...
+- <https://en.wikipedia.org/wiki/List_of_finite_element_software_packages>
+
+## (DONE/INFRASTRUCTURE) remove code from parent directory
+
+rename base/include.hpp in the main folder, move to base subfolder, and have all exec.s include it
+
+## (DONE/INFRASTRUCTURE) DECOUPLE FROM C++ STANDARD LIBRARY
+
+[x] Remove std::precision from the test files and benchmarks
+[x] remove iostream when possible, seems to reduce compile time, by a few seconds
+[x] Remove std::fstream when possible
+[x] Remove iomanip in each test module
+[x] In each module, reduce includes in header files, use forward declarations
+[x] Move STL references to where they are needed, away from header to the cpp file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

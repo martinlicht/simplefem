@@ -30,7 +30,7 @@
 
 #include <string>
 
-// global boolean variable to signal whether the last write finished with a fresh line 
+// Global boolean variable to signal whether the last write finished with a fresh line 
 // extern bool log_has_a_fresh_line;
 
 class Logger final
@@ -44,7 +44,7 @@ class Logger final
         std::string filename;
         int linenumber;
     
-        // class-scope boolean variable to signal whether the last write finished with a fresh line 
+        // Class-scope boolean variable to signal whether the last write finished with a fresh line 
         static bool log_has_a_fresh_line;
 
         // static const bool print_file_and_line = false;
@@ -180,7 +180,7 @@ class Logger final
 
 #ifndef USE_PRIMITIVE_LOGGING
 
-// returns a temporary logger to write stuff to, and line breaks on destruction 
+// Returns a temporary logger to write stuff to, and line breaks on destruction 
 // Example usage:
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
@@ -204,8 +204,8 @@ class Logger final
 // ============================================================================
 
 #if __cplusplus < 202002L
-#define LOGPRINTF(...) printf_into_stream( LOG, __VA_ARGS__ );
-#define ERRPRINTF(...) printf_into_stream( ERR, __VA_ARGS__ );
+#define LOGPRINTF(...) printf_into_stream( LOG, __VA_ARGS__ )
+#define ERRPRINTF(...) printf_into_stream( ERR, __VA_ARGS__ )
 #else
 #define LOGPRINTF( formatstring, ...) printf_into_stream( LOG, formatstring __VA_OPT__(,) __VA_ARGS__ );
 #define ERRPRINTF( formatstring, ...) printf_into_stream( ERR, formatstring __VA_OPT__(,) __VA_ARGS__ );

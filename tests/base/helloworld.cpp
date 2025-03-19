@@ -6,14 +6,20 @@
 
 using namespace std;
 
-/*
-The purpose of this program is to check whether your development environment is set up correctly,
-including compiler, linker, debug software, etc...
-It also outputs the C++ version.
-*/
+// ============================================================================
+// The purpose of this program is to check whether your development environment 
+// is set up functionally at all. That includes checks for 
+// - C++ version 
+// - compiler
+// - standard library 
+// - linker
+// - operating system
+// ============================================================================
 
 int main( int argc, char *argv[] )
 {
+    cout << "Unit Test: Does this program compile?" << endl;
+    
     cout << "Hello World! " << endl;
                 
     // C++ standard
@@ -64,6 +70,8 @@ int main( int argc, char *argv[] )
     int * p = new (nothrow) int[10000];
     
     cout << "some arbitrary integer from the memory: " << p[8] << endl;
+    
+    cout << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << endl;
     
     return 0;
 }

@@ -9,6 +9,14 @@
 #include <unistd.h>  // UNIX standard functions (read, sleep, STDIN_FILENO)
 #endif 
 
+
+// ============================================================================
+// Sets up keystroke detection in a parallel thread. 
+// Only works on Linux since it uses pthreads and terminal settings. 
+// ============================================================================
+
+
+
 #include "../../base/include.hpp"
 
 #if defined(__linux__) or defined(__unix__)
@@ -26,8 +34,8 @@ void busy_sleep( double seconds );
 void* process_keyboard_reader( void* /*unused*/ );
 void* process_printer( void* /*unused*/ );
 
-/**
- * @brief Changes the terminal mode to non-canonical (raw) mode.
+/*
+ * Changes the terminal mode to non-canonical (raw) mode.
  * 
  * This function modifies terminal settings to disable line buffering and echoing.
  * It also ensures that settings can be restored when the program exits.
@@ -60,8 +68,8 @@ void terminal_mode_into_raw()
     fcntl( STDIN_FILENO, F_SETFL, fcntlFlags | O_NONBLOCK );
 }
 
-/**
- * @brief Restores the original_terminal_settings terminal mode.
+/*
+ * Restores the original_terminal_settings terminal mode.
  * 
  * This function is automatically called when the program exits, ensuring that the terminal returns to its default settings.
  */
@@ -72,10 +80,10 @@ void terminal_mode_restore()
 
 
 
-/**
- * @brief Waits for the specified number of seconds.
+/*
+ * Waits for the specified number of seconds.
  * 
- * @param (double): number of seconds.
+ * (double): number of seconds.
  */
 void busy_sleep( double seconds )
 {
@@ -85,14 +93,14 @@ void busy_sleep( double seconds )
 
 
 
-/**
- * @brief Reads keyboard input in a separate thread.
+/*
+ * Reads keyboard input in a separate thread.
  * 
  * This function listens for user keystrokes and prints them to the console.
  * If the ESC key (ASCII 27) is pressed, it terminates early.
  * 
- * @param unused (void*): Unused parameter to match pthread signature.
- * @return Always returns nullptr.
+ * unused (void*): Unused parameter to match pthread signature.
+ * Always returns nullptr.
  */
 void* process_keyboard_reader( void* /*unused*/ ) 
 {
@@ -125,14 +133,14 @@ void* process_keyboard_reader( void* /*unused*/ )
     return nullptr;
 }
 
-/**
- * @brief Simulates background work while listening for keyboard input.
+/*
+ * Simulates background work while listening for keyboard input.
  * 
  * This function runs in a separate thread and prints time progress updates
  * every second while the keyboard input thread is active.
  * 
- * @param unused (void*): Unused parameter to match pthread signature.
- * @return Always returns nullptr.
+ * unused (void*): Unused parameter to match pthread signature.
+ * Always returns nullptr.
  */
 void* process_printer( void* /*unused*/ ) 
 {
@@ -154,8 +162,10 @@ void* process_printer( void* /*unused*/ )
 
 #endif 
 
-int main() 
+int main( int argc, char *argv[] )
 {
+    LOG << "Unit Test: Keystrokes and pthreads" << nl;
+
 #if defined(__linux__) or defined(__unix__)
 
     // Thread identifiers
@@ -171,5 +181,7 @@ int main()
 
 #endif 
 
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
+    
     return 0;
 }

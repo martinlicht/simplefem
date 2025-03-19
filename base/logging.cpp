@@ -131,7 +131,7 @@ Logger::~Logger() noexcept
     /* 2. introduce final output string, reserve enough spaces */
 
     int number_of_newlines = 0;
-    for( const char character : message_string ) 
+    for( const char& character : message_string ) 
         if( character == '\n' )
             number_of_newlines++;
 
@@ -162,7 +162,7 @@ Logger::~Logger() noexcept
     
     /* 5. add newline if the last character is not a newline and we automatically append newlines */
     
-    if( message_string.back() != nl and pad_newline_if_there_is_none )
+    if( message_string.length() > 0 and message_string.back() != nl and pad_newline_if_there_is_none )
         output_string += nl;
 
     /* 6. memorize whether the last character is a newline */
