@@ -30,11 +30,11 @@ int main( int argc, char *argv[] )
         assert( irE3.cardinality() == 0 );
         
         #pragma clang diagnostic push 
-        #pragma clang diagnostic ignored "-Wunreachable-code-loop-increment"
+        #pragma clang diagnostic ignored "-Wimpossible-code-loop-increment"
         int counter = 0;
-        for( int i : irE1 ) { counter++; assert( irE1.min() <= i && i <= irE1.max() ); unreachable(); }
-        for( int i : irE2 ) { counter++; assert( irE2.min() <= i && i <= irE2.max() ); unreachable(); }
-        for( int i : irE3 ) { counter++; assert( irE3.min() <= i && i <= irE3.max() ); unreachable(); }
+        for( int i : irE1 ) { counter++; assert( irE1.min() <= i && i <= irE1.max() ); impossible(); }
+        for( int i : irE2 ) { counter++; assert( irE2.min() <= i && i <= irE2.max() ); impossible(); }
+        for( int i : irE3 ) { counter++; assert( irE3.min() <= i && i <= irE3.max() ); impossible(); }
         assert( counter == 0 );
         #pragma clang diagnostic pop
         

@@ -1,5 +1,5 @@
 #include "mallinfo.hpp"
-#include <cstdio>
+#include <cstdio>   // fprintf
 
 
 #if defined(__linux__) && (__GLIBC__ >= 2) and (__GLIBC_MINOR__ >= 33)

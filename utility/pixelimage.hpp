@@ -25,9 +25,9 @@ struct PixelColor
             case ColorChannel::red:   return red;
             case ColorChannel::green: return green;
             case ColorChannel::blue:  return blue;
-            default: unreachable();
+            default: impossible();
         }
-        unreachable();
+        impossible();
     }
 };
 

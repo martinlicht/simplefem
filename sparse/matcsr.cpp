@@ -1150,7 +1150,7 @@ MatrixCSR Conjugation( const MatrixCSR& center, const MatrixCSR& factor )
                 
                 int index = resultA[cj] + entries_per_row[cj] - 1;
 
-                Float c = ck;
+                int c = ck;
                 Float v = vj * vi * vk;
 
                 assert( resultC[index] == -1 );

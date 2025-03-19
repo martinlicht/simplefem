@@ -654,7 +654,7 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
                 rbase++;
                 
             } else {
-                unreachable();
+                impossible();
             }
 
         }
@@ -701,7 +701,7 @@ SparseMatrix SparseMatrixMultiplication( const SparseMatrix& left, const SparseM
                 rbase++;
                 
             } else {
-                unreachable();
+                impossible();
             }
 
         }

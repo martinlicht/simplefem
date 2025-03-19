@@ -41,7 +41,7 @@ DenseMatrix polynomialmassmatrix( int n, int r )
         
         if( ret( i, j ) <= 0. ) {
             LOG << multis[i] << multis[j] << ret (i, j );
-            unreachable();
+            impossible();
         }
 
     }
@@ -92,7 +92,7 @@ DenseMatrix polynomialmassmatrix( int n, int r, const MultiIndex& base )
         
         if( ret( i, j ) <= 0. ) {
             LOG << multis[i] << multis[j] << ret (i, j );
-            unreachable();
+            impossible();
         }
 
     }

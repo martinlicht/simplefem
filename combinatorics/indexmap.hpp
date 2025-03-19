@@ -235,7 +235,7 @@ int sign_of_rho_sigma( const IndexMap& sigma );
 //         if( ! sub.has_value_in_range(j) )
 //             return j;
 //         else 
-//             unreachable();
+//             impossible();
 // }
 
 

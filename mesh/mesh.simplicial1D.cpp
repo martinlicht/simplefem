@@ -354,7 +354,7 @@ int MeshSimplicial1D::count_simplices( int dim ) const
   else if( dim == 1 )
     return count_edges();
   else
-    unreachable();
+    impossible();
 }
 
 bool MeshSimplicial1D::has_subsimplices_listed( int sup, int sub ) const
@@ -389,7 +389,7 @@ IndexMap MeshSimplicial1D::get_subsimplices( int sup, int sub, int cell ) const
     
   } else {
       
-    unreachable(); 
+    impossible(); 
     
   }
   
@@ -421,7 +421,7 @@ const std::vector<int> MeshSimplicial1D::get_supersimplices( int sup, int sub, i
     
   } else {
     
-    unreachable(); 
+    impossible(); 
     
   }
   
@@ -439,7 +439,7 @@ SimplexFlag MeshSimplicial1D::get_flag( int dim, int cell ) const
         assert( 0 <= cell && cell < count_edges() );
         return flags_edges[cell];
     } else {
-        unreachable();
+        impossible();
     }
 }
         
@@ -453,7 +453,7 @@ void MeshSimplicial1D::set_flag( int dim, int cell, SimplexFlag flag )
         assert( 0 <= cell && cell < count_edges() );
         flags_edges[cell] = flag;
     } else {
-        unreachable();
+        impossible();
     }
 }
 
@@ -491,7 +491,7 @@ int MeshSimplicial1D::indexof_edge_vertex( int e, int v ) const
     assert( 0 <= v && v < counter_vertices );
     if     ( data_edge_vertices[e][0] == v ) return 0;
     else if( data_edge_vertices[e][1] == v ) return 1;
-    else                                     unreachable();
+    else                                     impossible();
 } 
 
 int MeshSimplicial1D::get_edge_vertex( int e, int vi ) const
@@ -533,7 +533,7 @@ int MeshSimplicial1D::get_vertex_nextparent_edge( int v, int e ) const
   else if( data_edge_vertices[e][1] == v )
     return data_edge_nextparents_of_vertices[e][1];
   else
-    unreachable();
+    impossible();
 }
 
 int MeshSimplicial1D::get_edge_nextparent_of_vertex( int e, int vi ) const

@@ -108,7 +108,7 @@ VTKWriter VTKWriter::write_coordinate_block( const std::function<Float(int)>& fu
                << mesh.getCoordinates().getdata(v,2) 
                << nl;
         } else {
-            unreachable();
+            impossible();
         }
         
     
@@ -565,7 +565,7 @@ VTKWriter VTKWriter::write_cell_vector_data_barycentriccrosses( const FloatVecto
             columnvalues = FloatVector{  0.,  0.,  1. };
         } else {
             LOG << sigmas[col] << nl;
-            unreachable();
+            impossible();
         }
         conversion.setcolumn( col, columnvalues );
 

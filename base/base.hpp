@@ -7,6 +7,30 @@
 #endif
 
 
+
+// ============================================================================
+// Minimal standard header inclusions
+// ============================================================================
+
+#include <cmath>        // pow,
+#include <cstdint>      // std::unint_max
+
+#include <limits>       // for numeric_limits
+#include <string>       
+#include <type_traits>  // for template requirements
+
+
+// ============================================================================
+// Include header file for debug macros
+// ============================================================================
+
+#include "debug.hpp"
+
+
+// ============================================================================
+// Define important macros
+// ============================================================================
+
 #ifdef ELIDE_HOT_FUNCTIONS
 #if defined(__GNUC__) or defined(__clang__)
 #define HOTCALL __attribute__((hot,warning("Performance-critical function call not elided.")))
@@ -43,44 +67,22 @@
 
 
 
-#include <cmath>
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-// #include <ctime>
 
-// #include <algorithm>
-#include <array>
-// #include <chrono>
-// #include <functional>
-// #include <iterator>
-// #include <list>
-// #include <ostream>
-#include <limits>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
+
+
+// ============================================================================
+// Casting-type for intentionally discarded variables
+// ============================================================================
 
 typedef void void_discard;
 
 
-#include "debug.hpp"
 
 
-
-/////////////////////////////////////////////////
-//                                             //
-//          FLOATING POINT DEFINITIONS         //
-//                                             //
-/////////////////////////////////////////////////
-
-// #ifndef EXTENDED_PRECISION
-// typedef double Float;
-// #else 
-// typedef long double Float;
-// #endif
+// ============================================================================
+// Floating-point definitions
+// ============================================================================
 
 #if defined(EXTENDED_PRECISION) && defined(SINGLE_PRECISION)
 #error Cannot request extended and single precision at the same time!
@@ -95,78 +97,14 @@ typedef double Float;
 #endif
 
 
-// constexpr Float SqrtHelper( Float a, Float x, unsigned int i )
-// {
-//     return ( i == 0 ) ? x : SqrtHelper( a, ( a / x + x ) / 2, i-1 );
-// }
-
 template<typename T>
 constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type Sqrt( T a, int i = 40 )
 {
     T x = a;
-    // assert( x >= 0. );
     if( not ( x > 0. ) ) return 0.;
     while ( i --> 0 ) x = ( x + a / x ) / 2.f;
     return x;    
-    // return SqrtHelper( a, a, i );
 }
-
-// template<typename T>
-// constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ThirdRoot( T a, int i = 100 )
-// {
-//     T x = a;
-//     // assert( x >= 0. );
-//     if( not ( x > 0. ) ) return 0.;
-//     while ( i --> 0 ) x = ( 2.f * x + a / (x*x) ) / 3.f;
-//     return x;    
-//     // return SqrtHelper( a, a, i );
-// }
-
-
-/*
-// 1. Integer exponentiation at compile time
-template<typename T>
-constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ipow( T base, unsigned exp )
-{
-    T result = 1.0;
-    for( unsigned i = 0; i < exp; i++ )
-        result *= base;
-    return result;
-}
-
-// 2. Newton iteration for x^p = a.
-//    We'll do a fixed number of iterations here (e.g., steps=20).
-template<typename T>
-constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type newtonRoot(T a, unsigned p, T initialGuess, int steps = 35 )
-{
-    T x = initialGuess;
-    for( int i = 0; i < steps; i++ ) {
-        // f(x)   = x^p - a
-        // f'(x)  = p * x^(p-1)
-        const T f      = ipow(x, p) - a;
-        const T fPrime = p * ipow(x, p - 1);
-
-        // Newton’s method: x_{n+1} = x_n - f(x_n)/f'(x_n)
-        x -= f / fPrime;
-    }
-    return x;
-}
-
-template<typename T>
-constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type ThirdRoot( T a )
-{
-    return newtonRoot( a, 3, (T)1.f );
-}
-*/
-
-
-// constexpr Float Sqrt_( Float a, bool init = true, unsigned int i = 40, Float x = 0. )
-// {
-//     return ( init ) ? Sqrt_( a, false, i, a ) : ( i==0 ? x : Sqrt_( a, false, i-1, ( a / x + x ) / 2 ) );
-// }
-
-
-
 
 
 static const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
@@ -184,31 +122,14 @@ static const constexpr Float desired_closeness_for_sqrt =
 
 
 
-                                    
-/////////////////////////////////////////////////
-//                                             //
-//          TEMPLATE INSTANTIATIONS            //
-//                                             //
-/////////////////////////////////////////////////
-
-// extern template class std::vector<char>;
-// extern template class std::vector<int>;
-// extern template class std::vector<std::size_t>;
-// extern template class std::vector<Float>;
 
 
 
 
 
-
-
-
-
-/////////////////////////////////////////////////
-//                                             //
-//        CHAR AND STRING CONSTANTS            //
-//                                             //
-/////////////////////////////////////////////////
+// ============================================================================
+// Char and string constants
+// ============================================================================
 
 static const constexpr char space = ' ';
 
@@ -224,11 +145,39 @@ static const constexpr char tab = '\t';
 
 
 
-/////////////////////////////////////////////////////////
-//                                                     //
-//    use this to safely cast size_types to C++ int    //
-//                                                     //
-/////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+// ============================================================================
+// System setup
+// 
+// We use a global singleton for any relevant setup and initial outputs,
+// which is called before the main function
+// ============================================================================
+
+struct SystemSetup final
+{
+    SystemSetup() noexcept;
+    ~SystemSetup() noexcept;
+};
+
+extern const SystemSetup system_setup;
+
+
+
+
+
+
+
+
+
+// ============================================================================
+// use this to safely cast size_types to C++ int
+// ============================================================================
 
 inline constexpr int SIZECAST( std::uintmax_t size )
 {
@@ -236,11 +185,9 @@ inline constexpr int SIZECAST( std::uintmax_t size )
     return static_cast<int>( size );
 }
 
-/////////////////////////////////////////////////////////
-//                                                     //
-//          use this to safely get array length        //
-//                                                     //
-/////////////////////////////////////////////////////////
+// ============================================================================
+// use this to safely get C array lengths
+// ============================================================================
 
 template < class T, size_t N >
 constexpr size_t countof( const T (&array)[N] ) {
@@ -250,13 +197,9 @@ constexpr size_t countof( const T (&array)[N] ) {
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//        SIMPLE AUXILIARY ARITHMETICS         //
-//                                             //
-/////////////////////////////////////////////////
-
-
+// ============================================================================
+// Simple auxiliary arithmetics
+// ============================================================================
 
 template<typename T>
 inline constexpr int kronecker( const T& i, const T& j )
@@ -266,7 +209,6 @@ inline constexpr int kronecker( const T& i, const T& j )
     else
         return 0;
 }
-
 
 template<typename T>
 inline constexpr T absolute( const T& x )
@@ -430,12 +372,9 @@ inline constexpr bool is_numerically_one( Float value, Float threshold = desired
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//               POWER FUNCTIONS               //
-//                                             //
-/////////////////////////////////////////////////
-
+// ============================================================================
+// Power functions
+// ============================================================================
 
 inline /*constexpr*/ Float power_numerical( Float base, Float exponent )
 {
@@ -470,16 +409,17 @@ inline constexpr int sign_power( int exponent )
 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-//                                                                                           //
-//                   INTEGRAL FACTORIAL, BINOMIALS AND AUXILIARIES                           //
-//                                                                                           //
-//   NOTE:                                                                                   //
-//   For small inputs, the naive method seems to perform best,                               //
-//   the table method is only slightly slower, and the loop method is consistently slowest.  // 
-//   The differences are in the range of 5%, so fairly small for practical purposes.         //
-//                                                                                           //
-///////////////////////////////////////////////////////////////////////////////////////////////
+// ============================================================================
+//
+// Integral factorial, binomials, and auxiliaries
+//
+// NOTE:
+// For small inputs, the naive method seems to perform best,
+// the table method is only slightly slower, 
+// and the loop method is consistently slowest.
+// The differences are in the range of 5%, so fairly small for practical purposes.
+//   
+// ============================================================================
 
 /*
  * Recursively divide the integer n by larger and larger numbers 1, 2, 3, ... without remainder
@@ -547,9 +487,9 @@ inline constexpr uintmax_t factorial_integer_table_old( intmax_t n )
         // case 23: return 25852016738884976640000ll;
         // case 24: return 620448401733239439360000ll;
         // case 25: return 15511210043330985984000000ll;
-        default: unreachable();
+        default: impossible();
     }
-    unreachable();
+    impossible();
 }
 
 inline constexpr uintmax_t factorial_integer_table( intmax_t n )
@@ -662,17 +602,15 @@ inline unsigned long long binomial_integer_secured( unsigned int n, unsigned int
 
 
 
-//////////////////////////////////////////////////
-//                                              //
-//       NUMERICAL FACTORIAL, BINOMIALS         //
-//               AND AUXILIARIES                //
-//                                              //
-//   NOTE:                                      //
-//   For small inputs, the loop method seems    //
-//   to be fastest, whereas the recursive form  //
-//   of the factorial performs 10% slower.      //
-//                                              //
-//////////////////////////////////////////////////
+// ============================================================================
+//
+// Numerical factorial, binomials, and auxiliaries
+//
+// NOTE:
+// For small inputs, the loop method seems to be fastest, 
+// whereas the recursive form of the factorial performs 10% slower.
+//   
+// ============================================================================
 
 inline constexpr Float factorial_numerical_naive( intmax_t n )
 {
@@ -762,17 +700,13 @@ inline constexpr Float binomial_numerical( intmax_t n, intmax_t k )
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//              TIME UTILITIES                 //
-//                                             //
-/////////////////////////////////////////////////
+// ============================================================================
+// Time utilities
+// ============================================================================
 
 typedef uintmax_t timestamp;
 
 timestamp timestampnow();
-
-// TODO(martinlicht): simplify the time stamp interface and move it to logging, even with code duplication.
 
 std::string timestamp2measurement( const timestamp& t );
 
@@ -797,32 +731,29 @@ std::string digitalcodenow();
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//            STRING UTILITIES                 //
-//                                             //
-/////////////////////////////////////////////////
+// ============================================================================
+// String utilities
+// ============================================================================
 
-// TODO(martinlicht): These functions are not used in the base. Move to utilities 
-
-/******************************************************/
-/*      count the white space within STL string       */
-/******************************************************/
+// ----------------------------------------------------------------------------
+// count the white space within STL string
+// ----------------------------------------------------------------------------
 
 int count_white_space( const std::string& str ); 
 
-/******************************************************/
-/*          insert tabs before each line              */
-/******************************************************/
+// ----------------------------------------------------------------------------
+// insert tabs before each line
+// ----------------------------------------------------------------------------
 
 std::string tab_each_line( std::string str );
 
-/******************************************************/
-/*        convert a C string to an integer            */
-/******************************************************/
+// ----------------------------------------------------------------------------
+// convert a C string to an integer
+// ----------------------------------------------------------------------------
 
 int string_to_integer( const char* s, const char* __restrict__ *endptr, unsigned int base, bool& has_overflown );
 
+// TODO(martinlicht): These functions are not used in the base. Move to utilities 
 
 
 
@@ -836,15 +767,14 @@ int string_to_integer( const char* s, const char* __restrict__ *endptr, unsigned
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//            GENERIC STREAMING                //
-//                                             //
-/////////////////////////////////////////////////
 
-/******************************************************/
-/*       printf into C++ strings and streams          */
-/******************************************************/
+// ============================================================================
+// Generic streaming
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// printf into C++ strings and streams 
+// ----------------------------------------------------------------------------
 
 std::string printf_into_string( const char* formatstring, ... ) 
 __attribute__ (( format (printf,1,2) ));
@@ -862,70 +792,6 @@ __attribute__ (( format (printf,1,2) ));
 
 
 
-
-
-/***********************************************/
-/*   GENERIC STREAM TEMPLATE FOR ITERABLES     */ 
-/***********************************************/
-
-// template< typename Stream, typename Container, 
-//           typename = decltype( std::begin( std::declval<Container>() ) )
-//         //   ,
-//         //   typename = std::enable_if< not std::is_same<Container,const std::string>::value && not std::is_same<Container,std::string>::value && not std::is_same<Container,char*>::value && not std::is_same<Container,const char*>::value >,
-//         //   typename = std::enable_if< not std::is_same<Container,std::string>::value >,
-//         //   typename = std::enable_if< not std::is_same<Container,const std::string>::value >,
-//         //   typename = std::enable_if< not std::is_same<Container,char*>::value >,
-//         //   typename = std::enable_if< not std::is_same<Container,const char*>::value >
-//         >
-// inline 
-// typename std::enable_if< not std::is_same<Container,const std::string>::value && not std::is_same<Container,std::string>::value && not std::is_same<Container,char*>::value && not std::is_same<Container,const char*>::value, Stream& >::type
-// operator<<( Stream& stream, const Container& container )
-// {
-//     for( const auto& item : container ) stream << item << space;
-//     return stream;
-// }
-
-// template< typename Stream >
-// inline Stream& operator<<( Stream&& stream, const std::string&& container )
-// {
-//     return operator<< <Stream,const char*>( stream, container.c_str() ); 
-// }
-
-// template <typename StreamType, typename T, size_t N>
-// inline StreamType& operator<<( StreamType& stream, const std::array<T, N>& v)
-// // Define a helper structure template to check for to_text existence
-// template <typename T, typename = void>
-// struct has_text : std::false_type {};
-// 
-// // Specialization that deduces to std::true_type only when to_text method exists
-// template <typename T>
-// struct has_text<T, decltype(std::declval<T>().text(), void())> : std::true_type {};
-// 
-// template< typename Stream, typename Object >
-// // inline Stream& operator<< < Stream, Object, decltype( std::declval<Object>().text() ) >( Stream& stream, const Object& object )
-// inline Stream& operator<<( Stream&& stream, const Object& object )
-// {
-//     static_assert( has_text<Object>::value );
-//     stream << object.text(); 
-//     return stream;
-// }
-
-// template< typename Stream, typename Container, typename = decltype( std::begin( std::declval<Container>() ) ) >
-// inline Stream& operator<<( Stream&& stream, const Container& container )
-// {
-//     for( const auto& item : container )
-//         stream << item << space;
-//     return stream;
-// }
-
-// template <typename StreamType, typename T, size_t N>
-// inline StreamType& operator<<( StreamType&& stream, const std::array<T, N>& v)
-// {
-//     for( const auto& item : v )
-//         stream << "" << item << space;
-//     stream << nl;
-//     return stream;
-// }
 
 
 

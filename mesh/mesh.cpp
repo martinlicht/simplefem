@@ -217,7 +217,7 @@ int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int loca
         if( alive )
           return opposite_index;
     }
-    unreachable();
+    impossible();
 }
 
 
