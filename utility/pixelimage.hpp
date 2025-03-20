@@ -12,6 +12,12 @@
 
 #include "../base/include.hpp"
 
+
+// ============================================================================
+// Utility functions for image file reading/writing
+// ============================================================================
+
+
 enum class ColorChannel : uint8_t { red = 0, green = 1, blue = 2 };
 
 struct PixelColor

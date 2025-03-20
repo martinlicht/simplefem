@@ -290,8 +290,8 @@ int main( int argc, char *argv[] )
 
                     if( r == min_r ) 
                     {
-                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                        VTKWriter vtk( M, fs, get_basename(__FILE__) );
 
                         {
                             const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 2, 0, r );

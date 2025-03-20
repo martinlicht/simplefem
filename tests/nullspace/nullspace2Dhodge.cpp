@@ -204,9 +204,9 @@ int main( int argc, char *argv[] )
             for( const auto& nullvector : nullvectorgallery )
             {
         
-                std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
     
-                VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                VTKWriter vtk( M, fs, get_basename(__FILE__) );
 
                 auto reduced_nullvector = interpol_matrix * vector_incmatrix * nullvector;
 

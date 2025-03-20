@@ -1,5 +1,3 @@
-// g++ sorthacktest.cpp -o sorthacktest
-
 
 #include <cstdlib>
 

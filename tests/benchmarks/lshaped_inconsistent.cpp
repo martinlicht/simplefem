@@ -225,7 +225,7 @@ int main( int argc, char *argv[] )
                     
                     
                     if( true ){
-                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
+                        std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
 
                         FloatVector z_values( M.count_vertices() );
 
@@ -237,7 +237,7 @@ int main( int argc, char *argv[] )
                         // }
 
 
-                        VTKWriter vtk( M, fs, getbasename(__FILE__) /*, z_values*/ );
+                        VTKWriter vtk( M, fs, get_basename(__FILE__) /*, z_values*/ );
                         // vtk.write_coordinate_block();
                         // vtk.write_top_dimensional_cells();
 

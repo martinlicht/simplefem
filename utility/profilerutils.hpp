@@ -7,6 +7,11 @@
 
 #include "../base/include.hpp"
 
+// ============================================================================
+// Utility functions for timing/profiling
+// ============================================================================
+
+
 class SectionProfiler final
 {
     private:
@@ -18,7 +23,7 @@ class SectionProfiler final
         
     public:
         
-        explicit SectionProfiler( const std::string& text = "---" )
+        explicit SectionProfiler( const std::string& text = "---" ) noexcept
         {
             ping( text );
         }
@@ -62,14 +67,15 @@ class StopWatch final {
 
     private:
 
-        typedef std::chrono::steady_clock::time_point time_type;
+        typedef std::chrono::steady_clock clock_type;
+        typedef clock_type::time_point time_type;
     
         time_type   start_time;
         std::string text;
 
     public:
 
-        explicit StopWatch( const std::string& text = "---" ) 
+        explicit StopWatch( const std::string& text = "---" ) noexcept
         : start_time(std::chrono::steady_clock::now()), text(text) 
         {}
 
@@ -80,11 +86,11 @@ class StopWatch final {
         
         ~StopWatch() noexcept {
             
-            const time_type end_time = std::chrono::steady_clock::now();
+            const time_type end_time = clock_type::now();
             
             const auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>( end_time - start_time ).count();
 
-            LOGPRINTF( "%ju ns \t %s\n", static_cast<uintmax_t>( elapsed_time ), text.c_str() );
+            LOGPRINTF( "%ju ms \t %s\n", static_cast<uintmax_t>( elapsed_time ), text.c_str() );
             
         }
 };

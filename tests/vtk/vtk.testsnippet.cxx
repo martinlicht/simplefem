@@ -10,9 +10,9 @@
 inline void internal_print( const Mesh& M, std::string meshname, std::string filename = "" )
 {
     
-    std::string basename = ( filename == "" ) ? getbasename(__FILE__) : filename;
+    std::string basename = ( filename == "" ) ? get_basename(__FILE__) : filename;
     
-    std::fstream fs( experimentfile( basename ), std::fstream::out );
+    std::fstream fs( get_available_filename( basename ), std::fstream::out );
     
     VTKWriter vtk( M, fs, meshname );
     // vtk.write_coordinate_block();

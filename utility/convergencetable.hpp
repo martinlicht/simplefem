@@ -7,6 +7,10 @@
 
 #include "../base/include.hpp"
 
+// ============================================================================
+// Convergence t
+// ============================================================================
+
 
 class ConvergenceTable final
 {
@@ -49,9 +53,6 @@ class ConvergenceTable final
         void lg() const;
         
         void lg( bool display_convergence_rates ) const;
-        
-//         void print( std::ostream& os );
-        
 
         std::string text( bool display_convergence_rates ) const;
         

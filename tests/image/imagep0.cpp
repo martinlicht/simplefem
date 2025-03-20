@@ -91,7 +91,7 @@ int main( int argc, char *argv[] )
         // FloatVector redvec( num_tets, 128 ), greenvec( num_tets, 240 ), bluevec( num_tets, 38 );
         // redvec.random_within_range(0.,255.); greenvec.random_within_range(0.,255.); blue.random_within_range(0.,255.);
 
-        std::fstream fs( experimentfile( getbasename(__FILE__), "svg" ), std::fstream::out );
+        std::fstream fs( get_available_filename( get_basename(__FILE__), "svg" ), std::fstream::out );
         fs << M.outputSVG( 0.000, "array", "none", &interpol_red, &interpol_green, &interpol_blue );
         fs.close();
 

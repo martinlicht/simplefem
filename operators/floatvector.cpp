@@ -325,7 +325,7 @@ void FloatVector::random()
 {
     check();
     for( int p = 0; p < getdimension(); p++ )
-        setentry( p, gaussrand() ); 
+        setentry( p, gaussian_variable() ); 
 }
 
 void FloatVector::random_within_range( Float min, Float max )

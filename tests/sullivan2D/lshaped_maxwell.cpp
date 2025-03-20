@@ -213,8 +213,8 @@ int main( int argc, char *argv[] )
                     auto computed_sol  = vector_incmatrix * sol;
                     
                     {
-                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                        VTKWriter vtk( M, fs, get_basename(__FILE__) );
 
                         vtk.write_cell_vector_data( function_rhs, "rhs_field" );
                         

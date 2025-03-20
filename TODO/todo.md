@@ -97,17 +97,19 @@ None of the above can be done in a day, so it most likely requires regular grind
 - [x] Dense: test everything thoroughly, even up to smaller rounding errors
 - [x] Operators: make things independent of screen output
 - [x] mixedsolver should test each variant of Hodge-CRM
+- [x] Learn about the __SSE__ macro
 - [ ] Sparse: check that composition does not change the outcome
 - [ ] Solver: meaningful convergence tests?
-- [ ] include visualization script
+- [ ] Include visualization script
 - [ ] Unit tests must check convergence rates
-- [ ] Clean up the VTK writer unit tests: a few full tests, proper naming practices, some more complicated meshes. Some parts of this component are also used to output and inspect meshes.
+- [ ] Clean up the VTK writer unit tests: a few full tests, proper naming practices, some more complicated meshes. 
+      Some parts of this component are also used to output and inspect meshes.
 - [ ] Clean up the unit tests of the mesh writer
-- [ ] check whether the << and >> and bitwise operations are executed on signed integral types
+- [ ] Check whether the << and >> and bitwise operations are executed on signed integral types
 - [ ] Disabled code should be marked accordingly, same for trivially true conditions
 - [ ] lshaped maxwell: correct the computation
 - [ ] Neumann estimate of eigenvalues 
-- [ ] try out Neumann BC to mixed FEM for Poisson
+- [ ] Try out Neumann BC to mixed FEM for Poisson
 
 
 
@@ -118,11 +120,12 @@ None of the above can be done in a day, so it most likely requires regular grind
 
 # HIGH: DO THESE NEXT
 
-## (HIGH) Colored matrix output
+## (HIGH) Hodge star **READING**
 
-The matrix output auto adapts 
+Review the Hodge star operations, combine the two implementations into one file. Combine the unit tests into one file. 
+Ensure that the results are uniform and correct. 
 
-## (HIGH) Algebraic Preconditioners 
+## (HIGH) Algebraic Preconditioners **READING**
 
 These preconditioners are intended for the basis blocks such as stiffness and mass matrices. 
 They are possible alternatives to Gauss-Seidel with Eisenstatt and graph coloring.
@@ -144,31 +147,7 @@ FEM tests that depend on convergence are not easy to measure but we can at least
 Figure out a scalar product implementation that guarantees positive output.
 Reduce the rounding errors in the mass matrix even further
 
-## (HIGH) Nullspace filter
-
-Streamline the matrix construction in the nullspace discussion:
-Develop a general class of methods to filter out nullspaces, either with single matrices or Hodge systems.
-The nullspace tests then merely use that component internally.
-
-- [ ] scalar examples: simplify the construction and unify 
-- [ ] hodge and mixed: simplify the construction and unify
-- [ ] scalar case unified algorithm
-- [ ] switch for either extracting from x or from b
-
-The general method looks like this:
-
-  1. Grab some random vector with unit mass 
-        OPTIONAL Orthogonalize against the previous nullspace vectors 
-  2. Filter out a nullspace vector 
-  5. Orthogonalize against the previous nullspace vectors 
-  3. Check whether the result is a nullspace vector 
-  4. Check whether the result is too small 
-
-## (HIGH) Hodge star
-
-Review the Hodge star operations and make them work.
-
-## (HIGH) Compare different Herzog-Soodhalter methods
+## (HIGH) Compare different Herzog-Soodhalter methods **READING**
 
 ## (HIGH) Semantics for matrix-vector multiplication
 
@@ -181,7 +160,7 @@ Specify which operation should be the most basic one and stick with that one.
 <https://beta.boost.org/doc/libs/1_68_0/libs/math/doc/html/math_toolkit/float_comparison.html>
 Understand the floating-point comparison functions and import them into this project, mutatis mutandis.
 
-## (HIGH) AFW-Basis of Sullivan forms
+## (HIGH) AFW-Basis of Sullivan forms **READING**
 
 - [ ] Write about those bases in your article and detail out their construction
 - [ ] Implement them
@@ -196,10 +175,11 @@ Can we canonicalize everything already in the matrix assembly?
 
 ## (HIGH) FEM rewrite
 
-- [ ] Summarize: indexfunctions, polynomialmassmatrix, utilities -> utilities
+- [ ] Summarize files: indexfunctions, polynomialmassmatrix, utilities -> utilities
 - [ ] Summarize: global functions
+- [ ] *inc -> inc* 
 
-## (HIGH) Dense Matrix rewrite
+## (HIGH) Dense Matrix rewrite **READING**
 
 Finally, rearrange and rename everything in the dense matrix module. One suggestion:
 
@@ -253,6 +233,12 @@ Use augmented integration for checking errors and the rhs
 
 # MEDIUM: DO-ABLE YET LOWER IMPORTANCE
 
+## (MEDIUM) Renaming
+
+- [x] better convention for names in files.hpp: snake_case
+- [x] summation: clean up the code
+- [x] simplify sorthack and retire sorthack test 
+
 ## (DONE/MEDIUM) Solver output
 
 Within solvers without explicit output enum, distinguish the following cases of the print modulo:
@@ -300,7 +286,7 @@ tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
 
 ## (DONE/MEDIUM) Solvers should abort if Ar_r or Ad_r is negative ?
 
-## (MEDIUM) SOLVERS
+## (MEDIUM) SOLVERS **QUALITY TIME**
 
 - [ ] vereinfache die verschiedenen CR solver, finde die unterschiede und markiere sie im Code, mache fallunterscheidungen und vereinheitliche
 
@@ -1456,6 +1442,26 @@ Ensure that all-one vectors are not used for constant functions. That only works
 Align different Frobenius norms of vectors and dense matrices.
 Align the entire DenseMatrix and FloatVector classes as much as only possible.
 
+> ## (DONE) Nullspace filter
+> 
+> Streamline the matrix construction in the nullspace discussion:
+> Develop a general class of methods to filter out nullspaces, either with single matrices or Hodge systems.
+> The nullspace tests then merely use that component internally.
+> 
+> - [x] scalar examples: simplify the construction and unify 
+> - [x] hodge and mixed: simplify the construction and unify
+> - [x] scalar case unified algorithm
+> 
+> The general method looks like this:
+> 
+>   1. Grab some random vector with unit mass 
+>         OPTIONAL Orthogonalize against the previous nullspace vectors 
+>   2. Filter out a nullspace vector 
+>   5. Orthogonalize against the previous nullspace vectors 
+>   3. Check whether the result is a nullspace vector 
+>   4. Check whether the result is too small 
+
+
 ## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
 
 Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include 
@@ -1482,6 +1488,33 @@ That will give you a sense of what you should do.
 - Hermes:   common
 - concepts: ...
 - <https://en.wikipedia.org/wiki/List_of_finite_element_software_packages>
+
+## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
+< 
+< Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include 
+< 
+< - base 
+< - common 
+< - commons
+< - core 
+< - general
+< - global
+< - shared
+< - std
+< 
+< Survey a few important projects to get a sense of what name you should use for this one.
+< That will give you a sense of what you should do.
+< 
+< - Examples: base, common, core, general, std
+< - MFEM:     general
+< - Feelpp:   core
+< - Lifev:    core
+< - ngsolve:  std
+< - Fenics:   common
+< - ??!!!!:   base 
+< - Hermes:   common
+< - concepts: ...
+< - <https://en.wikipedia.org/wiki/List_of_finite_element_software_packages>
 
 ## (DONE/INFRASTRUCTURE) remove code from parent directory
 

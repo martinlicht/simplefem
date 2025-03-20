@@ -289,8 +289,8 @@ int main( int argc, char *argv[] )
                         
                         FloatVector low_interpol_sol  = Interpolation( M, M.getinnerdimension(), 0, 0,   function_sol  );
                         
-                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                        VTKWriter vtk( M, fs, get_basename(__FILE__) );
                         
                         vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );
                         vtk.write_cell_scalar_data( low_interpol_sol, "interpolated_solution" , 1.0 );

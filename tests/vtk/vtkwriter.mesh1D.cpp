@@ -16,7 +16,7 @@ int main( int argc, char *argv[] )
     
     {
         
-        MeshSimplicial1D Mx = StandardInterval1D(); std::string meshname = std::string("One-dimensional Test Mesh: ") + getbasename(__FILE__);
+        MeshSimplicial1D Mx = StandardInterval1D(); std::string meshname = std::string("One-dimensional Test Mesh: ") + get_basename(__FILE__);
         
         internal_print( Mx, meshname );
         

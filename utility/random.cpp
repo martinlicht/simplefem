@@ -64,7 +64,7 @@ Float random_uniform()
 // Based on the implementations in the C-FAQ:
 // http://c-faq.com/lib/gaussian.html
 
-inline Float gaussrand_1()
+inline Float gaussian_variable_1()
 {
     const int n = 25;
     
@@ -79,7 +79,7 @@ inline Float gaussrand_1()
     return x;
 }
 
-inline Float gaussrand_2()
+inline Float gaussian_variable_2()
 {
     static bool phase = false;
     static Float u, v;
@@ -99,8 +99,8 @@ inline Float gaussrand_2()
     return z;
 }
 
-// http://c-faq.com/lib/gaussrand.luben.html
-inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
+// http://c-faq.com/lib/gaussian_variable.luben.html
+inline Float gaussian_variable_3( Float mean = 0., Float std_dev = 1. )
 {
     Assert( std_dev > machine_epsilon );
 
@@ -114,7 +114,7 @@ inline Float gaussrand_3( Float mean = 0., Float std_dev = 1. )
     return x_is_large ? (mean + z) : (mean - z);
 }
 
-inline Float gaussrand_4()
+inline Float gaussian_variable_4()
 {
     const Float pi = 3.14159265358979323846;
     Float u = ( random_integer() + 1. ) / ( get_random_integer_modulo() + 2. );
@@ -125,9 +125,9 @@ inline Float gaussrand_4()
     return result;
 }
 
-Float gaussrand()
+Float gaussian_variable()
 {
-    Float ret = gaussrand_4();
+    Float ret = gaussian_variable_4();
     assert( std::isfinite(ret) );
     return ret;
 }

@@ -8,11 +8,9 @@
 #include "../base/include.hpp"
 
 
-/////////////////////////////////////////////////
-//                                             //
-//       SUM INTEGERS PRODUCED BY LAMBDA       //
-//                                             //
-/////////////////////////////////////////////////
+// ============================================================================
+// Sum the integers produced by lambda
+// ============================================================================
 
 inline int sum_int( int from, int to, const std::function<int(int)>& calc )
 {
@@ -32,9 +30,9 @@ inline int sum_int( int to, const std::function<int(int)>& calc )
 
 
 
-/******************************************************/
-/*        write zero-based range into vector          */
-/******************************************************/
+// ============================================================================
+// Return a vector that enumerates a zero-based range
+// ============================================================================
 
 inline std::vector<int> range( int to )
 {
@@ -46,9 +44,9 @@ inline std::vector<int> range( int to )
 }
 
 
-/******************************************************/
-/*   remove duplicates from random access container   */
-/******************************************************/
+// ============================================================================
+// remove duplicates from random access container
+// ============================================================================
 
 template< typename T >
 inline void sort_and_remove_duplicates( T& t )
@@ -59,44 +57,47 @@ inline void sort_and_remove_duplicates( T& t )
 }
 
 
-/******************************************************/
-/*      find index of element with STL vector         */
-/******************************************************/
-
-template<typename T>
-inline int contains( const std::vector<T>& vec, const T& t )
-{
-   const auto it = std::find( vec.begin(), vec.end(), t );
-   return it != vec.end();
-}
-
+// ============================================================================
+// find index of element with STL vector
+// ============================================================================
 
 template<typename T>
 inline int find_index( const std::vector<T>& vec, const T& t )
 {
-   const auto it = std::find( vec.begin(), vec.end(), t );
-   Assert( it != vec.end() );
-   const auto ret = std::distance( vec.begin(), it );
-   Assert( ret >= 0 );
-   Assert( ret < vec.size() );
-   return SIZECAST( ret );
+    const auto it = std::find( vec.begin(), vec.end(), t );
+    Assert( it != vec.end() );
+    const auto ret = std::distance( vec.begin(), it );
+    Assert( ret >= 0 );
+    Assert( ret < vec.size() );
+    return SIZECAST( ret );
+}
+
+// ============================================================================
+// check whether vector contains a certain element
+// NOTE: Possibly superceded by in C++23
+// ============================================================================
+
+template<typename T>
+inline int contains( const std::vector<T>& vec, const T& t )
+{
+    return vec.end() != std::find( vec.begin(), vec.end(), t );
 }
 
 
-/******************************************************/
-/*            merge two sorted STL lists              */
-/******************************************************/
+// ============================================================================
+// merge two sorted STL lists
+// ============================================================================
 
 // template<typename T>
-// inline void mergeelementsinsortedlist
-// ( std::list<T>& L, 
+// inline void merge_elements_in_sorted_list
+// ( std::list<T>& L,
 //   const std::function<T( const T&, const T& )>& merge,
 //   const std::function<bool( const T&, const T& )>& compare
 // ) {
 //     typename std::list<T>::iterator it = L.begin();
 //     while( it != L.end() ){
 
-//         typename std::list<T>::iterator now = it; 
+//         typename std::list<T>::iterator now = it;
 //         typename std::list<T>::iterator next = ++it;
 
 //         if( next == L.end() ) return;
@@ -106,22 +107,24 @@ inline int find_index( const std::vector<T>& vec, const T& t )
 //             *now = merge( *now, *next );
 //             L.erase( next );
 //             it = now;
-//         } 
+//         }
 
 //     }
 // }
 
-/***********************************************/
-/*         make_unique HACK                    */ 
-/***********************************************/
+// ============================================================================
+// make_unique HACK
+// NOTE: Legacy codefrom when C++11 was still permitted
+// but C++11 did not natively provide the lambda.
+// ============================================================================
 
 #if __cplusplus < 201402L
 
 /****
- * 
+ *
  * A very imperfect solution for make_unique in C++11
  * We enter undefined behavior territory here
- * 
+ *
  ****/
 #warning \
 This code extends the std namespace so that `make_unique` is available throughout the code. \
@@ -134,10 +137,10 @@ Please try to compile with C++14 or higher.
 
 namespace std
 {
-template <typename T, typename ...Args> 
+template <typename T, typename ...Args>
 inline std::unique_ptr<T> make_unique(Args && ...args)
 {
-  return std::unique_ptr<T>( new T(std::forward<Args>(args)...) );
+    return std::unique_ptr<T>( new T(std::forward<Args>(args)...) );
 }
 }
 

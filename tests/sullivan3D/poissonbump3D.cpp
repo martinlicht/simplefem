@@ -217,8 +217,8 @@ int main( int argc, char *argv[] )
                     {
                         /* Print the iterative solution and also the data */
 
-                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                        VTKWriter vtk( M, fs, get_basename(__FILE__) );
                         
                         vtk.write_vertex_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_vertex_sol" );
                         vtk.write_vertex_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_vertex_rhs" );
