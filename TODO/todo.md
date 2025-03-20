@@ -12,7 +12,8 @@ nor production are relevant for testing functionality, and thus should be separa
 In the wake of this, the framework of the library should be progressively extended and polished according to demands
 of the unit tests. That touches upon error handling, logging, output colors, assertions...
 
-Finally, on a larger scale, the file structure of the library as well as the makefile setup should be fixed. The makefile structure is too complicated and at times difficult to understand and maintain, and improvement is due.
+Finally, on a larger scale, the file structure of the library as well as the makefile setup should be fixed. 
+The makefile structure is too complicated and at times difficult to understand and maintain, and improvement is due.
 
 None of the above can be done in a day, so it most likely requires regular grinding in order to get it done.
 
@@ -40,19 +41,19 @@ None of the above can be done in a day, so it most likely requires regular grind
       <https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-move-constructor.html>
 - [x] all destructors virtual or class is final without parents
 - [x] destructors do not check (possible moved-from state)
-- [x] Implement power method iteration to get largest eigenvalue
+- [x] Implement power method iteration to get the largest eigenvalue
 - [x] Does diffinterpol2D/3D still have strange output?
-- [?] what is the numerically stable way to compute the determinant?
+- [?] What is the numerically stable way to compute the determinant?
 - [!] The sqrt of a result subject to more than a machine epsilon error
       will be subject to more than the sqrt of the machine epsilon error
 - [x] Handle self-assignment in operator=
-- [x] CONSTANT_FLOATINGPOINT_DATATYPE: uses the same macro case distinction as the other ones
-- [x] remove includes from the definition of cxx files; test the cxx files
+- [x] `CONSTANT_FLOATINGPOINT_DATATYPE`: uses the same macro case distinction as the other ones
+- [x] remove includes from the definition of .cxx files; test the .cxx files
 - [x] enable compilation in different C++ modes and remove the error messages.
    * [x] 14
    * [x] 17
    * [x] 20
-- [x] how to turn off particular unused variable warnings? -> Blog post
+- [x] How to turn off particular unused variable warnings? -> Blog post
 
     ```c
     #define UNUSED_VARIABLE(x) (void)x
@@ -62,33 +63,33 @@ None of the above can be done in a day, so it most likely requires regular grind
 - [x] convergence tables should handle different precisions, one way or the other:
       best to internally use long double. Requires settling the printf issue
 - [x] Clean the printing methods of the convergence tables.
-- [x] Check debug.hpp for errors
-- [x] cpp file which contains the logging
+- [x] Check `debug.hpp`
+- [x] .cpp file which contains the logging
 - [x] fix the vee product; make the tests run in 2D and 3D
 - [x] integrate volume forms and scalar fields
-- [x] Enable the MinGW Printf implementation via: `#define __USE_MINGW_ANSI_STDIO 1`
+- [x] Enable the MinGW printf implementation via: `#define __USE_MINGW_ANSI_STDIO 1`
 - [x] std::exp and the like: single precision versions
-- [x] correct the computation in the nullspace test
+- [x] correct the computation in the null space test
 - [x] tests output into logs
    * [x] create a silent option for each run in the makefile
    * [x] ensure the tests only output into stdout
    * [x] adapt makefile to create a log
-- [x] Zum laufen bringen auf SCITAS
+- [x] Get it to run on SCITAS
    * [x] login SCITAS shell
-   * [x] git repo transferieren
-   * [x] job framework aufsetzen
+   * [x] transfer git repo 
+   * [x] Set up the job framework 
 
 ## Clean up unit tests
 
 - [x] Don't use MINRES whenever you can use another solver
 - [x] convergence tables can compute convergence rates
-- [x] Don't compute the norms of the solutions and the rhs unless necessary
+- [x] Don't compute the norms of the solutions and the RHS unless necessary
 - [x] Decide what the purpose each test, remove overhead, clarify output strings
    * [x] Sullivan2D
    * [x] Sullivan3D
    * [x] Whitney2D/3D
    * [x] what are poissontransformed old, old2, and the other one? Retire?
-   * [x] lshaped? -> these are maxwell systems. Annotate them. For example, the Lagrange test should reflect simple things and additional overhead
+   * [x] lshaped? -> these are Maxwell systems. Annotate them. For example, the Lagrange test should reflect simple things and additional overhead
 - [x] Clean up the test for the nullspace computation.
 - [x] FEM tests check assertions more thoroughly
 - [x] Mesh: improve consistency. Include orientation tests in usual tests to save compile time
@@ -96,7 +97,7 @@ None of the above can be done in a day, so it most likely requires regular grind
 - [x] Combinatorics: make tests independent of screen output
 - [x] Dense: test everything thoroughly, even up to smaller rounding errors
 - [x] Operators: make things independent of screen output
-- [x] mixedsolver should test each variant of Hodge-CRM
+- [x] `mixedsolver.cpp` should test each variant of Hodge-CRM
 - [x] Learn about the __SSE__ macro
 - [ ] Sparse: check that composition does not change the outcome
 - [ ] Solver: meaningful convergence tests?
@@ -110,8 +111,41 @@ None of the above can be done in a day, so it most likely requires regular grind
 - [ ] lshaped maxwell: correct the computation
 - [ ] Neumann estimate of eigenvalues 
 - [ ] Try out Neumann BC to mixed FEM for Poisson
+- [ ] Compilation error with: no exceptions, optimizations, OpenMP, sanitizers, tcmalloc, stripping, profiling, gold linker
+- [ ] `-Weffc++`: initializer lists and (const) iterators
+- [ ] GCC: `-ffold-simple-inlines -fimplicit-constexpr -fno-implement-inlines ? -fvisibility-inlines-hidden` ?
 
+## Reorder the compilation makefile
 
+Compare with the order of setting CXXFLAGS
+
+- Language options (std, ...)
+- OpenMP
+- Format of diagnostic settings 
+- Warning options 
+- Static analysis options 
+- Whether debugging information is added `-g`
+- Profiling instrumentation 
+- Code generation options (whether `-fpic -fno-plt`)
+- Optimization flags 
+- Macro definitions 
+- Linker flags 
+- Options if tcmalloc is used 
+- Whether to strip debug information: `-ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--strip-all`
+
+```makefile
+CXXFLAGS := 
+CXXFLAGS += ${CXXFLAGS_LANG}
+CXXFLAGS += ${CXXFLAGS_DIAGNOSISFORMAT}
+CXXFLAGS += ${CXXFLAGS_WARNINGS}
+CXXFLAGS += ${CXXFLAGS_STATICANALYSER}
+CXXFLAGS += ${CXXFLAGS_DEBUG}
+CXXFLAGS += $(CXXFLAGS_PROF)
+CXXFLAGS += $(CXXFLAGS_SANI)
+CXXFLAGS += ${CXXFLAGS_MALLOC}
+CXXFLAGS += ${CXXFLAGS_OPTIMIZE}
+CXXFLAGS += ${CXXFLAGS_CODEGEN}
+```
 
 
 
@@ -134,18 +168,18 @@ They are possible alternatives to Gauss-Seidel with Eisenstatt and graph colorin
       * Make every node a root node of itself 
       * For each level Loop 
         * For each cluster 
-          * Take the one with lowest-rank and extend patch to the ones with who have not been updated before 
+          * Take the one with lowest-rank and extend patch to the ones with who have not been updated before.
       * For each cluster 
         * compute the inverse of that cluster.
         
-- [ ] Overlapping blocks, then color the blocks, then Gauss-Seidel. Multiplicative Schwarz / Gauss-Seidel algorithms
-- [ ] Algebraic multigrid. Read the article on the topic
+- [ ] Overlapping blocks, then color the blocks, then Gauss-Seidel. Multiplicative Schwarz / Gauss-Seidel algorithms.
+- [ ] Algebraic multigrid. Read the article on the topic.
 
 ## (HIGH) FEM tests
 
-FEM tests that depend on convergence are not easy to measure but we can at least test for finiteness
+FEM tests that depend on convergence are not easy to measure, but we can at least test for finiteness
 Figure out a scalar product implementation that guarantees positive output.
-Reduce the rounding errors in the mass matrix even further
+Reduce the rounding errors in the mass matrix even further.
 
 ## (HIGH) Compare different Herzog-Soodhalter methods **READING**
 
@@ -153,7 +187,7 @@ Reduce the rounding errors in the mass matrix even further
 
 Specify which operation should be the most basic one and stick with that one.
 
-## (HIGH) Floating point exact comparisons ersetzen durch Funktion mit expliziter semantik
+## (HIGH) Floating point exact comparisons are replaced by functions with explicit semantics
 
 ## (HIGH) Floating-point comparisons
 
@@ -162,15 +196,15 @@ Understand the floating-point comparison functions and import them into this pro
 
 ## (HIGH) AFW-Basis of Sullivan forms **READING**
 
-- [ ] Write about those bases in your article and detail out their construction
-- [ ] Implement them
+- [ ] Write about those bases in your article and detail out their construction.
+- [ ] Implement them.
 - [ ] Compare the condition numbers of the bases.
 - [ ] Compare the sparsity on standard triangles: rectangular, regular, split-symmetry
 
 ## (HIGH) Try to canonicalize on the go
 
 The commutativity is not satisfied sufficiently.
-That seems to be due to the mass matrix, since canonicalization reduces that effect
+That seems to be due to the mass matrix, since canonicalization reduces that effect.
 Can we canonicalize everything already in the matrix assembly?
 
 ## (HIGH) FEM rewrite
@@ -192,12 +226,12 @@ Finally, rearrange and rename everything in the dense matrix module. One suggest
 Based on that:
 
 - core matrix class: functions where the ratio computation/output size is small
-- manipulations:     transpose, deleting rows and columns, tensor product
+- manipulations: transpose, deleting rows and columns, tensor product
 - simple solvers
 - factorizations
 - operations: det, cofactor, subdet, inv
 
-Clean up the Dense Matrix component's unit tests
+Clean up the Dense Matrix component's unit tests.
 
 
 ## (HIGH) Warm restarts for system solvers
@@ -208,9 +242,16 @@ However, the outer iteration is insufficiently understood. At this point, we can
 
 Q: what happens if warm restarts are disabled in the inner iteration?
 
+
 ## (HIGH) Augmented integration
 
-Use augmented integration for checking errors and the rhs 
+Use augmented integration for checking errors and the RHS.
+
+
+## (HIGH) Multiplication operator
+
+The sparse matrix classes use the & operator for deep multiplication and do not define the * operator,
+which is reserved for shallow operations. Re-assess that convention, possibly change it. 
 
 
 
@@ -233,12 +274,6 @@ Use augmented integration for checking errors and the rhs
 
 # MEDIUM: DO-ABLE YET LOWER IMPORTANCE
 
-## (MEDIUM) Renaming
-
-- [x] better convention for names in files.hpp: snake_case
-- [x] summation: clean up the code
-- [x] simplify sorthack and retire sorthack test 
-
 ## (DONE/MEDIUM) Solver output
 
 Within solvers without explicit output enum, distinguish the following cases of the print modulo:
@@ -248,7 +283,7 @@ Within solvers without explicit output enum, distinguish the following cases of 
 - *-1* print only start and exit 
 - *else* absolute silence
 
-Any automatic value should be 1/20th of the max iteration count
+Any automatic value should be 1/20th of the max iteration count.
 
 ## (DONE/MEDIUM) Standard max iteration count 
 
@@ -298,21 +333,19 @@ tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
       Idee: Zur Not kann man einen Solver dann einer Klasse verpacken mittels einer Template-Konstruktion?
       Argumente sind:
 
-        * Matrix, initial guess, rhs
+        * Matrix, initial guess, RHS
         * residual
         * max steps, desired precision
         * print modus
         * Preconditioner?
 
-## (MEDIUM) mergeelementsinsortedlist should be moved into legacy
-
-## (MEDIUM) test getdimensionclone/loaddimension for the Coordinates class
+## (MEDIUM) test `getdimensionclone`/`loaddimension` for the Coordinates class
 
 Generally, we would like to control the output format by some parameter given to each print function.
-We can assume that the parameters belong to some enum class defined within a class declaration and are specifcally tailored to each class.
+We can assume that the parameters belong to some enum class defined within a class declaration and are specifically tailored to each class.
 They are a purely optional argument for the print method and may be skipped at convenience.
 
-## (MEDIUM) Graph coloring and Gauss-Seidel iteration 
+## (MEDIUM) Graph coloring and Gauss-Seidel iteration **READING**
 
 - [ ] Algebraic multigrid
 
@@ -336,25 +369,26 @@ They are a purely optional argument for the print method and may be skipped at c
 
 
 
-## (THEORY) Double check Herzog-Soodhalter implementation in systemsparsesolver
+## (THEORY) Double check Herzog-Soodhalter implementation in `systemsparsesolver.cpp` **READING**
 
-## (THEORY) Simplify the solver component, CRM in particular
+## (THEORY) Simplify the solver component, CRM in particular **READING**
 
 The project is suffering from too much complexity in the solver component and their unit tests.
-There are different variants of the CRM with experimental observation but theoretical understanding about speed/robustness.
+There are different variants of the CRM with experimental observation, but theoretical understanding about speed/robustness.
 Rather, there should be a template for several variants of the CRM, so that different variations can be studied systematically.
 A prerequisite for that endeavor are working notes on the CGM and CRM, even with preconditioners. 
 There are different variants for the numerator and denominator of alpha and beta: the latter even has a possible two-term recursion.
 
-## (THEORY) Fix Whatever solvers or fix Wikipedia
+## (THEORY) Fix Whatever solvers or fix Wikipedia **READING**
 
 - [x] Herzog-Soodhalter funktioniert nun, auch die sparse variant.
-- [ ] Identify the source for MINRES solver; the other ones are known
-- [x] Fix the whatever solver or retire it
-- [ ] verstehe die stopping criteria for iterative solvers etwas besser
-- [ ] was ist die richtige variante von CG? (E-Mail Meurant?)
-- [ ] Chebyshev iteration: Der Solver scheint zu funktionieren. Als naechstes den mittleren Versuch erasen, dann den externen archivieren. Verstehe den Chebyshev solver von theoretischer Seite und auch die verschiedenen Arten ihn aufzuschreiben
-- [ ] Erstelle eine 08/15 FD matrix (square, laplace, Dirichlet/periodisch). Solve that SPD matrix using all available solvers
+- [ ] Identify the source for MINRES solver; the other ones are known.
+- [x] Fix the whatever solver or retire it.
+- [ ] Verstehe die stopping criteria for iterative solvers etwas besser.
+- [ ] Was ist die richtige variante von CG? (E-Mail Meurant?)
+- [ ] Chebyshev iteration: Der Solver scheint zu funktionieren. Als naechstes den mittleren Versuch erasen, dann den externen archivieren. 
+      Verstehe den Chebyshev solver von theoretischer Seite und auch die verschiedenen Arten ihn aufzuschreiben.
+- [ ] Erstelle eine 08/15 FD matrix (square, laplace, Dirichlet/periodisch). Solve that SPD matrix using all available solvers.
 
 
 
@@ -379,8 +413,8 @@ Is it possible to overload these and contain the infrastructure within those par
 ## (LOW) SPARSE
 
 - [ ] SparseMatrix, CSR-Matrix. Statistics substructure that provides the min-average-max number of off-diagonal elements.
-- [ ] check symmetry, measure deviation from symmetry. Assume sort+compress has been applied.
-- [ ] Die Sortierung und Kompression der SparseMatrix braucht nicht soviel Zeit. Lasse den Output weg
+- [ ] Check symmetry, measure deviation from symmetry. Assume sort+compress has been applied.
+- [ ] Sorting and compressing the sparse matrices does not take that much time. No output annotations needed.
 - [ ] Unit tests to check for sparse matrix sorting and compression. Test those sparse matrix routines with random input.
 
 ## (LOW) Interesting meshes
@@ -395,16 +429,15 @@ Try to find other triangulations too and integrate them as examples.
 ## (LOW) Operators as non-member functions?
 
 Check the classes for member operator functions.
-Except for some particular special cases,
-= () [] ->
-we can and should turn them into non-member operators.
+Except for some particular special cases: `= () [] ->`
+We can and should turn them into non-member operators.
 
 ## (LOW) Elaborate Logging class
 
 Even though advanced logging control would be desirable,
 for the time being it is sufficient if the logging capabilities are merely present.
 
-- First layer: semantic wrappers for the cpp streams
+- First layer: semantic wrappers for the C++ streams
 - Second layer: advanced logging classes for the alias streams
 - Third layer: primitive MACROS that wrap
 
@@ -414,7 +447,7 @@ Setting this up will require some careful thinking and refactoring of the entire
 A reasonable approach would be a replacement of cout and cerr throughout the entire code
 by new derivations of the stream class which facilitate more behavior.
 
-In a first step, this is just two streams with the some functionality as cout and cerr.
+In a first step, this is just two streams with the same functionality as cout and cerr.
 
 In a second step, more functionality may be added.
 
@@ -423,14 +456,14 @@ different log streams, their usage looks like
 
 `LOG << "here is a message";`
 
-alternatively, I would like to skip the shift operator alltogether
+alternatively, I would like to skip the shift operator all together
 and perhaps replace by a macro to read
 
 `LOG "Here is a message";`
 
-The nice thing is that the log messages get accummulated in the data structure
+The nice thing is that the log messages get accumulated in the data structure
 and only on destruction of the temporary object the message gets actually written
-in the actual logging object. Thus one can impose various prefixes and postfixes.
+in the actual logging object. Thus, one can impose various prefixes and postfixes.
 
 Encapsulate cout, cerr, and clog within wrapper objects
 that delegate the input to those streams.
@@ -499,7 +532,7 @@ New iterative methods should only be added if the preconditioned variant is adde
 
 ## (LOW) Global Index Type
 
-Replace any occurance of 'int' by a user-defined type 'Index'.
+Replace any occurrence of 'int' by a user-defined type 'Index'.
 That type should be large enough and compatible with the STL standard library.
 Possible definition: `typedef std::size_t Index;`
 
@@ -578,7 +611,7 @@ std::size_t ADMISSIBLE_SIZE_CAST( T t )
 
 # INACTIVE UNTIL FURTHER NOTICE
 
-## (INACTIVE): parallelize matrix transposition
+## (INACTIVE) Parallelize matrix transposition
 
 ## (INACTIVE) Some snippet from linear algebra
 
@@ -656,9 +689,9 @@ if( data_vertex_firstparent_triangle[ t_v2 ] == t_old ) {
 }
 ```
 
-## (INACTIVE) openMP parallelization of Float Vector class
+## (INACTIVE) OpenMP parallelization of Float Vector class
 
-Many of the methods in the float vector class are openMP parallelizable.
+Many of the methods in the float vector class are OpenMP parallelizable.
 
 - Constructors
 - zero, scale
@@ -672,22 +705,7 @@ Many of the methods in the float vector class are openMP parallelizable.
 Write it up in a manner that is close to the STL vector class.
 Notably, you cannot inherit from STL classes:
 <https://stackoverflow.com/questions/2034916/is-it-okay-to-inherit-implementation-from-stl-containers-rather-than-delegate>
-Using raw pointers seems faster than using the STL for the FloatVector
-
-## (INACTIVE) Implement vector slices
-
-A vector slice refers to a part of a vector. The slice knows the original vector and some data determine how to access the original members.
-
-Best approach would be to introduce an abstract class for vectors that captures the interface. 
-Then fork off the original class of vectors and the new slice implementation.
-
-## (INACTIVE) Implement lambda-based vectors
-
-The get/set methods can then be given in terms of lambdas that produce the required terms/references on the spot. 
-This gives the most general functionality.
-
-Note that read-only vectors can be implemented by having the set operation cause an error.
-Alternatively, you can introduce a base class 'readable vector' and then derive your general purpose vector from there.
+Using raw pointers seems faster than using the STL for the `FloatVector` class
 
 ## (INACTIVE) Inverse operators via templates
 
@@ -703,6 +721,30 @@ Implement LU decomposition with different pivoting strategies: row, column, or f
 
 Can these errors be reduced? Probably not, it's a standard procedure.
 
+## (INACTIVE) Signal handlers 
+
+SIGINT handler: in case of abnormal abort, emit the name of test/program.
+
+## (INACTIVE) Smart Pointers
+
+Consider adopting smart pointers for the allocation of sparse matrices because you rarely want to deep-copy these matrices.
+That being said, doing so would introduce a notable difference to dense matrices, for which that would be too much overhead.
+
+## (DONT) Implement vector slices
+
+A vector slice refers to a part of a vector. The slice knows the original vector and some data determine how to access the original members.
+
+Best approach would be to introduce an abstract class for vectors that captures the interface. 
+Then fork off the original class of vectors and the new slice implementation.
+
+## (DONT) Implement lambda-based vectors
+
+The get/set methods can then be given in terms of lambdas that produce the required terms/references on the spot. 
+This gives the most general functionality.
+
+Note that read-only vectors can be implemented by having the set operation cause an error.
+Alternatively, you can introduce a base class 'readable vector' and then derive your general purpose vector from there.
+
 ## (INACTIVE) Augmented integration in all numerical tests
 
 Once the numerical tests have been cleaned up, the right-hand side should always be computed with (optional) augmented integration.
@@ -710,18 +752,9 @@ There should be a parameter 'r_plus' to control the added interpolation quality 
 Notably, if 'r_plus == 0', then there should be a fallback that avoid repeated computation of the mass matrix.
 Similarly, the errors should be computed with augmented integration.
 
-## (INACTIVE) Unreal engine 
+## (INACTIVE) Unreal Engine 
 
-Revisit the Unreal engine for ideas 
-
-## (INACTIVE) Signal handlers 
-
-SIGINT handler einbauen: im falle eines abbruchs geben den namen des tests aus
-
-## (INACTIVE) Smart Pointers
-
-Consider adopting smart pointers for the allocation of sparse matrices because you rarely want to deep copy these matrices.
-That being said, doing so would introduce a notable difference to dense matrices, for which that would be too much overhead.
+Revisit the Unreal Engine for ideas.
 
 
 
@@ -782,11 +815,11 @@ Write a script that checks whether these practices are upheld.
 How to show the first 2 lines of all hpp files:
 for datei in ./*/*.hpp; do head -n 2 $datei; done
 
-## (INFRASTRUCTURE) Question: what are best practices to keep the unit tests up to date with the code?
+## (INFRASTRUCTURE) Question: what are best practices keeping the unit tests up to date with the code?
 
 - The unit test file structure should mirror the source code structure. 
 - For each component, the tests should focus on the public interface. 
-- Keep the tests independent from the code base. 
+- Keep the tests independent of the code base. 
 - Test-driven development: write the test first and then see to implement the source. 
 - Code Coverage tools measure what parts of the code are executed during the tests. 
   *Tools include* gcov+lcov, Bullseye Coverage, Codecov, Clang
@@ -809,7 +842,7 @@ These projects can be used as example for this:
 - LifeV
 - vtk
 
-A uniform licence structure should be agreed upon before mass reproducing the tests.
+A uniform license structure should be agreed upon before mass reproducing the tests.
 That being said, you can also include the license information at later stages of the project
 through the use of some simple text manipulation programs.
 
@@ -893,7 +926,7 @@ What static analyzers are available by the different compilers?
 -Wanalyzer-use-of-pointer-in-stale-stack-frame 
 ```
 
-? -fanalyzer-transitivity -fanalyzer-verbosity=level # default
+? `-fanalyzer-transitivity -fanalyzer-verbosity=level # default`
 
 TODO: write an email to the mailing list about the static analyzer.
 
@@ -902,14 +935,14 @@ TODO: write an email to the mailing list about the static analyzer.
 
 ## (INFRASTRUCTURE) Makefile improvements 
 
-- [ ] lint and polish the makefiles 
-- [ ] include links to the manual in the makefiles for quicker reference
+- [ ] Lint and polish the makefiles. 
+- [ ] Include links to the manual in the makefiles for quicker reference.
 - [ ] Die automatische dependency generation funktioniert noch nicht. Werden alte dependency angaben erased?
-- [ ] Question: best practices in managing makefiles? what dependencies to make explicit?
+- [ ] Question: best practices in managing makefiles? What dependencies to make explicit?
 
 ## (INFRASTRUCTURE) Makefile with implicit rules
 
-The makefile has implicit rules for cpp files which can greatly simplify the entire make process.
+The makefile has implicit rules for.cpp files which can greatly simplify the entire make process.
 So we may replace the handwritten rules by the implicitly defined rules in many cases.
 We merely need to specify the compiler flags.
 
@@ -928,7 +961,7 @@ Generally speaking, they should be reduced to tests only: benchmarks should be p
 examples should be a folder of their own as well. Do not shy away from bringing a few tests out of retirement.
 Each test should be included in a wrapper function, the main function provided via inclusion from a unified template.
 The header file should forward declare the test function and the strings and pass the command line arguments.
-The individual tests should only contain a bool valued function that takes command line arguments, and a few strings that explain the function.
+The individual tests should only contain a bool-valued function that takes command line arguments, and a few strings that explain the function.
 
 The point is that you should be able to easily change the Unit test header file for all available tests at once, or maybe integrate it with a unit test framework. Finally, the project should transition to catch2 at some point.
 
@@ -946,8 +979,8 @@ Also have a look at the following unit test frameworks:
 The handling of command line options should be localized. This requires the common format for the unit tests. Preferably written, in the C-conforming subset of C++.
 Some ideas for command line options:
 
-- [ ] Printing help: --help
-- [ ] Controlling output verbosity: --quiet, --verbosity
+- [ ] Print help: --help
+- [ ] Control output verbosity: --quiet, --verbosity
 - [ ] Output, log and error output locations
 - [ ] Parameters such as polynomial degree, depending on the program 
 
@@ -963,16 +996,16 @@ This software could be used for personal websites.
 
 **Custom string and output library** as a thin wrapper around the C functionality. 
 
-**Custom printf implementation** that handles long doubles
+**Custom printf implementation** that handles long doubles.
 
 **Fixed-size vector** template whose size cannot be changed after allocation. 
 Copy the std::vector interface but do not provide resizing and capacity information.
 
 ## (INFRASTRUCTURE) What are common formats for meshes in FEM software
 
+- Gmsh: <http://gmsh.info/doc/texinfo/gmsh.html>
+- Gambit: <http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf>
 - <https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem>
-- Gmsh file format: <http://gmsh.info/doc/texinfo/gmsh.html>
-- Gambit:           <http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf>
 
 Learn more about Gmsh and how to utilize it for this project.
 
@@ -997,16 +1030,16 @@ Learn more about Gmsh and how to utilize it for this project.
 ## (DONE) Faster assembly of matrices
 
 For higher-dimensional problems, the matrix assembly is speed up by converting all partial matrices to CSR first, and the combining the CSR matrices.
-Furthermore, matrix conjugation seems to speed up the assembly, as was shown by mea surements. 
+Furthermore, matrix conjugation seems to speed up the assembly, as was shown by measurements. 
 
-## (DONE) clean up DenseMatrix subsystem
+## (DONE) clean up dense matrix subsystem
 
 The following modules look reasonable:
 
 - [x] simple scalar functions into the class
-- [x] readwrite is never used: retire
+- [x] read and write are never used: retire
 - [x] factorizations (Gauss-Jordan, QR, Cholesky -> inverse )
-- [x] complicated operations (transpose,determinant,tensorproduct)
+- [x] complicated operations (transpose, determinant, tensorproduct)
 - [x] simple solvers
 
 ## (DONE) Remove dead code
@@ -1020,7 +1053,7 @@ grep 'if( false' ./*/*pp
 
 ## (DONE) 'threshold' should be renamed 'tolerance'
 
-## (DONE) Github badge C++ >= 17
+## (DONE) GitHub badge C++ >= 17
 
 - <https://img.shields.io/badge/C++-00599C.svg?style=for-the-badge&logo=C++&logoColor=white>
 - <https://img.shields.io/badge/-c++-black?logo=c%2B%2B&style=social>
@@ -1035,7 +1068,7 @@ grep 'if( false' ./*/*pp
 For testing purposes. Given a broken differential form
 
 - (a) put it into canonical form again.
-- (b) Alternative, bring it into an equivalent form randomly
+- (b) Alternative, bring it into an equivalent form randomly.
 
 ## (DONE) Basic:
 
@@ -1062,8 +1095,8 @@ Apply the rule of six and declare all constructors explicitly even if merely set
 Implement solution algorithms for special matrix types:
 
 - diagonal solve
-- left/right triagonal solve
-- unit left/right/ triagonal solve
+- left/right triangular solve
+- unit left/right/ triangular solve
 - averages between left and right solves
 
 ## (DONE) Precisions for solvers and magic numbers
@@ -1088,9 +1121,9 @@ Termination is done either via `abort()` or via `throw(0)`, depending on whether
 
 ## (DONE) Separate build and tests targets
 
-Introduce two different targets, one for building the object files and libraries, and the other for building the test files
+Introduce two different targets, one for building the object files and libraries, and the other for building the test files.
 
-all: build tests
+`all: build tests`
 
 ## (DONE) VTK OUTPUT
 
@@ -1103,31 +1136,29 @@ Reading only ASCII
 
 ## (DONE) Rewrite composed operators
 
-Reduce the code complexity of the composed operators using pointers, flags,
-and templated constructors. This reduces code complexity.
-Then basically retire the the clone and heir methods.
+Reduce the code complexity of the composed operators using pointers, flags, and templated constructors. 
+This reduces code complexity. Then basically retire the clone and heir methods.
 
 ## (DONE) enable complex coefficients
 
-Enable complex coefficients in a minimalist fashion:
-compose complex operators from known (real) operators as composed operator
+Enable complex coefficients in a minimalist fashion: compose complex operators from known (real) operators as composed operator.
 This should be implemented as a composed operator.
 
-## (DONE) Retire the communtativity tests
+## (DONE) Retire the commutativity tests
 
 The old test files contain commutativity tests. Those should be retired.
 
 ## (DONE) Retire unnecessary Whitney tests
 
 Poisson solvers do not need to be tested for Whitney forms.
-It suffices to keep a complicated example with miex boundary conditions.
+It suffices to keep a complicated example with mixed boundary conditions.
 
 ## (DONE) Clean out legacy alternative tests in the FEM solver files
 
 Introduce a unit test in solverfem for the Darcy-system; the Maxwell is already there.
 First, clean out the non-block systems, then the block systems.
-ensure that everything that is deleted has an analogue in the list of solvers.
-The following is recommend:
+Ensure that everything that is deleted has an analogue in the list of solvers.
+The following is recommended:
 
 - cpp Mass: CGM
 - csr mass: CGM SSOR
@@ -1137,7 +1168,7 @@ The following is recommend:
 
 ## (DONE) Introduce a custom check script
 
-Introduce a check script which reports common 'errors' in your cpp file,
+Introduce a check script which reports common 'errors' in your .cpp file,
 that is, stuff you consider important for the design of your code.
 For example,
 
@@ -1153,9 +1184,9 @@ grep --line-number --recursively --color '[0-9]e' ./*pp
 
 ## (DONE) OpenMP pragmas conditional compilation
 
-Every occurence of 'pragma omp' should be included with a conditional compilation.
+Every occurrence of 'pragma omp' should be included with a conditional compilation.
 This ensures that no compiler warnings about 'unknown pragmas' are issued when you
-compile the code with openMP disabled.
+compile the code with OpenMP disabled.
 
 ## (DONE) Copy assignment operator for mesh classes
 
@@ -1174,21 +1205,19 @@ and otherwise only stuff in test files.
 Moreover, consider replacing all the other stuff
 by references to clog instead of cout.
 
-## (DONE) Abgleichen der Gitterweiten bei solverfem
-
 ## (DONE) Unit test for condition numbers of single element matrices
 
-For dimensions 1, 2, and 3
-All form degrees and polynomial degrees up to 6
-Construct the single element meshes, build mass and stiffness matrices
-compute their inverses (and check their products)
-perform QR algorithm to find the eigenvalues
+- For dimensions 1, 2, and 3
+- All form degrees and polynomial degrees up to 6
+- Construct the single element meshes, build mass and stiffness matrices
+- Compute their inverses (and check their products)
+- Perform QR algorithm to find the eigenvalues
 
 Requires: regular triangle and tetrahedra
 
-## (DONE) Conditional compilation when openMP
+## (DONE) Conditional compilation when OpenMP
 
-Furthermore, if openMP is enabled, then you should compile with an inclusion of thread-safe random number generation.
+Furthermore, if OpenMP is enabled, then you should compile with an inclusion of thread-safe random number generation.
 
 Generally speaking, you should replace explicit instances of 'rand' and 'srand'
 by wrapper functions. This makes it easier to switch to different implementations
@@ -1200,7 +1229,7 @@ throughout whenever that becomes necessary. For example:
 ## (DONE) Output of solver component
 
 The solver component prints should all contain the iteration number if possible.
-Each print should start with the iterartion number, followed by the message class, and then all other info
+Each print should start with the iteration number, followed by the message class, and then all other info.
 
 - RESTARTED
 - BREAKDOWN
@@ -1211,11 +1240,11 @@ Each print should start with the iterartion number, followed by the message clas
 ## (DONE) Argument names in all header files
 
 The function/method declarations in the header files should provide argument names.
-The names should coincide with the ones in the code but that's not necessary.
+The names should coincide with the ones in the code, but that's not necessary.
 
 Rationale: this improves readability.
 
-## (DONE) Change the include orders
+## (DONE) Change include orders
 
 Go from the most general down to the most specific.
 This ensures any overwriting of macros stays local.
@@ -1223,14 +1252,12 @@ Within each grouping, sort alphabetically.
 
 ## (DONE) Define and adopt a custom assert macro
 
-There is a function that performs the assert,
-and a macro that delivers the line number and file name
-to a function invocation. No further frills.
-Use the custom assert macro throughout the project.
+There is a function that performs the assertion, and a macro that delivers the line number and file name
+to a function invocation. No further frills. Use the custom assert macro throughout the project.
 
 ## (DONE) Phantom coordinate in 2D mesh output
 
-Add a phantom coordinate coordinate to the output of 2D meshes to plot functions
+Add a phantom coordinate to the output of 2D meshes to plot functions.
 
 ## (DONE) Unit test descriptions
 
@@ -1240,9 +1267,8 @@ Update the unit test **descriptions** in every module. They seem to be off in ma
 
 The logging procedure needs to be reworked.
 
-In particular, switch to an encapsulated approach: all classes should have the ability
-to produce logs of themselves. That way, you can isolate the problem
-in just a few methods throughout the code.
+In particular, switch to an encapsulated approach: all classes should have the ability to produce logs of themselves.
+That way, you can isolate the problem in just a few methods throughout the code.
 
 Basically, implement the following methods:
 
@@ -1252,50 +1278,39 @@ Basically, implement the following methods:
 - lg:          outputs the text into the log (with nl).
                This function may take a preamble argument
 
-Revert the current design of logging output: there shouldn't be
-any automatic newlines. Instead, re-introduce the newlines in the tests
-and deactive the automatic newline in the logging object.
+Revert the current design of logging output: there shouldn't be any automatic newlines. 
+Instead, re-introduce the newlines in the tests and deactivate the automatic newline in the logging object.
 
 ## (DONE) Introduce a LOG switch
 
-Make the logging framework optional by introducing a macro switch
-that enables/disables the logging framework
+Make the logging framework optional by introducing a macro switch that enables/disables the logging framework.
 
 Then introduce the logging framework throughout the entire code uniformly.
 
-This requires that the logging interface should be used in the same way
-as the entire script for the logging stuff.
+This requires that the logging interface should be used in the same way as the entire script for the logging stuff.
 
 ## (DONE) guarded element access
 
-All objects that feature element access via brackets,
-either blocky brackets or round brackets,
-also feature an additional at-method with the same effective behavior.
-The difference is that the at-methods
-always perform bound checks,
-which may not the case for the bracket access methods.
+All objects that feature element access via brackets, either blocky brackets or round brackets,
+also feature an additional at-method with the same effective behavior. The difference is that the at-methods
+always perform bound checks, which may not the case for the bracket access methods.
 
 - Enforce the effective behavior
 - Enforce the bound check policy.
 
-## (DONE) Improve the iterator interface of IndexRange to allow the full scope
+## (DONE) Improve the iterator interface of `IndexRange` to allow the full scope
 
 ## (DONE) Git ID extraction as macro
 
 ## (DONE) Improve the file names used for output
 
-While using the program name for the file output is nice, it is better if you can also add an additional prefix.
+While using the program name for the file output is nice, it is better if you can also add a prefix.
 That way you can separate the output of different subtasks more easily.
 
 ## (DONE) Dynamic library dependencies
 
 The test programs depend on the object files only if static linking is enabled.
 Otherwise, they don't.
-
-## (DONE) Output program info
-
-While using the program name for the file output is nice, it is better if you can also add an additional prefix.
-That way you can separate the output of different subtasks more easily.
 
 ## (DONE) Combinatorics generate multiindices tests must actually test something
 
@@ -1307,10 +1322,6 @@ That way you can separate the output of different subtasks more easily.
 - [x] Cholesky, QR, and Gauss-Jordan should be one file
 
 
-## (DONE) Reorganize the legacy directory with subdirectories
-
-There already are a few subdirectories. Extend that a little bit.
-
 ## (DONE) ND meshes
 
 Move this into playgrounds together with the unit tests.
@@ -1320,10 +1331,9 @@ Move this into playgrounds together with the unit tests.
 ## (DONE) Compilation mode with object files
 
 Ensure that you can compile everything if the executables only take the object file themselves.
-This is a third compilation mode in addition to static and dynamic libraries.
-ensure it all compiles.
+This is a third compilation mode in addition to static and dynamic libraries. Ensure it all compiles.
 
-## (DONE) Prevent warnings from the external stb libraries
+## (DONE) Prevent warnings from the external libraries
 
 ## (DONE) Go over the manuals of GCC and Clang, add more possible warnings
 
@@ -1364,10 +1374,10 @@ Check for notanumber and go over the different tests to ensure they test somethi
 
 ## (DONE) Robustness under shuffling combinatorial data
 
-The code assumes at several points that indexmaps and sigmas are ordered,
-at least when the indexmaps contains only one element. Conclusion:
+The code assumes at several points that IndexMaps and sigmas are ordered,
+at least when the IndexMaps contains only one element. Conclusion:
 
-- Shuffling the multindices is fine.
+- Shuffling the multiindices is fine.
 - Shuffling the sigmas is more difficult.
 
 ## (DONE) shake the coordinates in tests where there is no explicit functions living on them
@@ -1386,7 +1396,7 @@ Understand why a compiler might warn about weak vtables and how to avoid that is
 This concerns IndexMap and MultiIndex in particular. See also:
 <https://stackoverflow.com/questions/23746941/what-is-the-meaning-of-clangs-wweak-vtables>
 
-This is not particulary dangerous for this project.
+This is not particularly dangerous for this project.
 
 ## (DONE) Averaging for Sullivan and Whitney spaces
 
@@ -1398,7 +1408,7 @@ You can then average according to some scheme, such as:
 - [x] weight uniformly
 - [x] weight by volume
 
-Thus you can always average from the non-conforming into the conforming space.
+Thus, you can always average from the non-conforming into the conforming space.
 
 ## (DONE) dependencies for object file compilation
 
@@ -1437,19 +1447,19 @@ In file included from ./basic/.all.cpp:3:
 
 Ensure that all-one vectors are not used for constant functions. That only works if r=1. Name: constant_one
 
-## (DONE) Streamline float vector vs dense matrix: gemeinsame dinge zusammen testen
+## (DONE) Streamline float vector vs dense matrix
 
 Align different Frobenius norms of vectors and dense matrices.
-Align the entire DenseMatrix and FloatVector classes as much as only possible.
+Align the entire `DenseMatrix` and `FloatVector` classes as much as only possible.
 
 > ## (DONE) Nullspace filter
 > 
 > Streamline the matrix construction in the nullspace discussion:
-> Develop a general class of methods to filter out nullspaces, either with single matrices or Hodge systems.
+> Develop a general class of methods to filter out the nullspace, either with single matrices or Hodge systems.
 > The nullspace tests then merely use that component internally.
 > 
 > - [x] scalar examples: simplify the construction and unify 
-> - [x] hodge and mixed: simplify the construction and unify
+> - [x] Hodge and mixed: simplify the construction and unify
 > - [x] scalar case unified algorithm
 > 
 > The general method looks like this:
@@ -1464,7 +1474,7 @@ Align the entire DenseMatrix and FloatVector classes as much as only possible.
 
 ## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
 
-Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include 
+Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include:
 
 - base 
 - common 
@@ -1489,33 +1499,6 @@ That will give you a sense of what you should do.
 - concepts: ...
 - <https://en.wikipedia.org/wiki/List_of_finite_element_software_packages>
 
-## (DONE/INFRASTRUCTURE) Rename basic to 'base' or 'general' or 'common'
-< 
-< Basic has the wrong connotation, it makes more sense to call it 'base', 'common' or 'general'. Possible names include 
-< 
-< - base 
-< - common 
-< - commons
-< - core 
-< - general
-< - global
-< - shared
-< - std
-< 
-< Survey a few important projects to get a sense of what name you should use for this one.
-< That will give you a sense of what you should do.
-< 
-< - Examples: base, common, core, general, std
-< - MFEM:     general
-< - Feelpp:   core
-< - Lifev:    core
-< - ngsolve:  std
-< - Fenics:   common
-< - ??!!!!:   base 
-< - Hermes:   common
-< - concepts: ...
-< - <https://en.wikipedia.org/wiki/List_of_finite_element_software_packages>
-
 ## (DONE/INFRASTRUCTURE) remove code from parent directory
 
 rename base/include.hpp in the main folder, move to base subfolder, and have all exec.s include it
@@ -1527,7 +1510,13 @@ rename base/include.hpp in the main folder, move to base subfolder, and have all
 [x] Remove std::fstream when possible
 [x] Remove iomanip in each test module
 [x] In each module, reduce includes in header files, use forward declarations
-[x] Move STL references to where they are needed, away from header to the cpp file
+[x] Move STL references to where they are needed, away from header to the.cpp file
+
+## (DONE) Renaming
+
+- [x] better convention for names in files.hpp: snake_case
+- [x] summation: clean up the code
+- [x] simplify sorthack and retire sorthack test 
 
 
 
@@ -1547,9 +1536,9 @@ rename base/include.hpp in the main folder, move to base subfolder, and have all
 
 # (ARTICLES)
 
-- [ ] local functions in C++
+- [x] local functions in C++
 - [ ] marathon of sort algorithms: int <, int mod <, int hash <
-- [ ] Why does CLOG go into stderr?
+- [ ] Why does clog go into stderr?
 - [ ] How to enable DLLs? You can use a .def file...
 
 
@@ -1584,7 +1573,7 @@ mdl todo.md -r ~MD009,~MD012,~MD013,~MD026,~MD032,~MD034
 1. Some extensions to the solver component:
 
    * [ ] **high** sparse solvers: implement restart and print modulos, crm with only one abort criterion
-   * [ ] **medium** Rewrite the German wikipedia MINRES method in C-style code.
+   * [ ] **medium** Rewrite the German Wikipedia MINRES method in C-style code.
    * [ ] **medium** Find another pseudocode for the MINRES method.
 
 
@@ -1594,14 +1583,16 @@ mdl todo.md -r ~MD009,~MD012,~MD013,~MD026,~MD032,~MD034
    * [ ] ON ERROR ESTIMATION IN THE CONJUGATE GRADIENT METHOD AND WHY IT WORKS IN FINITE PRECISION COMPUTATIONS
    * [ ] Give another reading to 
          <https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf> 
-         Check whether you improve the CGM or CRM a little bit more (by using only one single loop)
+         Check whether you improve the CGM or CRM (by using only one single loop)
 
 
 The SSOR preconditioner gives a massive advantage for the CGM and stiffness matrix of the Poisson problem (magnitudes) with a simple choice of SSOR parameter equal 1. Does that carry over to the CRM?
 
 The diagonal preconditioner seems to work well for the CGM and the mass matrix.
 
-The diagonal entries of the Poisson stiffness matrix seem to converge to about 4 as the mesh is refined uniformly. This is compatible with our theoretical scaling estimates. In particular, the diagonal preconditioner is not going to have much of an affect here.
+The diagonal entries of the Poisson stiffness matrix seem to converge to about 4 as the mesh is refined uniformly. 
+This is compatible with our theoretical scaling estimates. 
+In particular, the diagonal preconditioner is not going to have much of an affect here.
 
 
 
@@ -1653,5 +1644,21 @@ k=3	max * mid * min | PF |  max * mid  = max * mid * min / min * mid  = max
 
 The macro is defined in MSVC. Should I use it in addition to the GCC/Clang macros in the debug component?
 
+
+
+```
+GCC
+    real    2m12.580s
+    user    1m57.733s
+    sys     0m14.574s
+Clang 
+    real    2m4.502s
+    user    1m52.565s
+    sys     0m11.626s
+Clang w/o transitive includes
+    real    2m4.510s
+    user    1m52.688s
+    sys     0m11.574s
+```
 
 

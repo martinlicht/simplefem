@@ -258,13 +258,19 @@ More prefixes: prefixes:
 NOTES Scott Meyers book
 ==================================================
 
-- 7: declare destructors virtual in polymorphic base classes OK
-- 9: never call virtual functions during construction or destruction OK
+-  7: declare destructors virtual in polymorphic base classes OK
+-  9: never call virtual functions during construction or destruction OK
 - 10: have assignments return reference to *this OK
 - 11: handle self-assignment in operator=	 OK
 
+- The prefix and postfix forms of the increment/decrement operators have different semantics
+- No overloading of the operators &&, ||, or ,.
+- If a class dynamically allocates memory, then define a copy constructor and an assignment operator.
+- Use initialization before constructor body over within constructor body.
+- Assignment operators return reference to *this.
+- Do not return a reference when the return type is an object
 
-Better make operators non-member
+Better make operators non-member or hidden friends
 ==================================================
 
 - https://www.reddit.com/r/cpp_questions/comments/1cjgvfe/overloading_operators_from_outside_a_class_as/
