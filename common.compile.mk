@@ -29,8 +29,8 @@ endif
 
 
 # Uncomment your choice of compiler below
-# FLAG_CXX := CLANG
-FLAG_CXX := GCC
+FLAG_CXX := CLANG
+# FLAG_CXX := GCC
 # FLAG_CXX := ICC
 
 
@@ -86,7 +86,7 @@ FLAG_COLORED_OUTPUT=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
-FLAG_DO_USE_SANITIZER=yes
+# FLAG_DO_USE_SANITIZER=yes
 
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
@@ -115,7 +115,7 @@ FLAG_DO_USE_SANITIZER=yes
 # Choose the linker by uncommenting, or leave commented for default linker 
 # LDFLAGS += -fuse-ld=bfd
 # LDFLAGS += -fuse-ld=lld
-LDFLAGS += -fuse-ld=gold
+# LDFLAGS += -fuse-ld=gold
 # LDFLAGS += -fuse-ld=mold
 
 
@@ -390,6 +390,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wdangling-else 
 		CXXFLAGS_WARNINGS += -Wdangling-reference
 		CXXFLAGS_WARNINGS += -Wdate-time
+		# CXXFLAGS_WARNINGS += -Wdeprecated-variadic-comma-omission
 		CXXFLAGS_WARNINGS += -Wdisabled-optimization
 		CXXFLAGS_WARNINGS += -Wduplicated-branches 
 		CXXFLAGS_WARNINGS += -Wduplicated-cond
@@ -482,6 +483,10 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		# # TODO What is stack smashing???? HSA????
 		# # TODO Read the format warnings 
 
+		# CXXFLAGS_WARNINGS += -Wshadow			# we accept shadowed variables 
+		CXXFLAGS_WARNINGS += -Wshadow-local			# ... except local variables shadowing other locals 
+
+
 		CXXFLAGS_WARNINGS += 
 		
 	else ifeq ($(FLAG_CXX),CLANG)
@@ -546,7 +551,6 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wdelete-non-virtual-dtor
 		CXXFLAGS_WARNINGS += -Wdelimited-escape-sequence-extension
 		CXXFLAGS_WARNINGS += -Wdeprecated
-		CXXFLAGS_WARNINGS += -Wdeprecated-variadic-comma-omission
 		CXXFLAGS_WARNINGS += -Wdirect-ivar-access
 		CXXFLAGS_WARNINGS += -Wdisabled-macro-expansion
 		CXXFLAGS_WARNINGS += -Wdollar-in-identifier-extension
@@ -842,7 +846,6 @@ CXXFLAGS_WARNINGS += -Wno-old-style-cast
 
 CXXFLAGS_WARNINGS += -Wno-double-promotion	# it is okay to implicitly promote float to double
 CXXFLAGS_WARNINGS += -Wno-old-style-cast	# we accept old C-style casts 
-CXXFLAGS_WARNINGS += -Wno-shadow			# we accept shadowed variables 
 CXXFLAGS_WARNINGS += -Wunused-variable   # we accept unused variables 
 CXXFLAGS_WARNINGS += -Wunused-parameter  # we accept unused parameters 
 CXXFLAGS_WARNINGS += -Wno-unknown-pragmas	# we accept unknown pragmas
