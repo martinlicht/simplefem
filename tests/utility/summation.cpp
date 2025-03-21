@@ -76,53 +76,44 @@ int main( int argc, char *argv[] )
     std::cout.precision(30);
     std::cout << std::scientific;
     
-    // Values to test the summation algorithms
-    std::vector<double> values = {1.0, 1e-16, -1.0, 1e-16};
+    { 
+        std::vector<double> values = { 1.0, 1e-16, -1.0, 1e-16 };
 
-    // Naive summation
-    NaiveSum<double> naiveSum;
-    for( double val : values) {
-        naiveSum.add(val);
+        NaiveSum<double> naiveSum;
+        KahanSum<double> kahanSum;
+        NeumaierSum<double> neumaierSum;
+        
+        for( double val : values) naiveSum.add(val);
+        for( double val : values) kahanSum.add(val);
+        for( double val : values) neumaierSum.add(val);
+        
+        std::cout << "Naive Sum:\t" << naiveSum.getSum() << '\n';
+        std::cout << "Kahan Sum:\t" << kahanSum.getSum() << '\n';
+        std::cout << "Neumaier Sum:\t" << neumaierSum.getSum() << '\n';
+
+        std::cout << '\n';
     }
-    std::cout << "Naive Sum:\t" << naiveSum.getSum() << '\n';
-
-    // Kahan summation
-    KahanSum<double> kahanSum;
-    for( double val : values) {
-        kahanSum.add(val);
-    }
-    std::cout << "Kahan Sum:\t" << kahanSum.getSum() << '\n';
-
-    // Neumaier summation
-    NeumaierSum<double> neumaierSum;
-    for( double val : values) {
-        neumaierSum.add(val);
-    }
-    std::cout << "Neumaier Sum:\t" << neumaierSum.getSum() << '\n';
-
-    std::cout << '\n';
 
     { 
         // Example 0: Something simple
-        std::vector<double> dataset0 = {1.0, 1e-16, -1.0, 1e-16};
+        std::vector<double> dataset0 = { 1.0, 1e-16, -1.0, 1e-16 };
 
-        // Example 1: Alternating small and large values // should be 0.
+        // Example 1: Alternating small and large values, should be 0.
         std::vector<double> dataset1(1000);
         for( size_t i = 0; i < dataset1.size(); i++ ) {
-            dataset1[i] = (i % 2 == 0) ? 1e10 : -1e10; // Alternating large positive and negative values
+            dataset1[i] = (i % 2 == 0) ? 1e10 : -1e10;
         }
 
-        // Example 2: Very small incremental values // should be 1e-7
+        // Example 2: Very small incremental values, should be 1e-7
         std::vector<double> dataset2(1000);
         for( size_t i = 0; i < dataset2.size(); i++ ) {
-            dataset2[i] = 1e-10; // All values are very small
-
+            dataset2[i] = 1e-10; 
         }
 
-        // Example 3: Combination of large and small values // should be 1e13/2 + 1e-7/2 = 5e12 + 5e-8
+        // Example 3: Combination of large and small values, should be 1e13/2 + 1e-7/2 = 5e12 + 5e-8
         std::vector<double> dataset3(1000);
         for( size_t i = 0; i < dataset3.size(); i++ ) {
-            dataset3[i] = (i % 2 == 0) ? 1e10 : 1e-10; // Alternating between very large and very small values
+            dataset3[i] = (i % 2 == 0) ? 1e10 : 1e-10;
         }
 
         // Example 4: Summing up 0.1 with 10,000,000 ...
@@ -131,10 +122,9 @@ int main( int argc, char *argv[] )
             dataset4[i] = 0.1;
         }
 
-        // Example 5 
-        
+        // Example 5: computing the determinant of a 6x6 Hilbert matrix via Laplace expansion
         std::vector<double> dataset5; dataset5.reserve( 6 * 5 * 4 * 3 * 2 * 1 );
-        long double reference_value5 = std::numeric_limits<double>::quiet_NaN();
+        long double reference_value5 = hilbert_determinant(6);
 
         {
             double matrix[6][6];
@@ -195,19 +185,20 @@ int main( int argc, char *argv[] )
                     }
                 }
             }
-            reference_value5 = 1.;
-            // for( int r = 0; r < 6; r++ ) {
-            //     for( int c = 0; c < 6; c++ )
-            //         std::cout << matrix[r][c] << ' ';
-            //     std::cout << '\n';
-            // }
-            // std::cout << '\n';
-            for( int r = 0; r < 6; r++ ) reference_value5 *= matrix[r][r];
-            reference_value5 = hilbert_determinant(6);
+            // reference_value5 = 1.;
+            // // for( int r = 0; r < 6; r++ ) {
+            // //     for( int c = 0; c < 6; c++ )
+            // //         std::cout << matrix[r][c] << ' ';
+            // //     std::cout << '\n';
+            // // }
+            // // std::cout << '\n';
+            // for( int r = 0; r < 6; r++ ) reference_value5 *= matrix[r][r];
+            // reference_value5 = std::numeric_limits<double>::quiet_NaN();
         }
 
 
         // Helper function to test all three summation algorithms
+
         auto testSummation = [](const std::vector<double>& dataset) {
             NaiveSum<double> naiveSum;
             KahanSum<double> kahanSum;

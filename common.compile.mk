@@ -65,7 +65,7 @@ FLAG_NO_EXCEPTIONS=yes
 
 # Do you want to compile with all optimization flags enabled?
 # Uncomment the following line to have this done so
-FLAG_DO_OPTIMIZE=yes
+# FLAG_DO_OPTIMIZE=yes
 
 # Do you want to ENABLE the use of openMP?
 # Uncomment the following line to enable compilation with openMP
@@ -355,7 +355,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
 		# This flag is buggy and should not be used 
 		# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85783
-		CXXFLAGS_WARNINGS += -Wno-alloc-size-larger-than
+		# CXXFLAGS_WARNINGS += -Wno-alloc-size-larger-than
 		
 		# # DISABLED: CXXFLAGS_WARNINGS += -Wabi
 		CXXFLAGS_WARNINGS += -Waggressive-loop-optimizations
@@ -808,25 +808,25 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 
 endif
 
-	# # DISABLED: CXXFLAGS_WARNINGS += -Weffc++
+# # DISABLED: CXXFLAGS_WARNINGS += -Weffc++
+
+# CXXFLAGS_WARNINGS += -Weffc++
+CXXFLAGS_WARNINGS += -Wctor-dtor-privacy
+CXXFLAGS_WARNINGS += -Wmisleading-indentation
+CXXFLAGS_WARNINGS += -Wmissing-declarations
+CXXFLAGS_WARNINGS += -Wmissing-field-initializers
+CXXFLAGS_WARNINGS += -Wnon-virtual-dtor
+CXXFLAGS_WARNINGS += -Woverloaded-virtual
+CXXFLAGS_WARNINGS += -Wodr  
+CXXFLAGS_WARNINGS += -Wredundant-decls
+CXXFLAGS_WARNINGS += -Wsign-promo
+CXXFLAGS_WARNINGS += -Wundef
+CXXFLAGS_WARNINGS += -Wunused 
+
+CXXFLAGS_WARNINGS += -Wno-old-style-cast
 	
-	# CXXFLAGS_WARNINGS += -Weffc++
-	CXXFLAGS_WARNINGS += -Wctor-dtor-privacy
-	CXXFLAGS_WARNINGS += -Wmisleading-indentation
-	CXXFLAGS_WARNINGS += -Wmissing-declarations
-	CXXFLAGS_WARNINGS += -Wmissing-field-initializers
-	CXXFLAGS_WARNINGS += -Wnon-virtual-dtor
-	CXXFLAGS_WARNINGS += -Woverloaded-virtual
-	CXXFLAGS_WARNINGS += -Wodr  
-	CXXFLAGS_WARNINGS += -Wredundant-decls
-	CXXFLAGS_WARNINGS += -Wsign-promo
-	CXXFLAGS_WARNINGS += -Wundef
-	CXXFLAGS_WARNINGS += -Wunused 
-	
-	CXXFLAGS_WARNINGS += -Wno-old-style-cast
-	
-	# possible experimental feature: CXXFLAGS_WARNINGS += -Wlifetime
-	
+# possible experimental feature: CXXFLAGS_WARNINGS += -Wlifetime
+
 	
 # Finally, the following warnings are disabled in any case.
 # In any case, remove the following warnings ...
@@ -834,8 +834,8 @@ endif
 CXXFLAGS_WARNINGS += -Wno-double-promotion	# it is okay to implicitly promote float to double
 CXXFLAGS_WARNINGS += -Wno-old-style-cast	# we accept old C-style casts 
 CXXFLAGS_WARNINGS += -Wno-shadow			# we accept shadowed variables 
-CXXFLAGS_WARNINGS += -Wno-unused-variable   # we accept unused variables 
-CXXFLAGS_WARNINGS += -Wno-unused-parameter  # we accept unused parameters 
+CXXFLAGS_WARNINGS += -Wunused-variable   # we accept unused variables 
+CXXFLAGS_WARNINGS += -Wunused-parameter  # we accept unused parameters 
 CXXFLAGS_WARNINGS += -Wno-unknown-pragmas	# we accept unknown pragmas
 CXXFLAGS_WARNINGS += -Wno-vla				# we accept variable-length arrays
 
@@ -921,40 +921,60 @@ ifeq ($(FLAG_DO_USE_SANITIZER),yes)
 
 	SANITIZERS :=
 	
+	# thread cannot be combined with address and leak 
+
 	ifeq ($(FLAG_CXX),GCC)
 
-		SANITIZERS :=$(SANITIZERS)pointer-compare,pointer-subtract,
+		# such as out-of-bounds or use-after-free
+		SANITIZERS :=$(SANITIZERS)address,
+		SANITIZERS :=$(SANITIZERS)pointer-compare,
+		SANITIZERS :=$(SANITIZERS)pointer-subtract,
+		
+		# leak detection 
+		SANITIZERS :=$(SANITIZERS)leak,
+		
+		# data race detection 
+		# SANITIZERS :=$(SANITIZERS)thread,
+
+		# check undefined behavior
 		SANITIZERS :=$(SANITIZERS)undefined,
 
 	else ifeq ($(FLAG_CXX),CLANG)
 
-		SANITIZERS :=$(SANITIZERS)pointer-compare,pointer-subtract,
-		SANITIZERS :=$(SANITIZERS)undefined,
-
-		SANITIZERS :=$(SANITIZERS)float-divide-by-zero,
-		SANITIZERS :=$(SANITIZERS)unsigned-integer-overflow,
-		SANITIZERS :=$(SANITIZERS)implicit-conversion,
-		SANITIZERS :=$(SANITIZERS)nullability-arg,
-		SANITIZERS :=$(SANITIZERS)nullability-assign,
-		SANITIZERS :=$(SANITIZERS)nullability-return,
-
+		# such as out-of-bounds or use-after-free
+		SANITIZERS :=$(SANITIZERS)address,
+		SANITIZERS :=$(SANITIZERS)pointer-compare,
+		SANITIZERS :=$(SANITIZERS)pointer-subtract,
+		
+		# leak detection 
+		SANITIZERS :=$(SANITIZERS)leak,
+		
+		# uninitialized memory detector (slowdown ca. 300%)
 		#SANITIZERS :=$(SANITIZERS)memory,
+		
+		# data race detection 
+		# SANITIZERS :=$(SANITIZERS)thread,
 
+		# check undefined behavior
+		SANITIZERS :=$(SANITIZERS)undefined,
+		
 	endif
 
-	SANITIZERS :=$(SANITIZERS)address,
-	SANITIZERS :=$(SANITIZERS)leak,
-	# SANITIZERS :=$(SANITIZERS)thread 
-
-	# thread cannot be combined with address and leak 
-
-	
+	# Detects signed integer over/underflows
 	# SANITIZERS :=-ftrapv,
 
 	# Comment out the following line to disable ALL built-in sanitizers 
 	CXXFLAGS_SANI := -fsanitize=$(SANITIZERS) -ftrapv 
 
 endif
+
+
+		# SANITIZERS :=$(SANITIZERS)float-divide-by-zero,
+		# SANITIZERS :=$(SANITIZERS)unsigned-integer-overflow,
+		# SANITIZERS :=$(SANITIZERS)implicit-conversion,
+		# SANITIZERS :=$(SANITIZERS)nullability-arg,
+		# SANITIZERS :=$(SANITIZERS)nullability-assign,
+		# SANITIZERS :=$(SANITIZERS)nullability-return,
 
 
 

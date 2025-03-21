@@ -180,7 +180,7 @@ DenseMatrix weight_vector(const FloatVector& vec)
     // auto jac = jacobian(vec);
     // auto det = Determinant(jac);
     // auto invjac = Inverse( jac );
-    // auto ret = MatrixTripleMult( parametric_A(vec), invjac );
+    // auto ret = Conjugation( parametric_A(vec), invjac );
     // ret *= absolute(det);
     // TransposeSquareInSitu(ret);
     // return ret;

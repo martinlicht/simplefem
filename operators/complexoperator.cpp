@@ -50,12 +50,8 @@ void ComplexOperator::check() const
 
 std::string ComplexOperator::text() const 
 {
-    return text( false ); 
-}
-
-std::string ComplexOperator::text( const bool embellish ) const 
-{
-    return "Complex operator";
+    return "Complex Operator" + std::to_string(getdimout()) + "x" + std::to_string(getdimin()) + "\n"
+                     + tab_each_line( part_real->text() + '\n' + part_imag->text() );
 }
 
 void ComplexOperator::apply( FloatVector& dest, const FloatVector& src, Float scaling ) const 

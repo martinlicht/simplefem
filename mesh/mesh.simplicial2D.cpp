@@ -3406,7 +3406,6 @@ std::string MeshSimplicial2D::outputLinearSVG(
     const FloatVector& triangle_green,
     const FloatVector& triangle_blue,
     Float stroke_width,
-    const std::string& fill,
     const std::string& stroke
 ) const {
     std::ostringstream os;

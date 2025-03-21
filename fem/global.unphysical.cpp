@@ -99,8 +99,8 @@ SparseMatrix FEECRandomizeBroken( const Mesh& mesh, int n, int k, int r, Float b
     // Calculate local matrix 
     for( int t = 0; t <= n; t++ )
     {
-//         Float alpha = ( 0 <= base_alpha and base_alpha <= 1.0 ) ? base_alpha : random_uniform();
         Float alpha = 1.;
+        alpha = ( 0. <= base_alpha and base_alpha <= 1.0 ) ? base_alpha : random_uniform();
         Assert( 0. <= alpha and alpha <= 1. );
 
         DenseMatrix Aux1( n+1, n+1, 0. );

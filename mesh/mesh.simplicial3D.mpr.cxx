@@ -19,7 +19,7 @@
 
 
 
-void MeshSimplicial3D::midpoint_refinement( int t )
+void MeshSimplicial3D::midpoint_refinement( int t UNUSED )
 {
     // check();
     

@@ -265,7 +265,7 @@ DenseMatrix IdentityMatrix( int dim );
 
 DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right );
 
-DenseMatrix MatrixTripleMult( const DenseMatrix& A, const DenseMatrix& B );
+DenseMatrix Conjugation( const DenseMatrix& A, const DenseMatrix& B );
 
 
 DenseMatrix HilbertMatrix( int n );

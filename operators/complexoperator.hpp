@@ -92,8 +92,6 @@ class ComplexOperator final
         virtual void check() const override;
         
         virtual std::string text() const override;
-        
-        virtual std::string text( const bool embellish ) const;
 
         /* OTHER METHODS */
         

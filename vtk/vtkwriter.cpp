@@ -9,7 +9,7 @@
 
 
 VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name )
-: VTKWriter( m, os, name, [&](int i) -> Float { return 0.; } )
+: VTKWriter( m, os, name, [&](int  ) -> Float { return 0.; } )
 {}
 
 VTKWriter::VTKWriter( const Mesh& m, std::ostream& os, const std::string& name, const FloatVector& z )

@@ -270,8 +270,8 @@ template<typename... Params> constexpr bool Cond( bool b, const Params&... param
 
 #if __cplusplus < 202002L
 #include <cassert>
-// constexpr bool Cond( bool b ) { return b; }
-template<typename... Params> constexpr bool Cond( bool b, const Params&... params ) { return b; }
+inline constexpr bool Cond( bool b ) { return b; }
+template<typename T, typename... Params> inline constexpr bool Cond( bool b, const T& param, const Params&... params ) { static_cast<void>(param); return Cond(b,params...); }
 #define Assert(...)     assert(Cond(__VA_ARGS__))
 #else 
 #ifndef DISCARD_ASSERT_MESSAGES

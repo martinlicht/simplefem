@@ -154,6 +154,8 @@ CXXFLAGS += ${CXXFLAGS_CODEGEN}
 
 # HIGH: DO THESE NEXT
 
+## (HIGH) Debug midpoint refinement 
+
 ## (HIGH) Hodge star **READING**
 
 Review the Hodge star operations, combine the two implementations into one file. Combine the unit tests into one file. 
@@ -274,6 +276,15 @@ which is reserved for shallow operations. Re-assess that convention, possibly ch
 
 # MEDIUM: DO-ABLE YET LOWER IMPORTANCE
 
+## (MEDIUM) Take care of numerous warnings 
+
+- Eigenvalue tests 
+- unused parameters and variables 
+- shadowed parameters and variables 
+
+
+## (MEDIUM) Review SVG output for 2D meshes and document / make self-documenting    
+
 ## (DONE/MEDIUM) Solver output
 
 Within solvers without explicit output enum, distinguish the following cases of the print modulo:
@@ -307,37 +318,25 @@ tolerance = maximum( desired_precision, precision * sqrt(tolerance) );
 ## (DONE/MEDIUM) Solvers print whether they have been successful
 
 ```cpp
-    /* HOW DID WE FINISH ? */
-    recent_deviation = rMAMr;
-    if( rMAMr > tolerance ) {
-        LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
-        LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
-    } else {
-        LOG << "PCRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
-        LOG << "PCRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
+/* HOW DID WE FINISH ? */
+recent_deviation = rMAMr;
+if( rMAMr > tolerance ) {
+    LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+    LOG << "PCRM process has failed. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
+} else {
+    LOG << "PCRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ")\n";
+    LOG << "PCRM process has succeeded. (" << recent_iteration_count << "/" << max_iteration_count << ") : " << recent_deviation << "/" << tolerance;
 
-    }
+}
 ```
 
 ## (DONE/MEDIUM) Solvers should abort if Ar_r or Ad_r is negative ?
 
 ## (MEDIUM) SOLVERS **QUALITY TIME**
 
-- [ ] vereinfache die verschiedenen CR solver, finde die unterschiede und markiere sie im Code, mache fallunterscheidungen und vereinheitliche
-
-- [ ] alle C++ solvers mit preconditioner
-
-- [ ] Unified solver interface:
-      Es macht wenig Sinn, einen solver als Klasse aufzuziehen.
-      Besser altmodisch mit Parametern, eventuell mit speziellen Default-Werten
-      Idee: Zur Not kann man einen Solver dann einer Klasse verpacken mittels einer Template-Konstruktion?
-      Argumente sind:
-
-        * Matrix, initial guess, RHS
-        * residual
-        * max steps, desired precision
-        * print modus
-        * Preconditioner?
+- [ ] Simplify the different CR solvers, identify and document the differences, unify via case distinctions.
+- [ ] Equip all C++ solvers with preconditioners 
+- [ ] Unified solver interface: it makes more sense to set up the solvers as functions instead of classes. 
 
 ## (MEDIUM) test `getdimensionclone`/`loaddimension` for the Coordinates class
 
@@ -351,16 +350,7 @@ They are a purely optional argument for the print method and may be skipped at c
 
 - [ ] Multiplicative Schwarz / Gauss-Seidel algorithms
 
-- [x] DOF partitioning
-    Schreibe einen Algorithmus welcher zu gegebener CSR-Matrix
-    die DOF partitioniert. Das ist eine Instanz des graph coloring problem.
-    Die max. Zahl der Farben kann man nach oben abschaetzen durch die Anzahl
-    der DOF, aber allgemein genuegt es, greedy vorzugehen.
-    We can restrict to symmetric matrices
-
-- [X] Schreibe einen solver, welcher das Faerbung verwendet
-    vielleicht mit einer Gauss-Seidel methode,
-    fuer eine multiplicative Schwarz methode.
+- [x] DOF partitioning of CSR Matrices. That is an instance of the graph coloring problem. 
 
 
 
@@ -381,14 +371,13 @@ There are different variants for the numerator and denominator of alpha and beta
 
 ## (THEORY) Fix Whatever solvers or fix Wikipedia **READING**
 
-- [x] Herzog-Soodhalter funktioniert nun, auch die sparse variant.
-- [ ] Identify the source for MINRES solver; the other ones are known.
+- [x] Herzog-Soodhalter is functional, including the sparse variant.
 - [x] Fix the whatever solver or retire it.
-- [ ] Verstehe die stopping criteria for iterative solvers etwas besser.
-- [ ] Was ist die richtige variante von CG? (E-Mail Meurant?)
-- [ ] Chebyshev iteration: Der Solver scheint zu funktionieren. Als naechstes den mittleren Versuch erasen, dann den externen archivieren. 
-      Verstehe den Chebyshev solver von theoretischer Seite und auch die verschiedenen Arten ihn aufzuschreiben.
-- [ ] Erstelle eine 08/15 FD matrix (square, laplace, Dirichlet/periodisch). Solve that SPD matrix using all available solvers.
+- [ ] Identify the source for MINRES solver; the other ones are known.
+- [ ] Understand the stopping criteria
+- [ ] What is the correct variant of CG? (E-Mail Meurant?)
+- [ ] Chebyshev iteration.
+- [ ] Create boilerplate FD matrix (square, Laplace, Dirichlet/periodic). Solve that SPD matrix using all available solvers.
 
 
 
@@ -519,10 +508,10 @@ Implement the following as classical iterative solvers:
 - [ ] Jacobi preconditioner
 - [ ] different scaling preconditioners
 - [ ] Gauss-Seidel preconditioner
-- [x] SOR + SSOR preconditioner
+- [x] SOR+SSOR preconditioner
 - [ ] block diagonal preconditioner
-- [ ] block gauss-seidel preconditioner
-- [ ] adjustable gauss-seidel preconditioner
+- [ ] block Gauss-Seidel preconditioner
+- [ ] adjustable Gauss-Seidel preconditioner
 - [ ] Polynomial preconditioners
 
 ## (LOW) Provide Preconditioned variants for all iterative methods
@@ -540,13 +529,13 @@ Possible definition: `typedef std::size_t Index;`
 
 ## (LOW) REWRITING OUTPUT
 
-- [x] Jede (bedeutende) Klasse soll eine Log-Funktion verwenden:
+- [x] Every (important) class provides a log method:
 
     ```
     void lg() const { LOG << *this << std::endl; }
     ```
 
-- [x] Jede Klasse soll das Shift interface implementieren
+- [x] Every such class implements the shift pattern as well:
 
     ```
     ostream& operator<<( T t, ostream& os )
@@ -555,7 +544,7 @@ Possible definition: `typedef std::size_t Index;`
     }
     ```
 
-- [x] Print soll genau das tun:
+- [x] Print does exactly this:
 
     ```
     virtual std::string text() const override;
@@ -566,23 +555,14 @@ Possible definition: `typedef std::size_t Index;`
     }
     ```
 
-- [ ] text() method
-    The text() shall only emit 'shallow' data,
-    so that no content of vectors and matrices is shown
-    If such content is to be shown, one can use a method
-    such as
+- [ ] The `text()` method only emits 'shallow' data, so that no content of vectors and matrices is shown.
+    If such content is to be shown, one can use a method such as
 
     ```
     std::string fulltext() const;
     ```
 
     Many of your unit tests will need to be rewritten
-
-- [ ] Retire die erweiterten print methoden (etwa ausgabe)
-
-- [ ] composed operators hierarchisch ausgeben: und zwar nur thin mittels text
-
-- [ ] Retire the print() methods throughout the code.
 
 ## (LOW) Various
 
@@ -754,7 +734,8 @@ Similarly, the errors should be computed with augmented integration.
 
 ## (INACTIVE) Unreal Engine 
 
-Revisit the Unreal Engine for ideas.
+- Revisit the Unreal Engine for ideas.
+- https://www.gamedev.net/forums/topic/704525-3-quick-ways-to-calculate-the-square-root-in-c/
 
 
 
@@ -809,11 +790,10 @@ For wider usage, pack everything into a project namespace.
 
 ## (INFRASTRUCTURE) Rename include guards
 
-Find a format for the inlucde guards that is in line with common practices. 
+Find a format for the include guards that is in line with common practices. 
 Write a script that checks whether these practices are upheld. 
 
-How to show the first 2 lines of all hpp files:
-for datei in ./*/*.hpp; do head -n 2 $datei; done
+How to show the first 2 lines of all .hpp files: `for datei in ./*/*.hpp; do head -n 2 $datei; done`
 
 ## (INFRASTRUCTURE) Question: what are best practices keeping the unit tests up to date with the code?
 
@@ -932,12 +912,11 @@ TODO: write an email to the mailing list about the static analyzer.
 
 
 
-
 ## (INFRASTRUCTURE) Makefile improvements 
 
 - [ ] Lint and polish the makefiles. 
 - [ ] Include links to the manual in the makefiles for quicker reference.
-- [ ] Die automatische dependency generation funktioniert noch nicht. Werden alte dependency angaben erased?
+- [ ] Die automatische dependency generation funktioniert noch nicht. Werden alte dependency Angaben erased?
 - [ ] Question: best practices in managing makefiles? What dependencies to make explicit?
 
 ## (INFRASTRUCTURE) Makefile with implicit rules
@@ -965,7 +944,7 @@ The individual tests should only contain a bool-valued function that takes comma
 
 The point is that you should be able to easily change the Unit test header file for all available tests at once, or maybe integrate it with a unit test framework. Finally, the project should transition to catch2 at some point.
 
-Also have a look at the following unit test frameworks:
+Also study the following unit test frameworks:
 
 - <http://unitpp.sourceforge.net/>
 - <https://github.com/burner/sweet.hpp/blob/master/options.hpp>
@@ -991,7 +970,6 @@ This software could be used for personal websites.
 
 
 
-
 ## (INFRASTRUCTURE) Replace C++ standard library 
 
 **Custom string and output library** as a thin wrapper around the C functionality. 
@@ -1003,11 +981,23 @@ Copy the std::vector interface but do not provide resizing and capacity informat
 
 ## (INFRASTRUCTURE) What are common formats for meshes in FEM software
 
-- Gmsh: <http://gmsh.info/doc/texinfo/gmsh.html>
-- Gambit: <http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf>
+- `Gmsh`: <http://gmsh.info/doc/texinfo/gmsh.html>
+- `Gambit`: <http://web.stanford.edu/class/me469b/handouts/gambit_write.pdf>
 - <https://scicomp.stackexchange.com/questions/23882/what-is-a-common-file-data-format-for-a-mesh-for-fem>
 
-Learn more about Gmsh and how to utilize it for this project.
+Learn more about `Gmsh` and how to utilize it for this project.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1163,8 +1153,8 @@ The following is recommended:
 - cpp Mass: CGM
 - csr mass: CGM SSOR
 - cpp stiff:
-- csr stiff: minres csr or CGM SSOR
-- systems: Herzog-Soodhalter mit operator preconditioning
+- csr stiff: MINRES-CSR or CGM-SSOR
+- systems: Herzog-Soodhalter with operator preconditioning
 
 ## (DONE) Introduce a custom check script
 
@@ -1356,10 +1346,10 @@ Enable for all nullspace vectors printing for any polynomial degree.
 
 Most routines only print if r == 1. Generalize that.
 
-- [x] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polydegree
+- [x] enable higher-order printing wherever convenient, and provide higher-order printing. Agree on polynomial degree.
 - [x] writeCellVector data: print barycentric 2-forms
 - [x] writeCellScalar data: print barycentric n-forms
-- [x] Apply uniform format to Darcy, Maxwell, and curlcurl
+- [x] Apply uniform format to Darcy, Maxwell, and curl-curl
 - [x] Apply uniform format to lshaped?
 - [x] Apply uniform format to Poisson
 
@@ -1396,7 +1386,7 @@ Understand why a compiler might warn about weak vtables and how to avoid that is
 This concerns IndexMap and MultiIndex in particular. See also:
 <https://stackoverflow.com/questions/23746941/what-is-the-meaning-of-clangs-wweak-vtables>
 
-This is not particularly dangerous for this project.
+This is not particularly relevant for this project.
 
 ## (DONE) Averaging for Sullivan and Whitney spaces
 
@@ -1501,7 +1491,7 @@ That will give you a sense of what you should do.
 
 ## (DONE/INFRASTRUCTURE) remove code from parent directory
 
-rename base/include.hpp in the main folder, move to base subfolder, and have all exec.s include it
+rename `base/include.hpp` in the main folder, move to base subfolder, and have all exec.s include it
 
 ## (DONE/INFRASTRUCTURE) DECOUPLE FROM C++ STANDARD LIBRARY
 
@@ -1548,11 +1538,11 @@ rename base/include.hpp in the main folder, move to base subfolder, and have all
 - [ ] compilation time marathon
 - [ ] proofread the documentation and sort entries, write blog entries
 
-- [ ] -fshort-enums: enumerations, their size, their values
-- [ ] -fno-plt
-- [ ] -fvisibility=hidden
+- [ ] `-fshort-enums`: enumerations, their size, their values
+- [ ] `-fno-plt`
+- [ ] `-fvisibility=hidden`
 - [ ] find the largest factorial with only divisions
-- [ ] how to compile shared objects on linux
+- [ ] how to compile shared objects on Linux
 - [ ] sanitizers
 
 - [ ] compilation time marathon
@@ -1662,3 +1652,11 @@ Clang w/o transitive includes
 ```
 
 
+
+real    3m41.789s
+user    3m24.552s
+sys     0m17.091s
+
+real    4m43.761s
+user    4m21.795s
+sys     0m21.579s

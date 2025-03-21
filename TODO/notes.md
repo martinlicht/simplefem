@@ -71,6 +71,19 @@ then comment out the check and add an explanation:
 
 
 
+ 
+Enum Policy
+===========
+ 
+All enumerations must be `enum class` as opposed to the usual enums.
+The program is possibly compiled with `-fstrict-enum`, which effectively prohibits any fancy arithmetics.
+All enumerations must have a base type, typically `unsigned char`, large enough to represent all values.
+
+Contrary to the usual C conventions, the enumeration values have simpler names, there is no need to include
+the name of the enumeration type, because the values are only accessible through the enumeration identifier
+in the first place.
+ 
+
 
 
 Exception policy
@@ -115,7 +128,18 @@ so the conditions describe exactly when a destructor is permitted to be non-virt
 A non-virtual destructor will generally have slightly better performance.
 
 
-Final keyword
+C++ Attributes 
+=========================
+
+The following attributes are defined via macros and may be used within the code:
+
+- HOTCALL: signifies that a function will be called repeatedly and should be inlined 
+- PACKED: marks data structures that should be packed, without regard to alignment 
+- LIKELY/UNLIKELY: indicates code paths that are LIKELY/UNLIKELY to be followed
+- UNUSED: marks variables and parameters that are not used
+
+
+`final` keyword
 =========================
 
 Classes that are not part of a class hierarchy should be declared `final`.
@@ -127,7 +151,7 @@ This avoids the vtable in some cases.
 Rule of Five
 =========================
 
-We adhere to the following rule of Five. If a class features one of the following methods
+We adhere to the following rule of Five. If a class features one of the following methods,
 
 - Copy constructor
 - Move constructor

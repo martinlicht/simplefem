@@ -11,17 +11,18 @@
 // to the contexpr C++ implementation Sqrt.
 // ============================================================================
 
+
+// ============================================================================
+// Auxiliary class to test square root computations with a given type. 
+// ============================================================================
+
+
 template<typename NumericalType>
 struct SqrtTest
 {
     struct SqrtResults{ 
         NumericalType cpp; 
         NumericalType fem; 
-    };
-
-    union numerical_container {
-        NumericalType f;
-        unsigned int i;
     };
 
     SqrtResults calculate_sqrts( NumericalType x ) {
@@ -40,67 +41,46 @@ struct SqrtTest
     void check()
     {
 
-        // LOG << "\nSize of Numerical Type\n";
         LOG << nl;
-
+        
         {
             LOG << "SQRT: check machine epsilon" << nl;
-            numerical_container u;
-            u.f = std::numeric_limits<NumericalType>::epsilon();
-            auto result = calculate_sqrts( u.f );
+            auto f = std::numeric_limits<NumericalType>::epsilon();
+            auto result = calculate_sqrts( f );
             LOGPRINTF( "epsilon x=%.30e cpp=%.10e fem=%.10e \n", 
-                (double)(safedouble)u.f, (double)(safedouble)result.cpp, (double)(safedouble)result.fem ); 
+                (double)(safedouble)f, (double)(safedouble)result.cpp, (double)(safedouble)result.fem ); 
         }
 
         { 
-            LOG << "SQRT: very big integer" << nl;
-            numerical_container u;
-            u.f = std::numeric_limits<unsigned int>::max() >> 6;
+            LOG << "SQRT: some very big integer" << nl;
+            NumericalType f = std::numeric_limits<unsigned int>::max() /16/16;
             // LOG << u.i << ' ' << (double)u.f << nl;
-            auto result = calculate_sqrts( u.f );
+            auto result = calculate_sqrts( f );
             LOGPRINTF( "epsilon x=%.30e cpp=%.10e fem=%.10e \n", 
-                (double)(safedouble)u.f, (double)(safedouble)result.cpp, (double)(safedouble)result.fem ); 
+                (double)(safedouble)f, (double)(safedouble)result.cpp, (double)(safedouble)result.fem ); 
         }
 
         // if(false)
         {
-            LOG << "Test the ratio of sqrt implementations on range: " << nl;
-
-            unsigned int iteration_min = 0;
+            unsigned int iteration_min = 1;
             unsigned int iteration_max = 10000; 
 
+            LOG << "Test the ratio of sqrt implementations on range: " << iteration_min << "-" << iteration_max << nl;
+
             NumericalType worst_upper = 0.;
-            NumericalType worst_lower = 0.;
+            NumericalType worst_lower = 10.;
             
-            #if defined(_OPENMP)
-            #pragma omp parallel for reduction(max:worst_upper,worst_lower)
-            #endif
-            for( int i = iteration_min; i < iteration_max; ++i )
+            int i = iteration_min;
+            for( ; i < iteration_max; ++i )
             {
-                numerical_container u;
-
-                u.f = i;
-
-                // Optionally, break or continue on specific conditions to avoid NaNs, infinities, etc.
-                if (std::isnan(u.f) || std::isinf(u.f)) {
-                    continue; // Skip this iteration
-                }
-
-                if( u.f < 0 ) continue; // skip from here on 
-
-                auto sqrts = calculate_sqrts(u.f);
-
+                auto sqrts = this->calculate_sqrts(i);
                 auto ratio = sqrts.cpp / sqrts.fem;
-
                 worst_upper = std::max( worst_upper, ratio );
-                worst_lower = std::max( worst_lower, ratio );
-
-                // LOGPRINTF( "%.10e %.10e %.10e \n", (double)(safedouble)worst_upper, (double)(safedouble)worst_lower );
-            
+                worst_lower = std::min( worst_lower, ratio );
+                // LOGPRINTF( "%.10e %.10e %.10e \n", (double)(safedouble)ratio, (double)(safedouble)worst_upper, (double)(safedouble)worst_lower );
             }
 
-            LOGPRINTF( "WORST RATIOS: %.17e %.17e \n", (double)(safedouble)worst_upper, (double)(safedouble)worst_lower );
-            
+            LOGPRINTF( "WORST RATIOS: %.17e %.17e [%d iterations]\n", (double)(safedouble)worst_upper, (double)(safedouble)worst_lower, i );            
         }
             
         LOG << "Test finished\n\n";

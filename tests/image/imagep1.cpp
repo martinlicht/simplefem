@@ -108,7 +108,7 @@ int main( int argc, char *argv[] )
 
 
         std::fstream fs( get_available_filename( get_basename(__FILE__), "svg" ), std::fstream::out );
-        fs << M.outputLinearSVG( interpol_red, interpol_green, interpol_blue, 0.000, "array", "none" );
+        fs << M.outputLinearSVG( interpol_red, interpol_green, interpol_blue, 0.000, "none" );
         fs.close();
 
         if( l == l_max ) break;
