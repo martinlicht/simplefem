@@ -2,6 +2,7 @@
 OVERWRITE.COMPILE.mk
 PACKAGE/
 node_modules/
+.ignore*
 .stuff/
 .CUDA/
 .private/

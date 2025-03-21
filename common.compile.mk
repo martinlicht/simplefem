@@ -381,6 +381,7 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wdangling-else 
 		CXXFLAGS_WARNINGS += -Wdangling-reference
 		CXXFLAGS_WARNINGS += -Wdate-time
+		# CXXFLAGS_WARNINGS += -Wdeprecated-variadic-comma-omission
 		CXXFLAGS_WARNINGS += -Wdisabled-optimization
 		CXXFLAGS_WARNINGS += -Wduplicated-branches 
 		CXXFLAGS_WARNINGS += -Wduplicated-cond
@@ -473,6 +474,10 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		# # TODO What is stack smashing???? HSA????
 		# # TODO Read the format warnings 
 
+		# CXXFLAGS_WARNINGS += -Wshadow			# we accept shadowed variables 
+		CXXFLAGS_WARNINGS += -Wshadow-local			# ... except local variables shadowing other locals 
+
+
 		CXXFLAGS_WARNINGS += 
 		
 	else ifeq ($(FLAG_CXX),CLANG)
@@ -537,7 +542,6 @@ ifeq ($(FLAG_EXCESSIVE_WARNINGS),yes)
 		CXXFLAGS_WARNINGS += -Wdelete-non-virtual-dtor
 		CXXFLAGS_WARNINGS += -Wdelimited-escape-sequence-extension
 		CXXFLAGS_WARNINGS += -Wdeprecated
-		CXXFLAGS_WARNINGS += -Wdeprecated-variadic-comma-omission
 		CXXFLAGS_WARNINGS += -Wdirect-ivar-access
 		CXXFLAGS_WARNINGS += -Wdisabled-macro-expansion
 		CXXFLAGS_WARNINGS += -Wdollar-in-identifier-extension
@@ -833,7 +837,6 @@ CXXFLAGS_WARNINGS += -Wno-old-style-cast
 
 CXXFLAGS_WARNINGS += -Wno-double-promotion	# it is okay to implicitly promote float to double
 CXXFLAGS_WARNINGS += -Wno-old-style-cast	# we accept old C-style casts 
-CXXFLAGS_WARNINGS += -Wno-shadow			# we accept shadowed variables 
 CXXFLAGS_WARNINGS += -Wunused-variable   # we accept unused variables 
 CXXFLAGS_WARNINGS += -Wunused-parameter  # we accept unused parameters 
 CXXFLAGS_WARNINGS += -Wno-unknown-pragmas	# we accept unknown pragmas

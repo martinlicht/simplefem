@@ -133,7 +133,7 @@ C++ Attributes
 
 The following attributes are defined via macros and may be used within the code:
 
-- HOTCALL: signifies that a function will be called repeatedly and should be inlined 
+- HOTCALL: signifies that a function will be called repeatedly and should be elided
 - PACKED: marks data structures that should be packed, without regard to alignment 
 - LIKELY/UNLIKELY: indicates code paths that are LIKELY/UNLIKELY to be followed
 - UNUSED: marks variables and parameters that are not used
