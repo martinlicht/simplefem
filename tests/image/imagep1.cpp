@@ -21,33 +21,40 @@ int main( int argc, char *argv[] )
 {
     LOG << "Unit Test: Image output, San Francisco" << nl;
 
-    MeshSimplicial2D M = UnitSquare2D_centered();
-
-    M.check();
+    /* 1. File name */
 
     // const std::string image_name = "blue.png";
     // const std::string image_name = "aurora.jpeg";
     // const std::string image_name = "lena_color.tiff";
-    // const std::string image_name = "testbild.jpg";
-    std::string image_name = "sanfrancisco.jpg";
+    const std::string image_name = "testbild.jpg";
+    // const std::string image_name = "sanfrancisco.jpg";
 
     const std::string execution_name = argv[0];
     const std::string name = get_parent_directory( execution_name ) + "/" + image_name;
     
-    LOG << name << nl;
+    LOG << "Filename for input: " << name << nl;
+
     
+    /* 2. Read the image and prepare the piecewise constant color functions */
+
     PixelImage pim = readPixelImage( name );
 
     auto red   = pim.get_interpolated_red();
     auto green = pim.get_interpolated_green();
     auto blue  = pim.get_interpolated_blue();
     
-    M.getCoordinates().scale( 
-        FloatVector{ 
-            (Float)pim.getwidth(), (Float)pim.getheight() 
-        }
-    );
     
+    
+    MeshSimplicial2D M = UnitSquare2D_centered();
+
+    M.check();
+
+    // M.getCoordinates().shift( FloatVector{ 1. , 1. } );
+    M.getCoordinates().scale( FloatVector{ (Float)pim.getwidth()/1., (Float)pim.getheight()/1. } );
+    
+    
+    /* 3. Iterate over refinement levels */
+
     int l_min =  0;
     int l_max = 10;
     
@@ -59,6 +66,8 @@ int main( int argc, char *argv[] )
             
         int num_volumes = M.count_triangles();
 
+        /* 3.1 Approximate red/green/blue channels by barycentric linear functions, using linear sampling */
+        
         FloatVector interpol_red(   3 * M.count_triangles() );
         FloatVector interpol_green( 3 * M.count_triangles() );
         FloatVector interpol_blue(  3 * M.count_triangles() );
@@ -73,8 +82,6 @@ int main( int argc, char *argv[] )
             FloatVector sample_G(K);
             FloatVector sample_B(K);
 
-            // points = IdentityMatrix(3); // TODO(martinlicht) 
-            
             for( int k = 0; k < K; k++ )
             {
                 auto barycoords = get_random_barycentric_coordinates(2);
@@ -107,22 +114,26 @@ int main( int argc, char *argv[] )
         }
 
 
+        /* 3.2 Open the output file and write color interpolation */
+        
         std::fstream fs( get_available_filename( get_basename(__FILE__), "svg" ), std::fstream::out );
-        fs << M.outputLinearSVG( interpol_red, interpol_green, interpol_blue, 0.000, "array", "none" );
+        fs << M.outputInterpolatingSVG( interpol_red, interpol_green, interpol_blue, 0.000, "array", "none" );
         fs.close();
 
+        ///////////////////////////////////////////////////////////
+
+        /* 3.3 Refinement */
+        
         if( l == l_max ) break;
 
         // M.uniformrefinement(); continue;
 
-        ///////////////////////////////////////////////////////////
-
-        // container for all the weights 
+        /* 3.3.1 For each triangle, we determine the weight as the integral of the interpolation from the actual values, via random sampling */
+        
         std::vector<std::pair<int,Float>> weights( 
                 num_volumes, std::pair<int,Float>(0,0.)
         );
         
-        // compute the weight of all the volumes
         for( int t = 0; t < num_volumes; t++ ) {
                 
             int K = 30;
@@ -154,21 +165,24 @@ int main( int argc, char *argv[] )
             weights[t] = std::pair<int,Float>( t, weight );
         }
 
-        // sort descending by weight
+       /* 3.3.2 Sort the triangles by their weight */
+        
         std::sort( weights.begin(), weights.end(), 
             []( const std::pair<int,Float>& a, const std::pair<int,Float>& b )
             { return a.second > b.second; }
         );
         
-        // list all indices to be refined  
-        std::vector<int> to_refine;
-        int share = 3;
         LOG << "Weights min/max: " << weights.front().second << space << weights.back().second << nl;
+        
+        /* 3.3.2 Refine the upper third of the ranked triangles */
+        
+        int share = 3;
+        std::vector<int> to_refine;
         to_refine.reserve( num_volumes / share + 1 );
+        
         for( int i = 0; i < num_volumes / share + 1; i++ )
             to_refine.push_back( weights[i].first );
 
-        // dew it!
         M.longest_edge_bisection_recursive( to_refine );
 
         ///////////////////////////////////////////////////////////

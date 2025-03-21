@@ -3279,7 +3279,7 @@ inline std::string rgb_to_string( unsigned char r, unsigned char g, unsigned cha
     return std::string( result );
 }
 
-inline unsigned char float_to_color( Float f )
+inline unsigned char float_to_colorchannel( Float f )
 {
   if( f >= 255.) f = 255.;
   if( f <= 0.  ) f = 0.;
@@ -3401,7 +3401,7 @@ inline void computeProjection( Float x0, Float y0, Float x1, Float y1, Float x2,
     py = y1 + lambda * dy;
 }
 
-std::string MeshSimplicial2D::outputLinearSVG( 
+std::string MeshSimplicial2D::outputInterpolatingSVG( 
     const FloatVector& triangle_red,
     const FloatVector& triangle_green,
     const FloatVector& triangle_blue,
@@ -3411,7 +3411,7 @@ std::string MeshSimplicial2D::outputLinearSVG(
 ) const {
     std::ostringstream os;
 
-    // 1. copy coordinates and shift them 
+    // 1. copy coordinates and shift the clone  
     auto coords = getCoordinates();
 
     coords.shift( FloatVector{ 
@@ -3426,62 +3426,71 @@ std::string MeshSimplicial2D::outputLinearSVG(
        << coords.getmax(0) << space << coords.getmax(1) << "\""
        << " shape-rendering=\"crispEdges\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
        << nl;
+    // os << "<rect width=\"100%\" height=\"100%\" fill=\"red\"/>" << nl; // if you want a red background color
+
 
     // 2. print the defs of the linear gradients 
     os << "<defs>" << nl;
     for( int t = 0; t < this->count_triangles(); t++ ) {
       
+      // vertex indices 
       int v0 = this->get_triangle_vertex(t,0);
       int v1 = this->get_triangle_vertex(t,1);
       int v2 = this->get_triangle_vertex(t,2);
       
+      // vertex coordinates 
       Float x0 = coords.getdata(v0,0); Float y0 = coords.getdata(v0,1);
       Float x1 = coords.getdata(v1,0); Float y1 = coords.getdata(v1,1);
       Float x2 = coords.getdata(v2,0); Float y2 = coords.getdata(v2,1);
 
+      // opposing vertex coordinates 
       Float cx0, cx1, cx2, cy0, cy1, cy2;
       computeProjection( x0, y0, x1, y1, x2, y2, cx0, cy0 );
       computeProjection( x1, y1, x0, y0, x2, y2, cx1, cy1 );
       computeProjection( x2, y2, x1, y1, x0, y0, cx2, cy2 );
 
-      // Float cx0 = ( x1 + x2 ) / 2.;
-      // Float cy0 = ( y1 + y2 ) / 2.;
-      // Float cx1 = ( x0 + x2 ) / 2.;
-      // Float cy1 = ( y0 + y2 ) / 2.;
-      // Float cx2 = ( x0 + x1 ) / 2.;
-      // Float cy2 = ( y0 + y1 ) / 2.;
-
+      // coefficients of the barycentric coorindates 
+      unsigned char r0 = float_to_colorchannel( triangle_red  [3*t+0] );
+      unsigned char g0 = float_to_colorchannel( triangle_green[3*t+0] );
+      unsigned char b0 = float_to_colorchannel( triangle_blue [3*t+0] );
+      unsigned char r1 = float_to_colorchannel( triangle_red  [3*t+1] );
+      unsigned char g1 = float_to_colorchannel( triangle_green[3*t+1] );
+      unsigned char b1 = float_to_colorchannel( triangle_blue [3*t+1] );
+      unsigned char r2 = float_to_colorchannel( triangle_red  [3*t+2] );
+      unsigned char g2 = float_to_colorchannel( triangle_green[3*t+2] );
+      unsigned char b2 = float_to_colorchannel( triangle_blue [3*t+2] );
+      
       //std::string rgb_to_string( unsigned char r, unsigned char g, unsigned char b )
 
-      unsigned char r0 = float_to_color( triangle_red  [3*t+0] );
-      unsigned char g0 = float_to_color( triangle_green[3*t+0] );
-      unsigned char b0 = float_to_color( triangle_blue [3*t+0] );
-      unsigned char r1 = float_to_color( triangle_red  [3*t+1] );
-      unsigned char g1 = float_to_color( triangle_green[3*t+1] );
-      unsigned char b1 = float_to_color( triangle_blue [3*t+1] );
-      unsigned char r2 = float_to_color( triangle_red  [3*t+2] );
-      unsigned char g2 = float_to_color( triangle_green[3*t+2] );
-      unsigned char b2 = float_to_color( triangle_blue [3*t+2] );
+      std::string color0_start = rgb_to_string( r0, g0, b0 );
+      std::string color1_start = rgb_to_string( r1, g1, b1 );
+      std::string color2_start = rgb_to_string( r2, g2, b2 );
       
-      std::string color0 = rgb_to_string( r0, g0, b0 );
-      std::string color1 = rgb_to_string( r1, g1, b1 );
-      std::string color2 = rgb_to_string( r2, g2, b2 );
+      std::string color0_end   = rgb_to_string( (r1+r2)/2., (g1+g2)/2., (b1+b2)/2. );
+      std::string color1_end   = rgb_to_string( (r0+r2)/2., (g0+g2)/2., (b0+b2)/2. );
+      std::string color2_end   = rgb_to_string( (r0+r1)/2., (g0+g1)/2., (b0+b1)/2. );
       
       std::ostringstream grad0;
       std::ostringstream grad1;
       std::ostringstream grad2;
 
-      grad0 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade0_" << t << "\" x1=\"" << render_number(x0) << "\" y1=\"" << render_number(y0) << "\" x2=\"" << render_number(cx0) << "\" y2=\"" << render_number(cy0) << "\" >"
-            << "<stop offset=\"0%\" stop-color=\"" << color0 << "\" stop-opacity=\"100%\" />"
-            << "<stop offset=\"100%\" stop-color=\"" << color0 << "\" stop-opacity=\"100%\" />"
+      grad0 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade0_" << t 
+            << "\" x1=\"" <<  render_number(x0) << "\" y1=\"" <<  render_number(y0) 
+            << "\" x2=\"" << render_number(cx0) << "\" y2=\"" << render_number(cy0) << "\" >"
+            << "<stop offset=\"0%\" stop-color=\"" << color0_start << "\" stop-opacity=\"100%\" />"
+            << "<stop offset=\"100%\" stop-color=\"" << color0_end << "\" stop-opacity=\"0%\" />"
             << "</linearGradient>";
-      grad1 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade1_" << t << "\" x1=\"" << render_number(x1) << "\" y1=\"" << render_number(y1) << "\" x2=\"" << render_number(cx1) << "\" y2=\"" << render_number(cy1) << "\" >"
-            << "<stop offset=\"0%\" stop-color=\"" << color1 << "\" stop-opacity=\"100%\" />"
-            << "<stop offset=\"100%\" stop-color=\"" << color1 << "\" stop-opacity=\"0%\" />"
+      grad1 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade1_" << t 
+            << "\" x1=\"" <<  render_number(x1) << "\" y1=\"" <<  render_number(y1) 
+            << "\" x2=\"" << render_number(cx1) << "\" y2=\"" << render_number(cy1) << "\" >"
+            << "<stop offset=\"0%\" stop-color=\"" << color1_start << "\" stop-opacity=\"100%\" />"
+            << "<stop offset=\"100%\" stop-color=\"" << color1_end << "\" stop-opacity=\"0%\" />"
             << "</linearGradient>";
-      grad2 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade2_" << t << "\" x1=\"" << render_number(x2) << "\" y1=\"" << render_number(y2) << "\" x2=\"" << render_number(cx2) << "\" y2=\"" << render_number(cy2) << "\" >"
-            << "<stop offset=\"0%\" stop-color=\"" << color2 << "\" stop-opacity=\"100%\" />"
-            << "<stop offset=\"100%\" stop-color=\"" << color2 << "\" stop-opacity=\"0%\" />"
+      grad2 << "<linearGradient gradientUnits=\"userSpaceOnUse\" id=\"myshade2_" << t 
+            << "\" x1=\"" <<  render_number(x2) << "\" y1=\"" <<  render_number(y2) 
+            << "\" x2=\"" << render_number(cx2) << "\" y2=\"" << render_number(cy2) << "\" >"
+            << "<stop offset=\"0%\" stop-color=\"" << color2_start << "\" stop-opacity=\"100%\" />"
+            << "<stop offset=\"100%\" stop-color=\"" << color2_end << "\" stop-opacity=\"0%\" />"
             << "</linearGradient>";
       
       os << grad0.str() << nl;
