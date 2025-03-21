@@ -228,8 +228,8 @@ int main( int argc, char *argv[] )
 
 
                     {
-                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                        VTKWriter vtk( M, fs, get_basename(__FILE__) );
                         
                         if( r == 1 ) { 
                             vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );

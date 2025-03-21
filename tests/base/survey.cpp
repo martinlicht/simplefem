@@ -7,11 +7,15 @@
 
 #include "../../base/include.hpp"
 
-// using namespace std;
+// ============================================================================
+// This program surveys data on your C/C++ environment, 
+// such as data type sizes and floating-point flags.
+// ============================================================================
+
 
 int main( int argc, char *argv[] )
 {
-    printf("Survey of machine data (integral and floating-point)");
+    printf("Unit test: Survey of machine data (integral and floating-point)");
 
     /* output integer parameters */
 
@@ -110,5 +114,7 @@ int main( int argc, char *argv[] )
 
     
 
+    LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
+    
     return 0;
 }

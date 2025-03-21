@@ -188,8 +188,6 @@ int main( int argc, char *argv[] )
                 
                 
                 
-                // TODO(martin): update using conjugation 
-    
                 // auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
 
                 LOG << "... compose system matrices" << nl;
@@ -339,8 +337,8 @@ int main( int argc, char *argv[] )
                     
 
                     {
-                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                        VTKWriter vtk( M, fs, get_basename(__FILE__) );
 
                         {
                             const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r+1 );

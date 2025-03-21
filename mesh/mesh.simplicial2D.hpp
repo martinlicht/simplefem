@@ -241,12 +241,11 @@ class MeshSimplicial2D
             const FloatVector* triangle_blue  = nullptr
         ) const;
 
-        std::string outputLinearSVG( 
+        std::string outputInterpolatingSVG( 
             const FloatVector& triangle_red,
             const FloatVector& triangle_green,
             const FloatVector& triangle_blue, 
             Float stroke_width = 0.01,
-            const std::string& fill   = "red",
             const std::string& stroke = "blue"
         ) const;
 

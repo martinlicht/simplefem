@@ -169,7 +169,6 @@ int main( int argc, char *argv[] )
             
             auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
             
-            // TODO(martinlicht): develop preconditioners 
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
             auto PA = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
@@ -299,8 +298,8 @@ int main( int argc, char *argv[] )
 
 
             {
-                std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                VTKWriter vtk( M, fs, get_basename(__FILE__) );
 
                 {
                     const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r+1 );

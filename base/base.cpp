@@ -1,21 +1,295 @@
 
-#include <cstdio>
-#include <cstdarg>
+#include <cfloat>   // FLT_EVAL_METHOD
+#include <cstdio>   // print
+#include <cstdarg>  // variadic function macros
 #include <chrono>
-#include <cctype>
+#include <cctype>   // char is ... checks
 
 #include <limits>
 #include <string>
 #include <type_traits>
-#include <vector>
 
 #include "base.hpp"
-#include "constants.hpp"
+#include "logging.hpp"
 
-template class std::vector<char>;
-template class std::vector<int>;
-template class std::vector<std::size_t>;
-template class std::vector<Float>;
+
+
+
+
+#include <limits> // for std::float_round_style
+
+// For controlling the floating-point behavior
+#include <cfenv>
+#include <cfloat> // _controlfp_s on Windows 
+
+#if defined(__SSE__)
+#include <xmmintrin.h> // _MM_SET_FLUSH_ZERO_MODE
+#endif
+#if defined(__SSE3__)
+#include <pmmintrin.h> // _MM_SET_DENORMALS_ZERO_MODE
+#endif
+
+
+#if defined(_OPENMP)
+#include <omp.h>
+#endif // #if defined(_OPENMP)
+
+SystemSetup::SystemSetup() noexcept
+{
+    
+    #if defined(GIT_COMMIT_ID)
+    LOG << "---\tCurrent Git commit ID: " << GIT_COMMIT_ID << nl;
+    #endif
+
+    const time_t t = std::time(nullptr);
+    const tm zeit = *std::localtime(&t);
+    LOGPRINTF("---\t%d-%02d-%02d %02d:%02d:%02d\n", zeit.tm_year + 1900, zeit.tm_mon + 1, zeit.tm_mday, zeit.tm_hour, zeit.tm_min, zeit.tm_sec );
+    
+    LOGPRINTF("---\tCompiler version: %s\n", __VERSION__);
+
+    #ifdef _DEBUG
+    LOGPRINTF("---\tMSVC Debugging flags enabled.\n");
+    #else
+    LOGPRINTF("---\tMSVC Debugging flags not enabled.\n");
+    #endif
+
+    #ifdef NDEBUG
+    LOGPRINTF("---\tNDEBUG enabled.\n");
+    #else
+    LOGPRINTF("---\tNDEBUG not enabled.\n");
+    #endif
+
+    #ifdef __OPTIMIZE__
+    LOGPRINTF("---\tCompiler optimization level: %d\n", __OPTIMIZE__);
+    // Add more performance-related information here
+    #endif
+
+    #ifdef __unix__
+    LOGPRINTF("---\tOS: Unix\n");
+    #elif defined(_WIN32)
+    LOGPRINTF("---\tOS: Windows\n");
+    #else
+    #error "Unknown platform"
+    #endif
+
+
+    #if defined(_OPENMP)
+    
+    LOG << "---\tOpenMP Value                   : " << _OPENMP                                                                     << nl;
+    LOG << "---\tMaximum number of threads      : " << omp_get_max_threads()                                                       << nl;
+    LOG << "---\tMaximum active levels          : " << omp_get_max_active_levels()                                                 << nl;
+    LOG << "---\tThread limit                   : " << omp_get_thread_limit()                                                      << nl;
+    LOG << "---\tNumber of processors available : " << omp_get_num_procs()                                                         << nl;
+    LOG << "---\tDefault thread affinity        : " << ( omp_get_proc_bind() == omp_proc_bind_false ? "No affinity" : "Affinity" ) << nl;
+    LOG << "---\tmax num nested active parallel : " << omp_get_max_active_levels()                                                 << nl;
+    // omp_get_nested is deprecated
+    // LOG << "---\tNested parallelism supported:   " << ( omp_get_nested() ? "Yes" : "No" )                                         << nl;
+    LOG << "---\tMaximum number of places       : " << omp_get_num_places()                                                        << nl;
+    LOG << "---\tDynamic adjustment of the number of threads enabled: " << ( omp_get_dynamic() ? "Yes" : "No" ) << nl;
+    for( int p = 0; p < omp_get_num_places(); p++ ) {
+        LOG << "---\t\tMaximum number of processors per place: " << p << " - > " << omp_get_place_num_procs(p) << nl;
+    }
+    
+    // // provoke the spawning of the OpenMP threads with some parallel block
+    // #pragma omp parallel
+    // {
+    //     printf("<%d/%d>", omp_get_thread_num(), omp_get_num_threads() );
+    // }
+    // printf("\n");
+    
+    #else
+    LOG << "---\tOpenMP is not enabled.\n";
+    #endif
+
+    // #ifdef _OPENMP
+    // LOGPRINTF("OpenMP is enabled.\n");
+    // LOGPRINTF("Number of threads: %d\n", omp_get_max_threads());
+    // LOGPRINTF("Nested parallelism supported: %s\n", omp_get_nested() ? "Yes" : "No");
+    // LOGPRINTF("Dynamic adjustment of the number of threads enabled: %s\n", omp_get_dynamic() ? "Yes" : "No");
+    // LOGPRINTF("Number of processors available: %d\n", omp_get_num_procs());
+    // LOGPRINTF("Default thread affinity: %s\n", omp_get_proc_bind() == omp_proc_bind_false ? "No affinity" : "Affinity");
+    // #else
+    // LOGPRINTF("OpenMP is not enabled.\n");
+    // #endif
+
+    
+
+
+    LOG << "---\tFLT_EVAL_METHOD: " << FLT_EVAL_METHOD << space;
+
+    switch (FLT_EVAL_METHOD) {
+        case -1:
+            LOG << "The default precision is not known." << nl;
+            break;
+        case 0:
+            LOG << "All operations and constants evaluate in the range and precision of the type used." << nl;
+            break;
+        case 1:
+            LOG << "All operations and constants evaluate in the range and precision of double." << nl;
+            break;
+        case 2:
+            LOG << "All operations and constants evaluate in the range and precision of long double." << nl;
+            break;
+        default:
+            if (FLT_EVAL_METHOD < 0) {
+                LOG << "Implementation-defined behavior." << nl;
+            } else {
+                LOG << "Unknown evaluation mode." << nl;
+            }
+            break;
+    }
+
+
+    LOG << "---\tFLT_ROUNDS: " << FLT_ROUNDS << space;
+
+    switch (FLT_ROUNDS) {
+        case std::round_indeterminate:
+            LOG << "Rounding style cannot be determined." << nl;
+            break;
+        case std::round_toward_zero:
+            LOG << "Rounding toward zero." << nl;
+            break;
+        case std::round_to_nearest:
+            LOG << "Rounding toward nearest representable value." << nl;
+            break;
+        case std::round_toward_infinity:
+            LOG << "Rounding toward positive infinity." << nl;
+            break;
+        case std::round_toward_neg_infinity:
+            LOG << "Rounding toward negative infinity." << nl;
+            break;
+        default:
+            LOG << "Unknown rounding style." << nl;
+            break;
+    }
+
+
+    #if __cplusplus >= 201703L
+    LOG << "---\tFLT_HAS_SUBNORM: " << FLT_HAS_SUBNORM << space;
+    switch (FLT_HAS_SUBNORM) {
+        case -1:
+            LOG << "Support for subnormal numbers in float is indeterminable." << nl;
+            break;
+        case 0:
+            LOG << "Float type does not support subnormal numbers." << nl;
+            break;
+        case 1:
+            LOG << "Float type supports subnormal numbers." << nl;
+            break;
+        default:
+            LOG << "Unknown value for FLT_HAS_SUBNORM." << nl;
+            break;
+    }
+
+    LOG << "---\tDBL_HAS_SUBNORM: " << DBL_HAS_SUBNORM << space;
+    switch (DBL_HAS_SUBNORM) {
+        case -1:
+            LOG << "Support for subnormal numbers in double is indeterminable." << nl;
+            break;
+        case 0:
+            LOG << "Double type does not support subnormal numbers." << nl;
+            break;
+        case 1:
+            LOG << "Double type supports subnormal numbers." << nl;
+            break;
+        default:
+            LOG << "Unknown value for DBL_HAS_SUBNORM." << nl;
+            break;
+    }
+
+    LOG << "---\tLDBL_HAS_SUBNORM: " << LDBL_HAS_SUBNORM << space;
+    switch (LDBL_HAS_SUBNORM) {
+        case -1:
+            LOG << "Support for subnormal numbers in long double is indeterminable." << nl;
+            break;
+        case 0:
+            LOG << "Long double type does not support subnormal numbers." << nl;
+            break;
+        case 1:
+            LOG << "Long double type supports subnormal numbers." << nl;
+            break;
+        default:
+            LOG << "Unknown value for LDBL_HAS_SUBNORM." << nl;
+            break;
+    }
+    #endif 
+
+    
+    #if true and defined(_WIN32)
+    {
+        // Query the current floating-point control word
+        unsigned int currentControlWord = _controlfp(0, 0);
+        
+        // Check precision control bits
+        switch(currentControlWord & _MCW_PC) {
+            case _PC_24: 
+                LOG << "---\tPrecision control: 24-bit." << nl;
+                break;
+            case _PC_53:
+                LOG << "---\tPrecision control: 53-bit." << nl;
+                break;
+            case _PC_64:
+                LOG << "---\tPrecision control: 64-bit." << nl;
+                break;
+            default:
+                LOG << "---\tPrecision control: unknown." << nl;
+                break;
+        }
+    }    
+    #endif
+
+
+    // The following settings enable the flushing of denormals, both operands and results, to zero
+    // 
+    // If OpenMP is active, then we execute it in a parallel region, 
+    // so that each thread sets the flushing mode 
+    //  1. We assume that the main thread participates in the parallel regions, and that
+    //  2. the threads are persistent between parallel regions
+    // If OpenMP is active, we notify on the main thread
+    // 
+    // Generally, we use the floating-point intrinsics headers. 
+    // On Windows, however, we use the native headers
+
+    #if defined(_OPENMP)
+    #pragma omp parallel
+    {
+        if( omp_get_thread_num() == 0 )
+    #endif    
+
+    #if defined(_WIN32)
+        LOGPRINTF("---\tFlushing subnormal numbers\n");
+        _controlfp_s( nullptr, _DN_FLUSH, _MCW_DN );        // Use the native Windows interface
+    #elif defined(__SSE__)
+        LOGPRINTF("---\tFlushing subnormal numbers\n");     // xmmintrin.h
+        _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+        #ifdef __SSE3__
+            _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON); // pmmintrin.h
+        #endif
+    #endif
+
+    #if defined(_OPENMP)
+        (void)0; }
+    #endif    
+
+}
+
+SystemSetup::~SystemSetup() noexcept
+{
+    #if defined(_OPENMP)
+    // LOG << "---\tSystem Reporter: finished\n";
+    #endif
+}   
+
+const SystemSetup system_setup;
+
+
+
+
+
+
+
+
+
 
 
 // Since all floating-point literals throughout are double unless marked otherwise 
@@ -23,13 +297,6 @@ template class std::vector<Float>;
 // 
 // static_assert( Float(std::numeric_limits<double>::max()) == std::numeric_limits<double>::max(), "Float must be at least double" );
 // static_assert( sizeof(Float) >= sizeof(double), "Float must be at least double" );
-
-
-
-
-
-
-
 
 int count_white_space( const std::string& str ) 
 { 
@@ -230,8 +497,6 @@ std::string printf_into_string( const char* formatstring, ... )
 
 
 
-
-// TODO(martinlicht): move to utility 
 
 static_assert( std::is_integral< decltype( std::chrono::time_point_cast< std::chrono::milliseconds>( std::chrono::steady_clock::now() ).time_since_epoch().count() ) >::value , "Time measurement must be integral" );
 

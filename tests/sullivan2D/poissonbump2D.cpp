@@ -143,8 +143,8 @@ int main( int argc, char *argv[] )
             stiffness.sortentries();
             auto stiffness_csr = MatrixCSR( stiffness );
             
-            stiffness.save_graphics( ( getbasename(__FILE__) + "_stiffness.bmp" ).c_str() );
-            stiffness_csr.save_graphics( ( getbasename(__FILE__) + "_stiffness_csr.bmp" ).c_str() );
+            stiffness.save_graphics( ( get_basename(__FILE__) + "_stiffness.bmp" ).c_str() );
+            stiffness_csr.save_graphics( ( get_basename(__FILE__) + "_stiffness_csr.bmp" ).c_str() );
 
             {
 
@@ -175,7 +175,7 @@ int main( int argc, char *argv[] )
                     LOG << "Average value of diagonal preconditioner: " << stiffness_invprecon.getDiagonal().average() << nl;
                     
                     // auto stiffness_blockprecon = cluster_inversion( stiffness_csr, MatrixCSR_disjoint_clusters( stiffness_csr, 0 ) );
-                    // stiffness_blockprecon.save_graphics( ( getbasename(__FILE__) + "_stiffness_blockprecon.bmp" ).c_str() );
+                    // stiffness_blockprecon.save_graphics( ( get_basename(__FILE__) + "_stiffness_blockprecon.bmp" ).c_str() );
                     // SparseMatrix preconblock = stiffness_blockprecon; preconblock.scale(-1);
                     // for( int i = 0; i < preconblock.getdimout(); i++ ) preconblock.appendentry({i,i,1.});
                     // preconblock.sortandcompressentries();
@@ -264,8 +264,8 @@ int main( int argc, char *argv[] )
 
                 {
                     
-                    std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                    VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                    std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                    VTKWriter vtk( M, fs, get_basename(__FILE__) );
                     
                     
                     if( r == 1) {

@@ -77,11 +77,11 @@ int signPermutation( const IndexMap& im );
  * 
  * If none of the two ranges are empty, the output is the obvious one. 
  * The cardinality of the index mappings is 
- *      [ size of output range ] \choose [ size of input range ]
+ *      [ size of output range ] choose [ size of input range ]
  * 
  * NOTE:
- * We always have ( n \choose 0 ) = 1 regardless of (non-negative) n.
- * We always have ( n \choose k ) = 0 if k > n and n non-negative.
+ * We always have ( n choose 0 ) = 1 regardless of (non-negative) n.
+ * We always have ( n choose k ) = 0 if k > n and n non-negative.
  * 
  * 
  * 

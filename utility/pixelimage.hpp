@@ -12,6 +12,12 @@
 
 #include "../base/include.hpp"
 
+
+// ============================================================================
+// Utility functions for image file reading/writing
+// ============================================================================
+
+
 enum class ColorChannel : uint8_t { red = 0, green = 1, blue = 2 };
 
 struct PixelColor
@@ -25,9 +31,9 @@ struct PixelColor
             case ColorChannel::red:   return red;
             case ColorChannel::green: return green;
             case ColorChannel::blue:  return blue;
-            default: unreachable();
+            default: impossible();
         }
-        unreachable();
+        impossible();
     }
 };
 
@@ -67,7 +73,7 @@ class PixelImage final
             return data.at( row * width + col );
         }
 
-        auto get_interpolated_function() const {
+        auto get_piecewise_constant_colorfunction() const {
             return [&]( double x, double y, ColorChannel cc ) -> double
             {
                 const PixelImage& pixelimage = *this;
@@ -104,17 +110,17 @@ class PixelImage final
         }
 
         auto get_interpolated_red() const {
-            auto rgb = get_interpolated_function();
+            auto rgb = get_piecewise_constant_colorfunction();
             return [rgb]( double x, double y ) -> double { return rgb(x,y,ColorChannel::red); };
         }
         
         auto get_interpolated_green() const {
-            auto rgb = get_interpolated_function();
+            auto rgb = get_piecewise_constant_colorfunction();
             return [rgb]( double x, double y ) -> double { return rgb(x,y,ColorChannel::green); };
         }
 
         auto get_interpolated_blue() const {
-            auto rgb = get_interpolated_function();
+            auto rgb = get_piecewise_constant_colorfunction();
             return [rgb]( double x, double y ) -> double { return rgb(x,y,ColorChannel::blue); };
         }
         

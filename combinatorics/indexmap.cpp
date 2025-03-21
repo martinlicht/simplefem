@@ -272,7 +272,7 @@ int IndexMap::get_preimage_of( int value ) const
     for( int i : src )
         if( at(i) == value )
             return i;
-    unreachable();
+    impossible();
 } 
         
 bool IndexMap::is_comparable_with( const IndexMap& im ) const

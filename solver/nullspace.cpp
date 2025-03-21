@@ -16,7 +16,7 @@ std::vector<FloatVector> computeNullspace(
     //
     const Float mass_threshold_for_small_residual, 
     const Float mass_threshold_for_small_vectors,
-    std::function<void(FloatVector&)> purifier
+    const std::function<void(FloatVector&)>& purifier
 ) { 
 
     const int max_number_of_purifications = 2;

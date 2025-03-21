@@ -6,11 +6,9 @@
 
 
 
-/////////////////////////////////////////////////
-//                                             //
-//              BUMP FUNCTIONS                 //
-//                                             //
-/////////////////////////////////////////////////
+// ============================================================================
+// Bump functions
+// ============================================================================
 
 Float bumpfunction( Float x );
 
@@ -33,28 +31,22 @@ Float sinpy( Float x );
 Float cospy( Float x );
 
 
-
-
-
-
-/////////////////////////////////////////////////
-//                                             //
-//       CARTESIAN AND POLAR COORDINATES       //
-//                                             //
-/////////////////////////////////////////////////
+// ============================================================================
+// Cartesian and polar coordinates
+// ============================================================================
 
 void cartesian_to_polar_coordinates2D( const Float& x, const Float& y, Float& radius, Float& angle );
 
 void polar_to_cartesian_coordinates2D( const Float& radius, const Float& angle, Float& x, Float& y );
 
 
+// ============================================================================
+// Volumes of unit ball, surface of unit sphere
+// ============================================================================
 
 Float unitBallVolume( int n );
 
-Float unitSphereArea(int n);
-
-
-
+Float unitSphereArea( int n );
 
 
 #endif

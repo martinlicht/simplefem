@@ -198,8 +198,6 @@ int main( int argc, char *argv[] )
                 
                 LOG << "... compose system matrices" << nl;
 
-                // TODO(martin): update using conjugation 
-    
                 auto A  = Conjugation( MatrixCSR(scalar_massmatrix), MatrixCSR(scalar_incmatrix) );
 
                 auto Bt = MatrixCSR(scalar_incmatrix_t) & MatrixCSR(scalar_diffmatrix_t) & MatrixCSR(vector_elevationmatrix_t) & MatrixCSR(vector_massmatrix) & MatrixCSR(vector_incmatrix); // upper right
@@ -347,8 +345,8 @@ int main( int argc, char *argv[] )
                     
 
                     {
-                        std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                        VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                        std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                        VTKWriter vtk( M, fs, get_basename(__FILE__) );
 
                         {
                             const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );

@@ -187,7 +187,7 @@ SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r,
             value = ( s == list_of_supersimplices[0] ) ? 1. : 0.;
 
         } else {
-            unreachable();
+            impossible();
         }
 
         int index_of_entry = entries_offset[d] // sum_int( d-1, [ &lists_of_sullivan_indices, n ](int c) -> int { return binomial_integer(n+1,c+1) * lists_of_sullivan_indices[c].size(); } ) * num_volumes

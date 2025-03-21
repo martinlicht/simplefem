@@ -261,7 +261,7 @@ PixelColor rgb_from_scale(
 
     // Introduce the color scale 
 
-    struct thresholded_color
+    struct ThresholdedColor
     {
         Float threshold;
         Float red;
@@ -270,7 +270,7 @@ PixelColor rgb_from_scale(
     };
     
     static const int N = 6;
-    static const thresholded_color colors[N] = { 
+    static const ThresholdedColor colors[N] = { 
         { -1.0, 0.0, 0.0, 1.0 }, // Blue
         { -0.5, 0.0, 1.0, 1.0 }, // Cyan
         {  0.0, 0.0, 1.0, 0.0 }, // Green
@@ -284,7 +284,7 @@ PixelColor rgb_from_scale(
 
     // Find which segment of the color scale t falls into
 
-    PixelColor ret; 
+    // PixelColor ret; 
 
     for( int i = 0; i < N - 1; i++ ) 
     {
@@ -300,18 +300,23 @@ PixelColor rgb_from_scale(
             Float G = colors[i].green + ratio * ( colors[i + 1].green - colors[i].green );
             Float B = colors[i].blue  + ratio * ( colors[i + 1].blue  - colors[i].blue  );
 
-            // Convert float/double color to 8-bit
-            ret.red   = (unsigned char)(R * 255);
-            ret.green = (unsigned char)(G * 255);
-            ret.blue  = (unsigned char)(B * 255);
-            return ret;
+            // // Convert float/double color to 8-bit
+            // ret.red   = (unsigned char)(R * 255);
+            // ret.green = (unsigned char)(G * 255);
+            // ret.blue  = (unsigned char)(B * 255);
+            // return ret;
+            return PixelColor { (unsigned char)(R * 255), (unsigned char)(G * 255), (unsigned char)(B * 255) };
         }
     }
 
-    // If for some reason t is 1.0 (or very close), then assign the last color.
-    ret.red   = (unsigned char)( colors[N - 1].red   * 255 );
-    ret.green = (unsigned char)( colors[N - 1].green * 255 );
-    ret.blue  = (unsigned char)( colors[N - 1].blue  * 255 );
-
-    return ret;
+    // // If for some reason t is 1.0 (or very close), then assign the last color.
+    // ret.red   = (unsigned char)( colors[N - 1].red   * 255 );
+    // ret.green = (unsigned char)( colors[N - 1].green * 255 );
+    // ret.blue  = (unsigned char)( colors[N - 1].blue  * 255 );
+    // return ret;
+    return PixelColor { 
+        (unsigned char)( colors[N - 1].red   * 255 ), 
+        (unsigned char)( colors[N - 1].green * 255 ), 
+        (unsigned char)( colors[N - 1].blue  * 255 ) 
+    };
 }

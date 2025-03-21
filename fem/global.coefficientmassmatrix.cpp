@@ -88,7 +88,7 @@ SparseMatrix FEECBrokenCoefficientMassMatrix( const Mesh& mesh, int n, int k, in
             const DenseMatrix matrix_at_point = generator( lpeucl.getcolumn(p) );
 
             const auto formMM = Transpose(extGM) * matrix_at_point * extGM;
-            // const auto formMM = MatrixTripleMult( matrix_at_point, extGM );
+            // const auto formMM = Conjugation( matrix_at_point, extGM );
 
             // DenseMatrix GPM = SubdeterminantMatrix( mesh.getGradientProductMatrix( n, s ), k );
             // assert( ( GPM - formMM ).is_numerically_small() );

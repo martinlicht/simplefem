@@ -4,11 +4,14 @@
 #include "../../base/include.hpp"
 
 
-// using namespace std;
+// ============================================================================
+// This program checks whether factorials and binomials work as intended, 
+// both integer and floating-point implementations.
+// ============================================================================
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test and Benchmark for Factorials and Binomials" << nl;
+    LOG << "Unit Test: Factorials and Binomials" << nl;
     
     /* survey factorials */
 
@@ -147,5 +150,6 @@ int main( int argc, char *argv[] )
     }
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
+    
     return 0;
 }

@@ -4,6 +4,11 @@
 
 #include "../base/include.hpp"
 
+
+// ============================================================================
+// Utility functions for probability distributions
+// ============================================================================
+
 void seed_random_integer();
 
 unsigned int random_integer();
@@ -14,7 +19,7 @@ unsigned int flip_coin( Float prob_zero = 0.5 );
 
 Float random_uniform();
 
-Float gaussrand();
+Float gaussian_variable();
 
 
 

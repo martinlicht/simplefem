@@ -172,7 +172,7 @@ DenseMatrix weight_vector(const FloatVector& vec)
     // auto jac = jacobian(vec);
     // auto det = Determinant(jac);
     // auto invjac = Inverse( jac );
-    // auto ret = MatrixTripleMult( parametric_A(vec), invjac );
+    // auto ret = Conjugation( parametric_A(vec), invjac );
     // ret *= absolute(det);
     // TransposeSquareInSitu(ret);
     // return ret;
@@ -475,8 +475,8 @@ int main( int argc, char *argv[] )
                 
                 if( true and r == 1 )
                 {
-                    std::fstream fs( experimentfile(getbasename(__FILE__)), std::fstream::out );
-                    VTKWriter vtk( M, fs, getbasename(__FILE__) );
+                    std::fstream fs( get_available_filename(get_basename(__FILE__)), std::fstream::out );
+                    VTKWriter vtk( M, fs, get_basename(__FILE__) );
                     
                     vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );
                     fs.close();

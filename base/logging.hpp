@@ -5,23 +5,34 @@
 #include "safedouble.hpp"
 
 
+// ============================================================================
+// Provides a simple logging stream so that we can write 
+// 
+//     LOG << "Value = " << value << nl;
+// 
+// If the variable `USE_PRIMITIVE_LOGGING` is defined, 
+// then we default to the C++ streams 
+// Otherwise, we use the following custom Logger class
+// 
+// The custom logger relies on a global state, just like the std C++ streams 
+// ============================================================================
+
+
+
+
+// ============================================================================
+// Unless we disable custom logging, define the logging class
+// ============================================================================
 
 #ifndef USE_PRIMITIVE_LOGGING
 
 #include <cstdio>
 
-// #include <ostream>
 #include <string>
-// #include <sstream>
 
-// #include "logger.hpp"
-// #include "prefixbuffer.hpp"
+// Global boolean variable to signal whether the last write finished with a fresh line 
+// extern bool log_has_a_fresh_line;
 
-extern bool log_has_a_fresh_line;
-
-
-// This variable has an instance in every translation unit 
-// It is not global for the entire program 
 class Logger final
 {
     private:
@@ -33,7 +44,8 @@ class Logger final
         std::string filename;
         int linenumber;
     
-        // static bool log_has_a_fresh_line = true;
+        // Class-scope boolean variable to signal whether the last write finished with a fresh line 
+        static bool log_has_a_fresh_line;
 
         // static const bool print_file_and_line = false;
         
@@ -53,6 +65,11 @@ class Logger final
         // filename( filename ),
         // linenumber( linenumber )
         // {}
+        Logger(const Logger&)            = delete;
+        Logger& operator=(const Logger&) = delete;
+        Logger(Logger&&)                 noexcept = delete;
+        Logger& operator=(Logger&&)      noexcept = delete;
+        ~Logger() noexcept;
 
 
         Logger& operator<<( char input ) {
@@ -148,79 +165,7 @@ class Logger final
             return *this;
         }
 
-        ~Logger() noexcept;
-
 };
-
-
-
-
-
-
-// class Logger2
-// {
-//     private:
-//         std::ostream& internalstream;
-//         std::string prefix;
-//         bool pad_newline_if_there_is_none;
-//         std::string filename;
-//         int linenumber;
-    
-//         bool print_file_and_line = false;
-//         std::ostringstream internalbuffer;
-        
-//     public:
-    
-//         explicit inline Logger2( 
-//             std::ostream& os,
-//             const std::string& prefix = "",
-//             const bool do_newline = false,
-//             const char* filename = "UNKNOWN",
-//             const int linenumber = -1
-//         )
-//         : internalstream( os ), prefix( prefix ), pad_newline_if_there_is_none( do_newline )
-//         {}
-
-//         inline ~Logger2()
-//         {
-            
-//             const auto str = internalbuffer.str();
-//             ................. internalstream << str;
-            
-//         }
-
-//         template<class T>
-//         Logger& operator<<( const T& t )
-//         {
-//             internalbuffer << t;
-//             return *this;
-//         }
-        
-//         Logger& operator<<( std::ostream& (*const f)(std::ostream&) )
-//         {
-//             f( internalbuffer );
-//             return *this;
-//         }
-        
-// };
-
-
-
-
-
-// template< typename L, typename... Params >
-// void printf_into_logger( L logger, const char* formatstring, Params... args )
-// {
-//     logger << printf_into_string( formatstring, args... );
-    
-//     // std::size_t length = std::snprintf(nullptr, 0, formatstring, args... ) + 1;
-//     // char* str = new char[length];
-//     // (void_discard)std::snprintf( str, length, formatstring, args... );
-    
-//     // logger << str;
-
-//     // delete[] str;
-// }
 
 #endif // USE_PRIMITIVE_LOGGING
 
@@ -229,8 +174,13 @@ class Logger final
 
 
 
+// ============================================================================
+// Define macros LOG and ERR for streaming
+// ============================================================================
+
 #ifndef USE_PRIMITIVE_LOGGING
-// returns a temporary logger to write stuff to, and line breaks on destruction 
+
+// Returns a temporary logger to write stuff to, and line breaks on destruction 
 // Example usage:
 //     LOG << "This is a short message with a number: " << 5;      
 //     ERR << "This is an error message.";      
@@ -249,12 +199,13 @@ class Logger final
 
 
 
-// utilize the printf template for stream-like objects 
-
+// ============================================================================
+// Define printf-like macros for logging
+// ============================================================================
 
 #if __cplusplus < 202002L
-#define LOGPRINTF(...) printf_into_stream( LOG, __VA_ARGS__ );
-#define ERRPRINTF(...) printf_into_stream( ERR, __VA_ARGS__ );
+#define LOGPRINTF(...) printf_into_stream( LOG, __VA_ARGS__ )
+#define ERRPRINTF(...) printf_into_stream( ERR, __VA_ARGS__ )
 #else
 #define LOGPRINTF( formatstring, ...) printf_into_stream( LOG, formatstring __VA_OPT__(,) __VA_ARGS__ );
 #define ERRPRINTF( formatstring, ...) printf_into_stream( ERR, formatstring __VA_OPT__(,) __VA_ARGS__ );
@@ -262,12 +213,14 @@ class Logger final
 
 
 
-// treat the following macros as PRINT 'str' commands
-// Example usage:
+// ============================================================================
+// The following macros work as simple PRINT "str" commands
+// 
 //     NOTE "This is a note"
 //     WARN "This is a warning"
 //     ALERT "This is an alert"
 //     ERROR "This is an error"
+// ============================================================================
 
 #ifndef USE_PRIMITIVE_LOGGING
 
@@ -290,9 +243,12 @@ class Logger final
 #endif // USE_PRIMITIVE_LOGGING
 
 
-// emit the current file and line number into the log stream 
-// Example usage:
-//     PING;
+
+
+// ============================================================================
+// Emit the current file and line number into the log stream.
+// Use this macro like a usual statement: PING;
+// ============================================================================
 
 #define PING LOG << "PING: " << __FILE__ << ":" << __LINE__ << nl;
 
@@ -300,75 +256,5 @@ class Logger final
 
 
 
-
-
-////////////////////////////////////////////
-// 
-//      logging via variadic templates
-// 
-////////////////////////////////////////////
-
-// inline void lg(){}
-// 
-// // template<typename T>
-// // inline void lg( T arg )
-// // {
-// //     LOG << arg << nl;
-// // }
-// 
-// template<typename T, typename... Ts>
-// inline void lg( const T arg, const Ts... args )
-// {
-//     LOG << arg << nl;
-//     lg( args... );
-// }
-
-
-
-
-
-
-
-////////////////////////////////////////////
-// 
-//      OMP reporter
-// 
-////////////////////////////////////////////
-
-// #ifdef _OPENMP
-
-struct System_Reporter final
-{
-    System_Reporter() noexcept;
-    ~System_Reporter() noexcept;
-    static void output();
-};
-
-extern const System_Reporter system_reporter;
-
-// #endif // _OPENMP
-
-
-
-
-
-
-
-
-// LEGACY DEFINITIONS:
-
-// inline void ping() { std::clog << "ping" << '\n'; }
-// inline void pong() { std::clog << "pong" << '\n'; }
-// inline void peng() { std::clog << "peng" << '\n'; }
-// inline void pang() { std::clog << "pang" << '\n'; }
-// inline void pung() { std::clog << "pung" << '\n'; }
-// 
-// 
-// static std::ostream* lognotice = &std::clog;
-// static std::ostream* loginfo   = &std::clog;
-// 
-// static std::ostream* logwarn   = &std::cerr;
-// static std::ostream* logalert  = &std::cerr;
-// static std::ostream* logerr    = &std::cerr;
 
 #endif // INCLUDEGUARD_LOGGING_HPP

@@ -1,16 +1,22 @@
 
 
 
+#include <cstdlib>
 #include <cstdio>
 
 #include "../../base/include.hpp"
 
-// #include <cassert>
-// #include <cstdlib>
-// #include <cctype>
-// #include <errno.h>
-// #include <climits>
-// #include <limits>
+// ============================================================================
+// Tests the conversion from C-Strings to integers
+// 
+// This is functional replacement for the C library function `strtol` which 
+// produces a `long int` output. The google style guide speaks out against 
+// using `long`. Hence this replacement, which produces an `int`. Functionally,
+// this function could be called `strtoi`. 
+// 
+// See also: https://en.cppreference.com/w/c/string/byte/strtol
+// ============================================================================
+
 
 int main( int argc, char *argv[] ) 
 {
@@ -170,5 +176,6 @@ int main( int argc, char *argv[] )
     }
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
+    
     return 0;
 }

@@ -17,36 +17,42 @@ int main( int argc, char *argv[] )
         unsigned int max_value =  get_random_integer_modulo();
         
         // Ensure ` get_random_integer_modulo()` returns a non-zero maximum
-        
-        // Ensure `random_integer` returns values within a reasonable range
-        assert( max_value > 0 && " get_random_integer_modulo() should be greater than 0" );
+        assert( max_value > 0 );
 
+        // Ensure `random_integer` returns values within a reasonable range        
         for( int t = 0; t < 10; t++ ) {
             unsigned int value = random_integer();
             unsigned int max   =  get_random_integer_modulo();
             assert( max == max_value );
-            assert( value <= max_value && "random_integer() out of range" );
+            assert( value <= max_value );
         }
-        
     }
 
     {
         LOG << "Test coin flip...\n";
         seed_random_integer();
         
-        // Test flipping a coin with a 50% probability
         unsigned int result = flip_coin();
-        assert( (result == 0 || result == 1) && "flip_coin() must return 0 or 1" );
 
-        // Test flipping a coin with a 100% probability of zero
-        result = flip_coin(1.0);
-        assert( result == 0 && "flip_coin(1.0) should always return 0" );
+        // Test flipping a coin with a 50% probability
+        
+        for( int i = 0; i < 100; i++ ) {
+            
+            // The result must be either 0 or 1
+            result = flip_coin();
+            assert( result == 0 || result == 1 );
 
-        // Test flipping a coin with a 0% probability of zero
-        result = flip_coin(0.0);
-        assert( result == 1 && "flip_coin(0.0) should always return 1" );
+            // Test flipping a coin with a 100% probability of zero
+            result = flip_coin(1.0);
+            assert( result == 0 );
 
-        // test whether coin is fair
+            // Test flipping a coin with a 0% probability of zero
+            result = flip_coin(0.0);
+            assert( result == 1 );
+
+        }
+
+        // test whether the coin is fair
         int count[2] = { 0, 0 };
         const int M = 1 << 10;
         for( int t = 0; t < M; t++ )
@@ -78,25 +84,23 @@ int main( int argc, char *argv[] )
             Float value = random_uniform();
             assert( value >= 0.0 && value <= 1.0 && "random_uniform() must return values in [0, 1]" );
         }
-        
     }
 
     {
-        LOG << "test_gaussrand...\n";
+        LOG << "test_gaussian_variable...\n";
         seed_random_integer();
         
         // Generate a random Gaussian number
         for( int t = 0; t < 1000; t++ )
         {
-            Float value = gaussrand();
+            Float value = gaussian_variable();
 
             const Float TOLERANCE = 1e+6;
 
-            // Basic sanity check (this doesn't verify the distribution, but it's a start)
-            assert( value == value && "gaussrand() should not return NaN" ); // Ensure no NaN
-            assert( std::abs(value) < TOLERANCE && "gaussrand() value too extreme" );
+            // Basic sanity check (not verifying the distribution but it is a start)
+            assert( value == value && "gaussian_variable() should not return NaN" ); // Ensure no NaN
+            assert( std::abs(value) < TOLERANCE && "gaussian_variable() value too extreme" );
         }
-        
     }
         
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;

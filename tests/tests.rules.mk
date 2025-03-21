@@ -187,7 +187,14 @@ $(context).silent_run: $($(context).silent_runs)
 $($(context).silent_runs): %.silent_run : %.$(ending)
 	./$< > /dev/null 
 
-.PHONY: run silent_run $(context).run $(context).silent_run $($(context).runs) $($(context).silent_runs)
+$(context).valgrind_runs := $(patsubst %.cpp,%.valgrind_run,$($(context).sources))
+
+valgrind_run: $(context).valgrind_run
+$(context).valgrind_run: $($(context).valgrind_runs)
+$($(context).valgrind_runs): %.valgrind_run : %.$(ending)
+	valgrind ./$< 
+
+.PHONY: run $(context).run $($(context).runs) silent_run $(context).silent_run $($(context).silent_runs) valgrind_run $(context).valgrind_run $($(context).valgrind_runs) 
 
 # # 2> /dev/null
 

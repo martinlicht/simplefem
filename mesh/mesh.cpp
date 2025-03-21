@@ -94,6 +94,8 @@ void Mesh::check() const
   assert( innerdimension >= 0 );
   assert( outerdimension >= 0 );
   assert( outerdimension == coordinates.getdimension() );
+
+  // TODO(martinlicht): implement general checks at this level.
   
   // the vertices and volumes must be counted 
   // assert( has_dimension_counted( innerdimension ) );
@@ -109,10 +111,6 @@ void Mesh::check() const
      * - morphism property of inclusion 
      *   
      */
-  
-  // TODO(martinlicht): Implement 
-  
-  // TODO(martinlicht): Develop indexing rules 
   
 }
 
@@ -219,7 +217,7 @@ int Mesh::get_opposite_subsimplex_index( int sup, int sub, int cellsup, int loca
         if( alive )
           return opposite_index;
     }
-    unreachable();
+    impossible();
 }
 
 

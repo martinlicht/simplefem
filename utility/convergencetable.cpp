@@ -577,7 +577,8 @@ ConvergenceTable& ConvergenceTable::operator<<( double entry )
 ConvergenceTable& ConvergenceTable::operator<<( long double entry )
 {
     ConvergenceTable& contable = *this;
-    contable.insert_numerical_entry( (EntryType)(double)(safedouble)entry ); // TODO(martinlicht) : kind of pointless, in need of a better solution
+    contable.insert_numerical_entry( (EntryType)(double)(safedouble)entry ); 
+    // TODO(martinlicht): here so that `long double` does not get cast to `char`
     return contable;
 }
 

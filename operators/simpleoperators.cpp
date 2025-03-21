@@ -88,7 +88,7 @@ std::string ZeroOperator::text() const
     return "Zero Operator " + std::to_string(getdimout()) + "x" + std::to_string(getdimin());
 }
 
-void ZeroOperator::apply( FloatVector& dest, const FloatVector& src, Float s ) const 
+void ZeroOperator::apply( FloatVector& dest, const FloatVector& src, Float s UNUSED ) const 
 {
     check();
     src.check();

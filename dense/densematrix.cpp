@@ -532,7 +532,7 @@ void DenseMatrix::random_matrix()
     check();
     for( int r = 0; r < getdimout(); r++ )
     for( int c = 0; c < getdimin(); c++ )
-        (*this)(r,c) = gaussrand();
+        (*this)(r,c) = gaussian_variable();
 }
 
 void DenseMatrix::random_integer_matrix( int min, int max )
@@ -1308,7 +1308,7 @@ DenseMatrix MatrixMult( const DenseMatrix& left, const DenseMatrix& right )
 }
 
 
-DenseMatrix MatrixTripleMult( const DenseMatrix& A, const DenseMatrix& B )
+DenseMatrix Conjugation( const DenseMatrix& A, const DenseMatrix& B )
 {
     A.check();
     B.check();
@@ -1382,6 +1382,6 @@ Float HilbertDeterminant(int n) {
     
     // LOG << "H1: " << 1./(double)detinv << '\n';
     // The determinant is c_n / denominator
-    return (Float)1./detinv;
+    return 1./static_cast<Float>(detinv);
 }
 
