@@ -117,12 +117,12 @@ int main( int argc, char *argv[] )
 
     for( int l = l_min; l <= l_max; l++ ){
         
-        LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
+        LOG << "Level: " << l_min << " <= " << l << " <= " << l_max << nl;
         
         for( int r      = r_min; r      <=      r_max; r++      ) 
         {
             
-            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+            LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
             
             LOG << "assemble mass matrices..." << nl;
             

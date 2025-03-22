@@ -22,7 +22,7 @@ SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r, int l, 
 
 SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r, int l, int s, const FloatVector& field );
 
-SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r );
+SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r );
 
 FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r );
 
@@ -30,7 +30,7 @@ FloatVector FEECScalarIntegral( const Mesh& mesh, int n, int r );
 
 DenseMatrix EuclideanHodgeStar( int n, int k );
 
-SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r );
+SparseMatrix FEECBrokenHodgeStarMatrix_Alternative( const Mesh& mesh, int n, int k, int r );
 
 
 

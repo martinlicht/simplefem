@@ -454,35 +454,45 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int form_k, int pol
 
 
 
+// =============================================================================
+// Hodge Star Matrix (exported)
+// =============================================================================
 
-SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
+SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r )
 {
     
     assert( r >= 0 );
     assert( n >= 0 && n <= mesh.getinnerdimension() );
     assert( k >= 0 && k <= n );
     
-    
+    /* 0. Prepare the auxiliary data */
+
     const int num_simplices = mesh.count_simplices( n );
 
+    // input k forms 
     auto sigmas_input  = generateSigmas( IndexRange(1,k  ), IndexRange(0,n) );
     
+    // test k forms, we only use those which do not start at 0
     auto sigmas_test   = generateSigmas( IndexRange(1,k  ), IndexRange(0,n) );
-    auto applejack_test = std::remove_if( sigmas_test.begin(), sigmas_test.end(),
-                    [k](IndexMap im) -> bool { assert( im.is_strictly_ascending() ); return   k != 0 and im[1] == 0; }
-    );
-    sigmas_test.erase( applejack_test, sigmas_test.end() );
+    {
+        auto sigma_test_startnonzero = std::remove_if( sigmas_test.begin(), sigmas_test.end(),
+                        [k](IndexMap im) -> bool { assert( im.is_strictly_ascending() ); return   k != 0 and im[1] == 0; }
+        );
+        sigmas_test.erase( sigma_test_startnonzero, sigmas_test.end() );
+    }
 
+    // output n-k forms 
     auto sigmas_output = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
     
+    // actual n-k forms for output, we only use those which do not start at 0
     auto sigmas_hodge  = generateSigmas( IndexRange(1,n-k), IndexRange(0,n) );
-    auto applejack_hodge = std::remove_if( sigmas_hodge.begin(), sigmas_hodge.end(),
-                    [n,k](IndexMap im) -> bool { assert( im.is_strictly_ascending() ); return n-k != 0 and im[1] == 0; }
-    );
-    sigmas_hodge.erase( applejack_hodge, sigmas_hodge.end() );
+    {
+        auto sigma_hodge_startnonzero = std::remove_if( sigmas_hodge.begin(), sigmas_hodge.end(),
+                [n,k](IndexMap im) -> bool { assert( im.is_strictly_ascending() ); return n-k != 0 and im[1] == 0; }
+        );
+        sigmas_hodge.erase( sigma_hodge_startnonzero, sigmas_hodge.end() );
+    }
 
-    // for( auto x : sigmas_hodge ) LOG << x << nl;
-    
     const int dim_polynomials = binomial_integer( n+r, n   );
     const int dim_sigmas_in   = binomial_integer( n+1,   k );
     const int dim_sigmas_out  = binomial_integer( n+1, n-k );
@@ -492,7 +502,8 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     Assert( sigmas_test.size()   == sigmas_hodge.size(), n, k, sigmas_test.size(), sigmas_hodge.size() );
     
     
-    // 1. Assemble the algebraic matrix
+    /* 1. Assemble the algebraic matrix over the test and hodge forms. */ 
+    /*    This corresponds to an Euclidean Hodge star.                 */ 
 
     const IndexMap standard_volume_form( IndexRange(1,n), IndexRange(0,n), [](int i)->int{ return i; } );
 
@@ -509,8 +520,6 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
 
         if( signum == 0 ) continue;
 
-        // LOG << sigma_prod << nl << volume_form << nl;
-
         assert( sigma_prod.is_strictly_ascending() and sigma_prod == standard_volume_form );
 
         wedge_matrix( s_t, s_h ) = signum;
@@ -521,6 +530,10 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     const DenseMatrix wedge_matrix_inv = Inverse( wedge_matrix ); // TODO(martinlicht): This inversion can be made much simpler ... 
 
     assert( ( wedge_matrix_inv * wedge_matrix - IdentityMatrix( wedge_matrix.getdimin() ) ).is_numerically_small() );
+    assert( ( Transpose(wedge_matrix) * wedge_matrix - IdentityMatrix( wedge_matrix.getdimin() ) ).is_numerically_small() );
+
+    
+    /* 2. Extend this matrix to the full set of indices, including those that start with zero. */ 
 
     DenseMatrix wedge_matrix_inv_full( sigmas_output.size(), sigmas_input.size(), 0. );
     
@@ -544,10 +557,22 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     
     
     
-    // 2. Run over the simplices and compile the local entries 
+    /* 3. Run over the simplices and compile the local entries. */
     
-    // const int localdim_in  = dim_polynomials * dim_sigmas_in;
-    // const int localdim_out = dim_polynomials * dim_sigmas_out;
+    /*                                                          */
+    /* The Hodge star is locally characterized by the equation  */
+    /* intvolume( v wedge star(u) ) = int mass( v, u )          */
+    /* where                                                    */
+    /*                                                          */
+    /* - u is the input form (input sigmas)                     */
+    /* - star(u) is the Hodge form (hodge sigmas)               */
+    /* - v is some test form (test forms)                       */
+    /*                                                          */
+    /* In terms of matrices, H star(u) = M u, which means       */
+    /* star(u) = inv(H) M u                                     */
+    /*                                                          */
+    /* The last inverse might be understood as a pseudoinverse. */
+    /*                                                          */
     
     const int dim_in      = num_simplices * dim_polynomials * dim_sigmas_in;
     const int dim_out     = num_simplices * dim_polynomials * dim_sigmas_out;
@@ -561,17 +586,21 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
     for( int s = 0; s < num_simplices; s++ )
     {
         
+        /* 3.1 Build the local mass matrix. */
+        
         const DenseMatrix GPM               = mesh.getGradientProductMatrix( n, s );
         
-        const DenseMatrix formMM            = SubdeterminantMatrix( GPM, k );
+        const DenseMatrix formMM            = SubdeterminantMatrix( GPM, k ) * mesh.getMeasure( n, s ) * factorial_integer(n);
 
         assert( formMM.is_finite() );
         
         const DenseMatrix full_local_matrix = wedge_matrix_inv_full * formMM;
 
+        /* 3.1 Get the full matrix. */
+        
         assert( full_local_matrix.is_finite() );
         
-        const Float scaling = mesh.getMeasure( n, s ) * factorial_integer(n);
+        const Float scaling = 1.; 
     
         for( int p   = 0; p   < dim_polynomials; p++   )
         for( int s_i = 0; s_i < dim_sigmas_in;   s_i++ )
@@ -614,6 +643,9 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
 
 
 
+// =============================================================================
+// Provides the Euclidean Hodge Star Matrix
+// =============================================================================
 
 DenseMatrix EuclideanHodgeStar( int n, int k )
 {
@@ -667,7 +699,29 @@ DenseMatrix EuclideanHodgeStar( int n, int k )
 }
 
 
-SparseMatrix FEECBrokenHodgeStarMatrix( const Mesh& mesh, int n, int k, int r )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =============================================================================
+// Hodge Star Matrix (alternative implementation)
+// =============================================================================
+
+SparseMatrix FEECBrokenHodgeStarMatrix_Alternative( const Mesh& mesh, int n, int k, int r )
 {
     
     // check whether the parameters are right 
