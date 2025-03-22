@@ -208,8 +208,6 @@ int main( int argc, char *argv[] )
                     timestamp start = timestampnow();
 
                     {
-                        const FloatVector  b_A( A.getdimin(),  0. ); 
-                        const FloatVector& b_C = rhs;    
                         BlockHerzogSoodhalterMethod( 
                             x_A, 
                             x_C, 

@@ -159,4 +159,4 @@ inline std::unique_ptr<T> make_unique(Args && ...args)
 
 
 
-#endif
+#endif // INCLUDEGUARD_UTILITY_STL_HPP

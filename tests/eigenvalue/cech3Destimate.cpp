@@ -62,7 +62,7 @@ int main( int argc, char *argv[] )
 
         LOG << "... assemble matrices" << nl;
 
-        SparseMatrix vertexones = SparseMatrix( M.count_vertices(), 1, M.count_vertices(), [](int r)->SparseMatrix::MatrixEntry{ return SparseMatrix::MatrixEntry(r,0,1.0); } );
+        SparseMatrix vertexones = SparseMatrix( M.count_vertices(), 1, M.count_vertices(), [](int r)->SparseMatrix::MatrixEntry{ return SparseMatrix::MatrixEntry{ r, 0, 1. }; } );
     
         // std::vector<SparseMatrix> bar;
         // bar.push_back( FEECCechMassMatrix( M, M.getinnerdimension(), 1, 0 ) );

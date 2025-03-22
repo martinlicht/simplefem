@@ -24,6 +24,7 @@ class SectionProfiler final
     public:
         
         explicit SectionProfiler( const std::string& text = "---" ) noexcept
+        : times{}, texts{}
         {
             ping( text );
         }

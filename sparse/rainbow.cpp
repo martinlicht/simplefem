@@ -12,6 +12,9 @@
 
 
 Rainbow::Rainbow( const MatrixCSR& mat, bool do_shuffle )
+: num_rows( mat.getdimout() ),
+  num_colors(0),
+  F(), B(), R()
 {
     mat.check();
     assert( mat.is_square() );

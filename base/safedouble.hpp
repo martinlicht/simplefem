@@ -1,5 +1,5 @@
-#ifndef SAFE_DOUBLE_HPP
-#define SAFE_DOUBLE_HPP
+#ifndef INCLUDEGUARD_BASE_SAFEDOUBLE_HPP
+#define INCLUDEGUARD_BASE_SAFEDOUBLE_HPP
 
 #include <limits>
 
@@ -28,4 +28,4 @@ public:
 
 };
 
-#endif // SAFE_DOUBLE_HPP
+#endif // INCLUDEGUARD_BASE_SAFEDOUBLE_HPP

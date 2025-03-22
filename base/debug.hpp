@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_DEBUG_HPP
-#define INCLUDEGUARD_DEBUG_HPP
+#ifndef INCLUDEGUARD_BASE_DEBUG_HPP
+#define INCLUDEGUARD_BASE_DEBUG_HPP
 
 
 /* Definitions for assert macros 
@@ -288,4 +288,4 @@ template<typename T, typename... Params> inline constexpr bool Cond( bool b, con
 #endif //NDEBUG
 
 
-#endif //INCLUDEGUARD_DEBUG_HPP
+#endif //INCLUDEGUARD_BASE_DEBUG_HPP

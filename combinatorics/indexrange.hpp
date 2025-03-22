@@ -80,14 +80,14 @@ class IndexRange final
                 
             public:
                 
-                inline int operator*() const
+                inline const int& operator*() const
                 {
                     assert( !is_end );
                     if( minimum <= maximum ) assert( minimum <= value && value <= maximum );
                     return value;                
                 }
                 
-                inline ConstIterator operator++()
+                inline ConstIterator& operator++()
                 {
                     assert( !is_end );
                     if( value == maximum )

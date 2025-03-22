@@ -180,8 +180,6 @@ int main( int argc, char *argv[] )
                         LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
                         LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
 
-                        FloatVector res = sol;
-                        
                         const auto PAinv = inv(PA,desired_precision,-1);
                         const auto PCinv = inv(PC,desired_precision,-1);
 

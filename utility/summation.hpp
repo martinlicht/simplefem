@@ -95,4 +95,4 @@ public:
 
 
 
-#endif
+#endif // INCLUDEGUARD_UTILITY_SUMMATION_HPP

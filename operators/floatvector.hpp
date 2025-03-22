@@ -234,7 +234,7 @@ class FloatVector final
                     return parentvector->at(index);
                 }
                 
-                inline ConstIterator operator++()
+                inline ConstIterator& operator++()
                 {
                     ++index; 
                     return *this;
@@ -272,7 +272,7 @@ class FloatVector final
                     return parentvector->at(index);
                 }
                 
-                inline Iterator operator++()
+                inline Iterator& operator++()
                 {
                     ++index; 
                     return *this;

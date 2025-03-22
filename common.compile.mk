@@ -82,11 +82,11 @@ FLAG_EXCESSIVE_WARNINGS=yes
 # FLAG_DO_USE_SINGLE_PRECISION=yes
 
 # Logging output in color?
-FLAG_COLORED_OUTPUT=yes
+# FLAG_COLORED_OUTPUT=yes
 
 # Do you want to ENABLE the Clang sanitizer?
 # Uncomment the following line to enable compilation with the Clang sanitizer
-FLAG_DO_USE_SANITIZER=yes
+# FLAG_DO_USE_SANITIZER=yes
 
 # Do you want to enable static analysis during the compilation process
 # Uncomment the following line to enable static analysis
@@ -115,7 +115,7 @@ FLAG_DO_USE_SANITIZER=yes
 # Choose the linker by uncommenting, or leave commented for default linker 
 # LDFLAGS += -fuse-ld=bfd
 # LDFLAGS += -fuse-ld=lld
-LDFLAGS += -fuse-ld=gold
+# LDFLAGS += -fuse-ld=gold
 # LDFLAGS += -fuse-ld=mold
 
 
@@ -269,7 +269,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 #		CXXFLAGS_OPTIMIZE += -finline-limit=1200
 			CXXFLAGS_OPTIMIZE += -fno-fat-lto-objects
 			CXXFLAGS_OPTIMIZE += -fdevirtualize-speculatively
-# 			CXXFLAGS_OPTIMIZE += -fno-signed-zeros -fno-trapping-math -fassociative-math
+# 			CXXFLAGS_OPTIMIZE += -fno-signed-zeros -fno-signaling-nans -fno-trapping-math -fassociative-math -fno-math-errno  -funsafe-math-optimizations 
 # 			CXXFLAGS_OPTIMIZE += -fmerge-all-constants
 # 			CXXFLAGS_OPTIMIZE += -fipa-pta 
 # Loop unrolling is very speculative			
@@ -280,6 +280,7 @@ ifeq ($(FLAG_DO_OPTIMIZE),yes)
 #			 CXXFLAGS_OPTIMIZE += -finline-limit=1200
 		endif
 	endif
+	 
 else
 	CXXFLAGS_OPTIMIZE += -O0
 endif
@@ -814,7 +815,7 @@ endif
 
 # # DISABLED: CXXFLAGS_WARNINGS += -Weffc++
 
-# CXXFLAGS_WARNINGS += -Weffc++
+CXXFLAGS_WARNINGS += -Weffc++
 CXXFLAGS_WARNINGS += -Wctor-dtor-privacy
 CXXFLAGS_WARNINGS += -Wmisleading-indentation
 CXXFLAGS_WARNINGS += -Wmissing-declarations

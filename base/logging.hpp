@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_LOGGING_HPP
-#define INCLUDEGUARD_LOGGING_HPP
+#ifndef INCLUDEGUARD_BASE_LOGGING_HPP
+#define INCLUDEGUARD_BASE_LOGGING_HPP
 
 #include "base.hpp"
 #include "safedouble.hpp"
@@ -257,4 +257,4 @@ class Logger final
 
 
 
-#endif // INCLUDEGUARD_LOGGING_HPP
+#endif // INCLUDEGUARD_BASE_LOGGING_HPP
