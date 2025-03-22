@@ -4,7 +4,7 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../sparse/matcsr.hpp"
 #include "../../sparse/rainbow.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
 #include "../../fem/global.massmatrix.hpp"
 
 

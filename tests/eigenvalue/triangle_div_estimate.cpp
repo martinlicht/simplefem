@@ -17,7 +17,7 @@
 #include "../../solver/systemsolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
 
 
 // using namespace std;

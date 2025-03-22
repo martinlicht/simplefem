@@ -21,7 +21,7 @@
 #include "../../solver/sparsesolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.inclwhitney.hpp"
 #include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 

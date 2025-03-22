@@ -19,35 +19,203 @@
 
 
 
-SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l, int s, const FloatVector& field )
+
+
+// =============================================================================
+// Generates a vector whose product with any scalar finite element field
+// produces the integral of that field.
+// =============================================================================
+FloatVector FEECScalarIntegral( const Mesh& mesh, int n, int r )
+{
+    
+    // check whether the parameters are right 
+    // only lowest order here
+    
+    assert( r >= 0 );
+    assert( n >= 0 && n <= mesh.getinnerdimension() );
+    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
+    
+    // Auxiliary calculations and preparations
+    
+	const int num_simplices = mesh.count_simplices( n );
+    
+    const int localdim = binomial_integer( n + r, n );
+    
+    const int num_entries = num_simplices * localdim;
+    
+    FloatVector ret( num_entries );
+	
+	// Numerical data : for the standard volume form
+    
+    FloatVector polynomial_weights( binomial_integer( n + r, n ) );
+	
+	std::vector<MultiIndex> multis = generateMultiIndices( IndexRange(0,n), r );
+    
+    const int N = multis.size();
+    
+    assert( N == binomial_integer( n + r, r ) );
+    
+    for( int index_poly = 0; index_poly < N; index_poly++ )
+    {
+        MultiIndex alpha = multis[index_poly];
+        assert( absolute( alpha ) == r ); 
+        // n! alpha! / (n+|alpha|)!
+        polynomial_weights[index_poly] = factorial_numerical(n) * alpha.factorial_numerical() / factorial_numerical( n + r ); 
+    }
+	
+	if( r == 0 )
+    for( auto w : polynomial_weights ) Assert( is_numerically_one( w ) );
+	
+	// Fill in the data into the return vector 
+	for( int s = 0;          s < num_simplices; s++          )
+	for( int index_poly = 0; index_poly < N;    index_poly++ )
+	{
+		Float volume = mesh.getMeasure( n, s );
+        ret[ s * N + index_poly] = volume * polynomial_weights[index_poly];
+	}
+
+    for( auto v : ret ) assert( v > 0. );
+	
+	return ret; 
+}
+
+
+
+
+
+
+// =============================================================================
+// Generates a vector whose product with any volume finite element field
+// produces the integral of that field.
+// =============================================================================
+FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r )
+{
+    // check whether the parameters are right 
+    // only lowest order here
+    
+    assert( r >= 0 );
+    assert( n >= 0 && n <= mesh.getinnerdimension() );
+    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
+    
+    // Auxiliary calculations and preparations
+    
+    const int num_simplices = mesh.count_simplices( n );
+    const int localdim      = binomial_integer( n + r, n ) * (n+1);
+    const int num_entries   = num_simplices * localdim;
+    
+    FloatVector ret( num_entries );
+	
+	// Numerical data : for the standard volume form
+    
+    std::vector<MultiIndex> multis = generateMultiIndices( IndexRange(0,n), r );
+    
+    const int N = multis.size();
+    
+    assert( N == binomial_integer( n + r, r ) );
+    
+    FloatVector polynomial_weights( N );
+	
+	for( int index_poly = 0; index_poly < N; index_poly++ )
+    {
+        MultiIndex alpha = multis[index_poly];
+        assert( absolute( alpha ) == r ); // n! alpha! / (n+|alpha|)!
+        polynomial_weights[index_poly] = factorial_numerical(n) * alpha.factorial_numerical() / factorial_numerical( n + r ); 
+    }
+
+    // Numerical data: catalog the signs
+	
+	std::vector<IndexMap> sigmas = generateSigmas( IndexRange(1,n), IndexRange(0,n) );
+    assert( sigmas.size() == n+1 );
+	
+	FloatVector signs( sigmas.size() );
+	
+    for( int index_form = 0; index_form < sigmas.size(); index_form++ )
+	for( int p = 0;          p <= n;                     p++          )
+	{
+		const auto& sigma = sigmas[index_form];
+		
+		bool p_found = sigma.has_value_in_range(p);
+
+        if( p_found ) continue;
+		
+        assert( not std::isfinite( signs[index_form] ) );
+
+        signs[index_form] = sign_power( p );
+
+        if( p == 0 ) assert( sign_power(p) ==  1 );
+        if( p == 1 ) assert( sign_power(p) == -1 );
+        if( p == 2 ) assert( sign_power(p) ==  1 );
+	}
+    
+	// Fill in the data into the return vector 
+	
+    for( int s = 0;          s < num_simplices;          s++          )
+    for( int index_poly = 0; index_poly < N;             index_poly++ )
+	for( int index_form = 0; index_form < sigmas.size(); index_form++ )
+	{
+		auto Jac = mesh.getTransformationJacobian(n,s);
+        assert( Jac.is_square() );
+        auto orientation = sign_integer( Determinant(Jac) );
+
+        // LOG << s << space << orientation << space << signs[index_form] << nl;
+        
+        Float value = orientation * signs[index_form] * polynomial_weights[index_poly] / factorial_numerical( n );
+
+        ret[ s * N * (n+1) + index_poly * (n+1) + index_form] = value; 
+	}
+
+
+	
+	return ret; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =============================================================================
+// Vee product of fixed field of poly_s l-forms with poly_r k-forms 
+// 
+// Currently only pairings that lead to scalar fields
+// =============================================================================
+SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int form_k, int poly_r , int form_l, int poly_s, const FloatVector& field )
 {
     
     // check whether the parameters are right 
     // only lowest order here
     
     assert( n >= 0 && n <= mesh.getinnerdimension() );
-    assert( r >= 0 );
-    assert( s >= 0 );
-    assert( k >= 0 && k <= n );
-    assert( l >= 0 && l <= n );
-    assert( k >= l );
+    assert( poly_r >= 0 );
+    assert( poly_s >= 0 );
+    assert( form_k >= 0 && form_k <= n );
+    assert( form_l >= 0 && form_l <= n );
+    assert( form_k >= form_l );
     assert( field.is_finite() );
 
-    assert( k == l ); // restricted special case for now...
+    assert( form_k == form_l ); // restricted special case for now. Requires understanding of pairing between general forms
     
     // Auxiliary calculations and preparations
     
     const int num_simplices = mesh.count_simplices( n );
         
-    const int localdim_in  = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
+    const int localdim_in  = binomial_integer( n + ( poly_r          ), n ) * binomial_integer( n+1, ( form_k        ) );
+    const int localdim_out = binomial_integer( n + ( poly_r + poly_s ), n ) * binomial_integer( n+1, ( form_k-form_l ) );
     
-    const int localdim_out = binomial_integer( n+(r+s), n ) * binomial_integer( n+1, (k-l) );
-    
-    const auto mis_input  = generateMultiIndices( IndexRange(0,n), r   );
-    const auto mis_factor = generateMultiIndices( IndexRange(0,n), s   );
-    const auto mis_output = generateMultiIndices( IndexRange(0,n), r+s );
+    const auto mis_input  = generateMultiIndices( IndexRange(0,n), poly_r          );
+    const auto mis_factor = generateMultiIndices( IndexRange(0,n),          poly_s );
+    const auto mis_output = generateMultiIndices( IndexRange(0,n), poly_r + poly_s );
 
-    std::vector<std::array<int,3>> couplings;
+    // We save the products of multiindices 
+
+    std::vector<std::array<int,3>> mi_couplings;
 
     for( int m_i = 0; m_i < mis_input.size();  m_i++ )
     for( int m_f = 0; m_f < mis_factor.size(); m_f++ )
@@ -57,21 +225,19 @@ SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l,
         
         const auto mi_prod = mi_input + mi_factor;
         
-        for( int m_o = 0; m_o < mis_output.size(); m_o++ )
-        {
-            if( mi_prod == mis_output[m_o] ) {
-                couplings.push_back( {m_i,m_f,m_o} );
-            }                
-        }
+        int m_o = 0;
+
+        for(; m_o < mis_output.size() && mi_prod != mis_output[m_o]; m_o++ );
+
+        assert( m_o != mis_output.size() );
+        assert( mi_prod == mis_output[m_o] );
+
+        mi_couplings.push_back( {m_i,m_f,m_o} );
     }
 
-    // LOG << "Couplings: " << couplings.size() << nl; for( const auto& a : couplings ) LOG << a[0] << space << a[1] << space << a[2] << nl;
-
-
-    
     const int dim_in      = num_simplices * localdim_in;
     const int dim_out     = num_simplices * localdim_out;
-    const int num_entries = num_simplices * couplings.size() * binomial_integer( n+1, k );
+    const int num_entries = num_simplices * mi_couplings.size() * binomial_integer( n+1, form_k );
 
     SparseMatrix ret( dim_out, dim_in, num_entries );
     
@@ -81,34 +247,37 @@ SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l,
     for( int s = 0; s < num_simplices; s++ )
     {
         
-        DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
-        DenseMatrix formMM = SubdeterminantMatrix( GPM, k );
-        assert( formMM.is_finite() );
+        // we compute the local product matrix for the form part
 
+        DenseMatrix GPM    = mesh.getGradientProductMatrix( n, s );
+        DenseMatrix formMM = SubdeterminantMatrix( GPM, form_k );
+        
+        assert( formMM.is_finite() );
         assert( not formMM.is_zero() );
         assert( formMM.is_square() );
         assert( formMM.is_symmetric() );
 
-        for( int coupling_index = 0; coupling_index < couplings.size();        coupling_index++ ) 
-        for( int f_i            = 0;            f_i < binomial_integer(n+1,k); f_i++            )
+        // Iterate over multiindex couplings and input form degrees.
+        for( int coupling_index = 0; coupling_index < mi_couplings.size();          coupling_index++ ) 
+        for( int f_i            = 0;            f_i < binomial_integer(n+1,form_k); f_i++            )
         {
 
-            int m_i = couplings[coupling_index][0];
-            int m_f = couplings[coupling_index][1];
-            int m_o = couplings[coupling_index][2];
+            int m_i = mi_couplings[coupling_index][0]; // input 
+            int m_f = mi_couplings[coupling_index][1]; // output 
+            int m_o = mi_couplings[coupling_index][2]; // pairing
 
-            SparseMatrix::MatrixEntry entry;
-            entry.row    = s * mis_output.size() + m_o;
-            entry.column = s * mis_input.size() * binomial_integer(n+1,k)  + m_i * binomial_integer(n+1,k) + f_i;
+            int row    = s * mis_output.size() * 1                             + m_o;
+            int column = s * mis_input.size()  * binomial_integer(n+1,form_k)  + m_i * binomial_integer(n+1,form_k) + f_i;
             
-            entry.value = 0.;
-            for( int g_i = 0; g_i < binomial_integer(n+1,k); g_i++ )
-                entry.value += field[ s * mis_factor.size() * binomial_integer(n+1,k)  + m_f * binomial_integer(n+1,k) + g_i ] * formMM( g_i, f_i );
+            Float value = 0.;
+            for( int g_i = 0; g_i < binomial_integer(n+1,form_l); g_i++ )
+                value += field[ s * mis_factor.size() * binomial_integer(n+1,form_l)  + m_f * binomial_integer(n+1,form_l) + g_i ] * formMM( g_i, f_i );
 
-            int index_of_entry = s * couplings.size() * binomial_integer( n+1, k ) + coupling_index * binomial_integer( n+1, k ) + f_i;
+            Assert( std::isfinite(value) );
+
+            int index_of_entry = s * mi_couplings.size() * binomial_integer( n+1, form_k ) + coupling_index * binomial_integer( n+1, form_k ) + f_i;
             
-            ret.setentry( index_of_entry,  entry );
-            assert( std::isfinite(entry.value) );
+            ret.setentry( index_of_entry, { row, column, value } );
         }        
         
     }
@@ -129,31 +298,35 @@ SparseMatrix FEECBrokenVeeMatrix( const Mesh& mesh, int n, int k, int r , int l,
 
 
 
+// =============================================================================
+// Wedge product of fixed field of poly_s l-forms with poly_r k-forms 
+// =============================================================================
 
-SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int l, int s, const FloatVector& field )
+SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int form_k, int poly_r , int form_l, int poly_s, const FloatVector& field )
 {
     
     // check whether the parameters are right 
     // only lowest order here
     
     assert( n >= 0 && n <= mesh.getinnerdimension() );
-    assert( r >= 0 );
-    assert( s >= 0 );
-    assert( k >= 0 && k <= n );
-    assert( l >= 0 && l <= n );
+    assert( poly_r >= 0 );
+    assert( poly_s >= 0 );
+    assert( form_k >= 0 && form_k <= n );
+    assert( form_l >= 0 && form_l <= n );
     assert( field.is_finite() );
 
     // Auxiliary calculations and preparations
     
     const int num_simplices = mesh.count_simplices( n );
         
-    const int localdim_in  = binomial_integer( n+r, n ) * binomial_integer( n+1, k );
+    const int localdim_in  = binomial_integer( n + ( poly_r          ), n ) * binomial_integer( n+1, form_k          );    
+    const int localdim_out = binomial_integer( n + ( poly_r + poly_s ), n ) * binomial_integer( n+1, form_k + form_l );
     
-    const int localdim_out = binomial_integer( n+(r+s), n ) * binomial_integer( n+1, k+l );
-    
-    const auto mis_input  = generateMultiIndices( IndexRange(0,n), r   );
-    const auto mis_factor = generateMultiIndices( IndexRange(0,n), s   );
-    const auto mis_output = generateMultiIndices( IndexRange(0,n), r+s );
+    // We save the products of multiindices 
+
+    const auto mis_input  = generateMultiIndices( IndexRange(0,n), poly_r          );
+    const auto mis_factor = generateMultiIndices( IndexRange(0,n), poly_s          );
+    const auto mis_output = generateMultiIndices( IndexRange(0,n), poly_r + poly_s );
 
     std::vector<std::array<int,3>> mi_couplings;
 
@@ -165,18 +338,22 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
         
         const auto mi_prod = mi_input + mi_factor;
         
-        for( int m_o = 0; m_o < mis_output.size(); m_o++ )
-        {
-            if( mi_prod == mis_output[m_o] ) {
-                mi_couplings.push_back( {m_i,m_f,m_o} );
-            }                
-        }
+        int m_o = 0;
+
+        for(; m_o < mis_output.size() && mi_prod != mis_output[m_o]; m_o++ );
+
+        assert( m_o != mis_output.size() );
+        assert( mi_prod == mis_output[m_o] );
+
+        mi_couplings.push_back( {m_i,m_f,m_o} );
     }
 
 
-    const auto sigmas_input  = generateSigmas( IndexRange(1,k  ), IndexRange(0,n) );
-    const auto sigmas_factor = generateSigmas( IndexRange(1,  l), IndexRange(0,n) );
-    const auto sigmas_output = generateSigmas( IndexRange(1,k+l), IndexRange(0,n) );
+    // We save the wedge of l-forms (factor) with k-forms (input) to get k+l-forms (output)
+
+    const auto sigmas_input  = generateSigmas( IndexRange(1, form_k          ), IndexRange(0,n) );
+    const auto sigmas_factor = generateSigmas( IndexRange(1,          form_l ), IndexRange(0,n) );
+    const auto sigmas_output = generateSigmas( IndexRange(1, form_k + form_l ), IndexRange(0,n) );
 
     std::vector<std::array<int,4>> sigma_couplings;
 
@@ -191,18 +368,27 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
 
         if( signum == 0 ) continue;
         
-        for( int s_o = 0; s_o < sigmas_output.size(); s_o++ )
-        {
-            if( sigma_prod == sigmas_output[s_o] ) {
-                sigma_couplings.push_back( {s_i,s_f,s_o,signum} );
-            }                
-        }
+        // for( int s_o = 0; s_o < sigmas_output.size(); s_o++ )
+        // {
+        //     if( sigma_prod == sigmas_output[s_o] ) {
+        //         sigma_couplings.push_back( {s_i,s_f,s_o,signum} );
+        //     }                
+        // }
+
+        int s_o = 0;
+
+        for(; s_o < sigmas_output.size() && sigma_prod != sigmas_output[s_o]; s_o++ );
+
+        assert( s_o != sigmas_output.size() );
+        assert( sigma_prod == sigmas_output[s_o] );
+
+        sigma_couplings.push_back( { s_i, s_f, s_o, signum } );
     }
 
-    // LOG << "Couplings: " << couplings.size() << nl; for( const auto& a : couplings ) LOG << a[0] << space << a[1] << space << a[2] << nl;
-
-
     
+    
+    // prepare the final sparse matrix 
+
     const int dim_in      = num_simplices * localdim_in;
     const int dim_out     = num_simplices * localdim_out;
     const int num_entries = num_simplices * mi_couplings.size() * sigma_couplings.size();
@@ -215,8 +401,11 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
     for( int s = 0; s < num_simplices; s++ )
     {
         
+        // For each simplex, we run over all possible product terms 
+        // This variable saves how many terms have been processed:
         int local_index_of_entry = 0;
 
+        // All multiindex and sigma couplings ...
         for( int mi_coupling_index = 0;    mi_coupling_index    < mi_couplings.size();    mi_coupling_index++    ) 
         for( int sigma_coupling_index = 0; sigma_coupling_index < sigma_couplings.size(); sigma_coupling_index++ ) 
         {
@@ -229,18 +418,19 @@ SparseMatrix FEECBrokenWedgeMatrix( const Mesh& mesh, int n, int k, int r , int 
             int s_f = sigma_couplings[sigma_coupling_index][1];
             int s_o = sigma_couplings[sigma_coupling_index][2];
 
-            int signum = sigma_couplings[sigma_coupling_index][3];
-
-            SparseMatrix::MatrixEntry entry;
-            entry.row    =                s * mis_output.size() * binomial_integer(n+1,k+l) + m_o * binomial_integer(n+1,k+l) + s_o;
-            entry.column =                s * mis_input.size()  * binomial_integer(n+1,k  ) + m_i * binomial_integer(n+1,k  ) + s_i;
-            entry.value = signum * field[ s * mis_factor.size() * binomial_integer(n+1,  l) + m_f * binomial_integer(n+1,  l) + s_f ] * mesh.getOrientation(s);
+            int row     =                 s * mis_output.size() * binomial_integer( n+1, form_k + form_l ) + m_o * binomial_integer( n+1, form_k + form_l ) + s_o;
+            int column  =                 s * mis_input.size()  * binomial_integer( n+1, form_k          ) + m_i * binomial_integer( n+1, form_k          ) + s_i;
             
-            assert( std::isfinite(entry.value) );
+            auto signum      = sigma_couplings[sigma_coupling_index][3];
+            auto orientation = mesh.getOrientation(s);
+
+            Float value = signum * orientation * field[ s * mis_factor.size() * binomial_integer( n+1,          form_l ) + m_f * binomial_integer( n+1,          form_l ) + s_f ];
+            
+            assert( std::isfinite(value) );
 
             int index_of_entry = s * mi_couplings.size() * sigma_couplings.size() + local_index_of_entry;
             
-            ret.setentry( index_of_entry, entry );
+            ret.setentry( index_of_entry, { row, column, value } );
             local_index_of_entry++;
         }        
         
@@ -413,146 +603,6 @@ SparseMatrix FEECBrokenHodgeMatrix( const Mesh& mesh, int n, int k, int r )
 
 
 
-
-FloatVector FEECScalarIntegral( const Mesh& mesh, int n, int r )
-{
-    
-    // check whether the parameters are right 
-    // only lowest order here
-    
-    assert( r >= 0 );
-    assert( n >= 0 && n <= mesh.getinnerdimension() );
-    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
-    
-    // Auxiliary calculations and preparations
-    
-	const int num_simplices = mesh.count_simplices( n );
-    
-    const int localdim = binomial_integer( n + r, n );
-    
-    const int num_entries = num_simplices * localdim;
-    
-    FloatVector ret( num_entries );
-	
-	// Numerical data : for the standard volume form
-    
-    FloatVector polynomial_weights( binomial_integer( n + r, n ) );
-	
-	std::vector<MultiIndex> multis = generateMultiIndices( IndexRange(0,n), r );
-    
-    const int N = multis.size();
-    
-    assert( N == binomial_integer( n + r , r ) );
-    
-    for( int index_poly = 0; index_poly < N; index_poly++ )
-    {
-        MultiIndex alpha = multis[index_poly];
-        assert( absolute( alpha ) == r ); 
-        // n! alpha! / (n+|alpha|)!
-        polynomial_weights[index_poly] = factorial_numerical(n) * alpha.factorial_numerical() / factorial_numerical( n + r ); 
-    }
-	
-	if( r == 0 )
-    for( auto w : polynomial_weights ) Assert( is_numerically_one( w ) );
-	
-	// Fill in the data into the return vector 
-	for( int s = 0;          s < num_simplices; s++          )
-	for( int index_poly = 0; index_poly < N;    index_poly++ )
-	{
-		Float volume = mesh.getMeasure( n, s );
-        ret[ s * N + index_poly] = volume * polynomial_weights[index_poly];
-	}
-
-    for( auto v : ret ) assert( v > 0. );
-	
-	return ret; 
-}
-
-
-
-
-
-
-FloatVector FEECVolumeFormIntegral( const Mesh& mesh, int n, int r )
-{
-    // check whether the parameters are right 
-    // only lowest order here
-    
-    assert( r >= 0 );
-    assert( n >= 0 && n <= mesh.getinnerdimension() );
-    assert( binomial_integer( n+r, n ) == binomial_integer( n+r, r ) );
-    
-    // Auxiliary calculations and preparations
-    
-    const int num_simplices = mesh.count_simplices( n );
-    const int localdim      = binomial_integer( n + r, n ) * (n+1);
-    const int num_entries   = num_simplices * localdim;
-    
-    FloatVector ret( num_entries );
-	
-	// Numerical data : for the standard volume form
-    
-    std::vector<MultiIndex> multis = generateMultiIndices( IndexRange(0,n), r );
-    
-    const int N = multis.size();
-    
-    assert( N == binomial_integer( n + r , r ) );
-    
-    FloatVector polynomial_weights( N );
-	
-	for( int index_poly = 0; index_poly < N; index_poly++ )
-    {
-        MultiIndex alpha = multis[index_poly];
-        assert( absolute( alpha ) == r ); // n! alpha! / (n+|alpha|)!
-        polynomial_weights[index_poly] = factorial_numerical(n) * alpha.factorial_numerical() / factorial_numerical( n + r ); 
-    }
-
-    // Numerical data: catalog the signs
-	
-	std::vector<IndexMap> sigmas = generateSigmas( IndexRange(1,n), IndexRange(0,n) );
-    assert( sigmas.size() == n+1 );
-	
-	FloatVector signs( sigmas.size() );
-	
-    for( int index_form = 0; index_form < sigmas.size(); index_form++ )
-	for( int p = 0;          p <= n;                     p++          )
-	{
-		const auto& sigma = sigmas[index_form];
-		
-		bool p_found = sigma.has_value_in_range(p);
-
-        if( p_found ) continue;
-		
-        assert( not std::isfinite( signs[index_form] ) );
-
-        signs[index_form] = sign_power( p );
-
-        if( p == 0 ) assert( sign_power(p) ==  1 );
-        if( p == 1 ) assert( sign_power(p) == -1 );
-        if( p == 2 ) assert( sign_power(p) ==  1 );
-	}
-    
-	// Fill in the data into the return vector 
-	
-    for( int s = 0;          s < num_simplices;          s++          )
-    for( int index_poly = 0; index_poly < N;             index_poly++ )
-	for( int index_form = 0; index_form < sigmas.size(); index_form++ )
-	{
-		auto Jac = mesh.getTransformationJacobian(n,s);
-        assert( Jac.is_square() );
-        auto orientation = sign_integer( Determinant(Jac) );
-
-        // LOG << s << space << orientation << space << signs[index_form] << nl;
-        
-        Float value = orientation * signs[index_form] * polynomial_weights[index_poly] / factorial_numerical( n );
-
-        ret[ s * N * (n+1) + index_poly * (n+1) + index_form] = value; 
-	}
-
-
-	
-	return ret; 
-}
 
 
 

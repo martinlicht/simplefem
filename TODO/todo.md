@@ -55,10 +55,10 @@ None of the above can be done in a day, so it most likely requires regular grind
    * [x] 20
 - [x] How to turn off particular unused variable warnings? -> Blog post
 
-    ```c
-    #define UNUSED_VARIABLE(x) (void)x
-    __attribute__((unused))
-    ```
+```c
+#define UNUSED_VARIABLE(x) (void)x
+__attribute__((unused))
+```
 
 - [x] convergence tables should handle different precisions, one way or the other:
       best to internally use long double. Requires settling the printf issue
@@ -347,9 +347,7 @@ They are a purely optional argument for the print method and may be skipped at c
 ## (MEDIUM) Graph coloring and Gauss-Seidel iteration **READING**
 
 - [ ] Algebraic multigrid
-
 - [ ] Multiplicative Schwarz / Gauss-Seidel algorithms
-
 - [x] DOF partitioning of CSR Matrices. That is an instance of the graph coloring problem. 
 
 
