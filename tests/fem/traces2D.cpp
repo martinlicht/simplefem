@@ -12,7 +12,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/utilities.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
 #include "../../utility/convergencetable.hpp"
 
 #include "../../fem/global.trace.hpp"

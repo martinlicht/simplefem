@@ -32,7 +32,7 @@ int main( int argc, char *argv[] )
         const int N = MM.getdimin();
 
         LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << nl;
-        LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+        LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
 
                 
         LOG << "Matrix dimension: " << N << nl;

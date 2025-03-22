@@ -22,7 +22,7 @@
 #include "../../fem/global.elevation.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
 #include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -180,8 +180,6 @@ int main( int argc, char *argv[] )
                         LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
                         LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
 
-                        FloatVector res = sol;
-                        
                         const auto PAinv = inv(PA,desired_precision,-1);
                         const auto PCinv = inv(PC,desired_precision,-1);
 

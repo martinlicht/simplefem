@@ -20,7 +20,7 @@
 #include "../../solver/systemsolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
 #include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 #include "../../vtk/vtkwriter.hpp"
@@ -208,8 +208,6 @@ int main( int argc, char *argv[] )
                     timestamp start = timestampnow();
 
                     {
-                        const FloatVector  b_A( A.getdimin(),  0. ); 
-                        const FloatVector& b_C = rhs;    
                         BlockHerzogSoodhalterMethod( 
                             x_A, 
                             x_C, 

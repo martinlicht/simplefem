@@ -142,4 +142,4 @@ PixelColor rgb_from_scale(
 );
 
 
-#endif
+#endif // INCLUDEGUARD_UTILITY_PIXELIMAGE_HPP

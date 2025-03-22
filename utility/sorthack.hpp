@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_SORTHACK_HPP
-#define INCLUDEGUARD_SORTHACK_HPP
+#ifndef INCLUDEGUARD_UTILITY_SORTHACK_HPP
+#define INCLUDEGUARD_UTILITY_SORTHACK_HPP
 
 #include <algorithm>
 #include <utility>
@@ -47,4 +47,4 @@ inline void sorthack( std::vector<A>& vec )
 
 
 
-#endif
+#endif // INCLUDEGUARD_UTILITY_SORTHACK_HPP

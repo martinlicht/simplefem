@@ -25,7 +25,7 @@
 // #include "../../solver/amg.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
 #include "../../fem/global.interpol.hpp"
 #include "../../fem/utilities.hpp"
 
@@ -279,16 +279,16 @@ int main( int argc, char *argv[] )
                     }
                     
                     {
-                        auto rhs = FloatVector( M.count_simplices(0) );
+                        auto interpolated_rhs = FloatVector( M.count_simplices(0) );
                         
                         for( int c = 0; c < M.count_simplices(0); c++ ) { 
                             auto x = M.getCoordinates().getdata(c,0);
                             auto y = M.getCoordinates().getdata(c,1);
                             auto value = experiment_rhs( FloatVector({ x, y }) )[0];
-                            rhs[c] = value;
+                            interpolated_rhs[c] = value;
                         }
                             
-                        vtk.write_vertex_scalar_data( rhs, "reference_scalar_data" , 1.0 );
+                        vtk.write_vertex_scalar_data( interpolated_rhs, "reference_scalar_data" , 1.0 );
                     }
                     
                     {

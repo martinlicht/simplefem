@@ -66,12 +66,12 @@ int main( int argc, char *argv[] )
         
     for( int l = l_min; l <= l_max; l++ ){
         
-        LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
+        LOG << "Level: " << l_min << " <= " << l << " <= " << l_max << nl;
         
         for( int r = r_min; r <= r_max; r++ ) 
         {
             
-            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+            LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
 
             LOG << "assemble matrices..." << nl;
     
@@ -156,21 +156,18 @@ int main( int argc, char *argv[] )
     
     
     
-    /*
-    No meaningful test for convergence possible as of now
     LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
     
     for( int l = l_min; l <= l_max; l++ ) 
     for( int r = r_min; r <= r_max; r++ ) 
     {
-        if( r < r_max || l < 8 ) continue;
+        if( r < r_max or l < l_max ) continue;
 
         // TODO(Martin): This test depends on convergence and cannot be exact
 
         for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
             Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt, r, l );
     }
-    */
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     

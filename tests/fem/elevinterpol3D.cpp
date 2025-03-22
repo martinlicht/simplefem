@@ -53,14 +53,14 @@ int main( int argc, char *argv[] )
 
     for( int l = l_min; l <= l_max; l++ ){
         
-        LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
+        LOG << "Level: " << l_min << " <= " << l << " <= " << l_max << nl;
         
         for( int k      = 0;     k <= n; k++      ) 
         for( int r      = r_min; r <= r_max;                 r++      ) 
         for( int r_plus = 0;     r_plus <= r_plus_max;       r_plus++ ) 
         {
             
-            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << " +" << r_plus << nl;
+            LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << " +" << r_plus << nl;
 
             LOG << "Form degree: " << space << k << nl;
 

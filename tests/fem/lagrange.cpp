@@ -16,8 +16,8 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
-#include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
+#include "../../fem/global.inclwhitney.hpp"
 #include "../../fem/lagrangematrices.hpp"
 #include "../../utility/convergencetable.hpp"
 

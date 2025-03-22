@@ -153,13 +153,13 @@ int main( int argc, char *argv[] )
 
     for( int l = l_min; l <= l_max; l++ ){
         
-        LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
+        LOG << "Level: " << l_min << " <= " << l << " <= " << l_max << nl;
         
         for( int r      = r_min; r      <=      r_max; r++      ) 
         for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
         {
             
-            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+            LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
             LOG << "Adding: 0 <= " << r_plus << " <= " << r_plus_max << nl;
             
             LOG << "assemble mass matrices..." << nl;
@@ -203,7 +203,7 @@ int main( int argc, char *argv[] )
 
                 Float mass_elev = interpol_elev * ( massmatrix_scalar_plus * interpol_elev );
 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 Assert( mass_elev >= -desired_closeness, mass_elev);
                 
                 Float error_mass = mass - mass_elev;
@@ -224,7 +224,7 @@ int main( int argc, char *argv[] )
 
                 Float mass_elev = interpol_elev * ( massmatrix_vector_plus * interpol_elev );
 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 Assert( mass_elev >= -desired_closeness, mass_elev);
                 
                 Float error_mass = mass - mass_elev;
@@ -245,7 +245,7 @@ int main( int argc, char *argv[] )
 
                 Float mass_elev = interpol_elev * ( massmatrix_pseudo_plus * interpol_elev );
 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 Assert( mass_elev >= -desired_closeness, mass_elev);
                 
                 Float error_mass = mass - mass_elev;
@@ -266,7 +266,7 @@ int main( int argc, char *argv[] )
 
                 Float mass_elev = interpol_elev * ( massmatrix_volume_plus * interpol_elev );
 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 Assert( mass_elev >= -desired_closeness, mass_elev);
                 
                 Float error_mass = mass - mass_elev;

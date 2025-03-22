@@ -13,7 +13,7 @@
 #include "../../solver/iterativesolver.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
 #include "../../fem/utilities.hpp"
 
 

@@ -88,4 +88,4 @@ inline std::string get_basename( const std::string& path )
 
 
 
-#endif
+#endif // INCLUDEGUARD_UTILITY_FILES_HPP

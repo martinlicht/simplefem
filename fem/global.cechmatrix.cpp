@@ -107,7 +107,7 @@ SparseMatrix FEECCechDiffMatrix( const Mesh& mesh, int n, int k )
         int gap_index = 0;
         while( gap_index <= k && std_vector_facevertices[gap_index] == std_vector_cellvertices[gap_index] ) gap_index++;
         
-        for( int i = gap_index; i <= k; i++ ) assert( std_vector_facevertices[i] == std_vector_cellvertices[i+1] );
+        for( int j = gap_index; j <= k; j++ ) assert( std_vector_facevertices[j] == std_vector_cellvertices[j+1] );
         
         int index_of_entry = s * faces_per_cell + i;
             

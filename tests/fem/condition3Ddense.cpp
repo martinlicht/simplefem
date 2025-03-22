@@ -11,8 +11,8 @@
 #include "../../mesh/examples3D.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
-#include "../../fem/global.sullivanincl.hpp"
-#include "../../fem/global.whitneyincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
+#include "../../fem/global.inclwhitney.hpp"
 #include "../../solver/iterativesolver.hpp"
 
 
@@ -190,7 +190,7 @@ int main( int argc, char *argv[] )
             for( int r = r_min; r <= r_max; r++ ) 
             {
                 
-                LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+                LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
 
                 LOG << "... assemble mass matrices" << nl;
                 

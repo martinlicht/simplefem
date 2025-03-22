@@ -25,7 +25,7 @@ int main( int argc, char *argv[] )
     for( int r = r_min; r <= r_max; r++ )
     {
         LOG << "Dimension: " << space << n_min << " <= " << n << " <= " << n_max << nl;
-        LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+        LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
         
         const auto lpsbc = InterpolationPointsInBarycentricCoordinates( n, r );
         

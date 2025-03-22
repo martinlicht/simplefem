@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_BASIC_HPP
-#define INCLUDEGUARD_BASIC_HPP
+#ifndef INCLUDEGUARD_BASE_BASE_HPP
+#define INCLUDEGUARD_BASE_BASE_HPP
 
 
 #if __cplusplus < 201402L
@@ -28,7 +28,7 @@
 
 
 // ============================================================================
-// Define important macros
+// Define attribute macros
 // ============================================================================
 
 #ifdef ELIDE_HOT_FUNCTIONS
@@ -802,4 +802,4 @@ __attribute__ (( format (printf,1,2) ));
 
 
 
-#endif
+#endif // INCLUDEGUARD_BASE_BASE_HPP

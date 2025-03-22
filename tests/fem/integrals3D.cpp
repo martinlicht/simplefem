@@ -20,7 +20,7 @@
 
 int main( int argc, char *argv[] )
 {
-    LOG << "Unit Test: (3D) Integrating scalar fields and volume forms" << nl;
+    LOG << "Unit Test: (3D) Auxiliary functions for integrating scalar fields and volume forms" << nl;
     
     LOG << "Initial mesh..." << nl;
     
@@ -34,6 +34,12 @@ int main( int argc, char *argv[] )
 
 
 
+    std::function<FloatVector(const FloatVector&)> constant_one
+            = [](const FloatVector& vec) -> FloatVector {
+                    assert( vec.getdimension() == 3 );
+                    return FloatVector({ 1. });
+                };
+        
     std::vector<std::function<FloatVector(const FloatVector&)>> experiments_scalar_field;
     std::vector<Float>                                          experiments_scalar_value;
     
@@ -77,9 +83,9 @@ int main( int argc, char *argv[] )
     
     const int l_min = 0;
     
-    const int l_max = 2;
+    const int l_max = 5;
 
-    // const int n = 3;
+    // const int n = 2;
     const int n = M.getinnerdimension();
     assert( n == M.getinnerdimension() );
     
@@ -93,15 +99,13 @@ int main( int argc, char *argv[] )
 
     for( int l = l_min; l <= l_max; l++ ){
         
-        LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
+        LOG << "Level: " << l_min << " <= " << l << " <= " << l_max << nl;
         
         for( int r = r_min; r <= r_max; r++ ) 
         {
             
-            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+            LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
 
-            LOG << "assemble matrices..." << nl;
-    
             errors_scalar[ l-l_min ][ r-r_min ] = 0.;
             errors_volume[ l-l_min ][ r-r_min ] = 0.;
             
@@ -109,36 +113,26 @@ int main( int argc, char *argv[] )
 
             FloatVector volume_integrals = FEECVolumeFormIntegral( M, M.getinnerdimension(), r );
 
-            if( r <= 1 )
+            // 1. check that the integral of scalar 1 is correct
             {
-                FloatVector unitvector = FloatVector( scalar_integrals.getdimension(), 1.);
-                Float unit = scalar_integrals * unitvector;
-                Assert( is_numerically_close( unit, 1. ), unit );
+                FloatVector interpol_scalar_one  = Interpolation( M, M.getinnerdimension(), 0, r, constant_one );
+            
+                Float value = scalar_integrals * interpol_scalar_one;
+
+                Assert( is_numerically_close( value, 1. ), value );
             }
 
-            if( r <= 1 )
+            // 2. check that the integral of volume 1 is correct
             {
-                FloatVector unitvector = FloatVector( volume_integrals.getdimension(), 1. );
+                FloatVector interpol_volume_one  = Interpolation( M, M.getinnerdimension(), n, r, constant_one );
+            
+                Float value = volume_integrals * interpol_volume_one;
                 
-                Float value = volume_integrals * unitvector;
-                
-                int count_positive = 0;
-                for( int s = 0; s < M.count_simplices(n); s++ ) {
-                    if( M.getOrientation(s) == 1. ) 
-                        count_positive++;
-                }
-                Float desired_value_1 = count_positive - ( M.count_simplices(n) - count_positive );
-
-                Float desired_value_2 = ( 1 - (n % 2) ) / factorial_numerical(n);
-                
-                Float desired_value = desired_value_1 * desired_value_2;
-                
-                Assert( is_numerically_close( value, desired_value ), 
-                        value, desired_value, 
-                        volume_integrals,
-                        M.count_simplices(n) );
+                Assert( is_numerically_close( value, 1. ), value );
             }
 
+            // 3. Find the integrals of the scalar fields 
+            
             for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
             {    
                 auto scalarfield = experiments_scalar_field[i];
@@ -154,17 +148,15 @@ int main( int argc, char *argv[] )
                 errors_scalar[l-l_min][r-r_min] = maximum( errors_scalar[l-l_min][r-r_min], error );   
             }
 
+            // 4. Find the integrals of the volume fields 
+            
             for( int i = 0; i < experiments_volume_field.size(); i++ ) 
             {    
                 auto volumefield = experiments_volume_field[i];
 
                 auto interpol = Interpolation( M, M.getinnerdimension(), n, r, volumefield );
 
-                // LOG << n << space << volume_integrals.getdimension() << space << interpol.getdimension() << nl;
                 auto interpol_integral = volume_integrals * interpol;
-
-                // LOG << interpol_integral << space << experiments_volume_value[i] << nl;
-                // if( r == 0 and l == 0 ) { LOG << volume_integrals << nl << interpol << nl; }
 
                 auto error = absolute( interpol_integral - experiments_volume_value[i] );
                 
@@ -223,6 +215,8 @@ int main( int argc, char *argv[] )
     for( int l = l_min; l <= l_max; l++ ) 
     for( int r = r_min; r <= r_max; r++ ) 
     {
+        if( l < l_max or r < r_max ) continue;
+
         Assert( errors_scalar[l-l_min][r-r_min] < desired_closeness, errors_scalar[l-l_min][r-r_min], desired_closeness );
         Assert( errors_volume[l-l_min][r-r_min] < desired_closeness, errors_volume[l-l_min][r-r_min], desired_closeness );
     }

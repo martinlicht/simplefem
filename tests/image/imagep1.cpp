@@ -62,7 +62,7 @@ int main( int argc, char *argv[] )
 
     for( int l = l_min; l <= l_max; l++ )
     {
-        LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
+        LOG << "Level: " << l_min << " <= " << l << " <= " << l_max << nl;
             
         int num_volumes = M.count_triangles();
 

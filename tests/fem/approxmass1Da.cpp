@@ -87,11 +87,11 @@ int main( int argc, char *argv[] )
 
     for( int l = l_min; l <= l_max; l++ ){
         
-        LOG << "Level:" << space << l_min << " <= " << l << " <= " << l_max << nl;
+        LOG << "Level: " << l_min << " <= " << l << " <= " << l_max << nl;
     
         for( int r = r_min; r <= r_max; r++ ) 
         {
-            LOG << "Polydegree:" << space << r_min << " <= " << r << " <= " << r_max << nl;
+            LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
 
             LOG << "assemble mass matrices..." << nl;
             
@@ -113,7 +113,7 @@ int main( int argc, char *argv[] )
 
                 Float mass = interpol * ( massmatrix_scalar * interpol );
                 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 
                 // LOG << mass << space << should_be << space << std::sqrt( std::abs( mass - should_be ) ) << nl;
                 // printf( "%.20f %.20f %.20f \n", mass, should_be, std::sqrt( std::abs( mass - should_be ) ) );
@@ -131,7 +131,7 @@ int main( int argc, char *argv[] )
 
                 Float mass = interpol * ( massmatrix_volume * interpol );
                 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
 
                 errors_volume[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                 
@@ -205,7 +205,7 @@ int main( int argc, char *argv[] )
     for( int l      = l_min; l      <=      l_max; l++      ) 
     for( int r      = r_min; r      <=      r_max; r++      ) 
     {
-        if( r < r_max or l < 5 ) 
+        if( r < r_max or l < l_max ) 
             continue;
         
         // continue; // TODO(martinlicht): This test depends on convergence and cannot be exact

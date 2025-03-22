@@ -13,7 +13,7 @@
 
 #include "indexfunctions.hpp"
 
-#include "../fem/global.sullivanincl.hpp"
+#include "../fem/global.inclsullivan.hpp"
 
 
 

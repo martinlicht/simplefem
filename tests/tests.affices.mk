@@ -1,5 +1,5 @@
 affix.external      := 
-affix.base         := base
+affix.base          := base
 affix.utility       := utility base external
 affix.combinatorics := combinatorics base external
 affix.operators     := operators combinatorics utility base external

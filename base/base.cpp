@@ -1,11 +1,12 @@
 
-#include <cfloat>   // FLT_EVAL_METHOD
+#include <cctype>   // char is ... checks
+#include <cfloat>   // FLT_EVAL_METHOD, _controlfp_s on Windows 
 #include <cstdio>   // print
 #include <cstdarg>  // variadic function macros
-#include <chrono>
-#include <cctype>   // char is ... checks
+#include <ctime>
 
-#include <limits>
+#include <chrono>
+#include <limits> // for std::float_round_style
 #include <string>
 #include <type_traits>
 
@@ -16,11 +17,8 @@
 
 
 
-#include <limits> // for std::float_round_style
-
 // For controlling the floating-point behavior
 #include <cfenv>
-#include <cfloat> // _controlfp_s on Windows 
 
 #if defined(__SSE__)
 #include <xmmintrin.h> // _MM_SET_FLUSH_ZERO_MODE
@@ -42,7 +40,7 @@ SystemSetup::SystemSetup() noexcept
     #endif
 
     const time_t t = std::time(nullptr);
-    const tm zeit = *std::localtime(&t);
+    const tm zeit = *std::localtime(&t); // TODO(martin) replace by chrono for thread-safety?
     LOGPRINTF("---\t%d-%02d-%02d %02d:%02d:%02d\n", zeit.tm_year + 1900, zeit.tm_mon + 1, zeit.tm_mday, zeit.tm_hour, zeit.tm_min, zeit.tm_sec );
     
     LOGPRINTF("---\tCompiler version: %s\n", __VERSION__);

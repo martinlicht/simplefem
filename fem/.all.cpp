@@ -12,6 +12,6 @@
 #include "global.trace.cpp"
 #include "global.avgsullivan.cpp"
 #include "global.unphysical.cpp"
-#include "global.sullivanincl.cpp"
-#include "global.whitneyincl.cpp"
+#include "global.inclsullivan.cpp"
+#include "global.inclwhitney.cpp"
 #include "global.cechmatrix.cpp"

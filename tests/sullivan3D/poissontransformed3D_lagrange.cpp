@@ -405,8 +405,8 @@ int main( int argc, char *argv[] )
 
                     const auto& old_M = meshes[ l - min_l - 1 ];
 
-                    for( const auto& sol : solutions )
-                        new_solutions.push_back( IncreaseResolution( old_M, sol ) );
+                    for( const auto& saved_sol : solutions )
+                        new_solutions.push_back( IncreaseResolution( old_M, saved_sol ) );
 
                     assert( solutions.size() == new_solutions.size() );
                     

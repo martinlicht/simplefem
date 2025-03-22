@@ -41,7 +41,7 @@ struct mesh_information_for_shelling
     std::vector<std::vector<std::vector<std::vector<Float>>>> C8;
     
     // Constructor
-    mesh_information_for_shelling( const Mesh& mesh );
+    explicit mesh_information_for_shelling( const Mesh& mesh );
 
 };
 

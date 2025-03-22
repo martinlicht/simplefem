@@ -12,7 +12,7 @@
 #include "../../mesh/examples2D.hpp"
 #include "../../solver/sparsesolver.hpp"
 #include "../../solver/iterativesolver.hpp"
-#include "../../fem/global.sullivanincl.hpp"
+#include "../../fem/global.inclsullivan.hpp"
 #include "../../fem/global.massmatrix.hpp"
 #include "../../fem/global.diffmatrix.hpp"
 #include "../../fem/utilities.hpp"

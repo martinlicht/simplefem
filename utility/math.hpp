@@ -49,4 +49,4 @@ Float unitBallVolume( int n );
 Float unitSphereArea( int n );
 
 
-#endif
+#endif // INCLUDEGUARD_UTILITY_MATH_HPP

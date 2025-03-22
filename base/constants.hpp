@@ -1,5 +1,5 @@
-#ifndef INCLUDEGUARD_CONSTANTS_HPP
-#define INCLUDEGUARD_CONSTANTS_HPP
+#ifndef INCLUDEGUARD_BASE_CONSTANTS_HPP
+#define INCLUDEGUARD_BASE_CONSTANTS_HPP
 
 #if defined(EXTENDED_PRECISION) && defined(SINGLE_PRECISION)
 #error Cannot request extended and single precision at the same time!
@@ -58,4 +58,4 @@ namespace Constants
     
 } // namespace Constants
 
-#endif
+#endif // INCLUDEGUARD_BASE_CONSTANTS_HPP

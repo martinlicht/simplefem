@@ -3332,7 +3332,7 @@ std::string MeshSimplicial2D::outputSVG(
         -getCoordinates().getmin(1) 
     } );
 
-    os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "
+    os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"100%\" height=\"100%\" "
        << "viewBox=\""
        << coords.getmin(0) << space << coords.getmin(1) << space 
        << coords.getmax(0) << space << coords.getmax(1) << "\""
@@ -3419,7 +3419,7 @@ std::string MeshSimplicial2D::outputInterpolatingSVG(
     } );
 
     // 2. preamble 
-    os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.200000\" width=\"100%\" height=\"100%\" "
+    os << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"100%\" height=\"100%\" "
        << "viewBox=\""
        << coords.getmin(0) << space << coords.getmin(1) << space 
        << coords.getmax(0) << space << coords.getmax(1) << "\""
@@ -3465,9 +3465,25 @@ std::string MeshSimplicial2D::outputInterpolatingSVG(
       std::string color1_start = rgb_to_string( r1, g1, b1 );
       std::string color2_start = rgb_to_string( r2, g2, b2 );
       
-      std::string color0_end   = rgb_to_string( (r1+r2)/2., (g1+g2)/2., (b1+b2)/2. );
-      std::string color1_end   = rgb_to_string( (r0+r2)/2., (g0+g2)/2., (b0+b2)/2. );
-      std::string color2_end   = rgb_to_string( (r0+r1)/2., (g0+g1)/2., (b0+b1)/2. );
+      unsigned char r1r2 = float_to_colorchannel( ( r1 + r2 ) / 2. );
+      unsigned char g1g2 = float_to_colorchannel( ( g1 + g2 ) / 2. );
+      unsigned char b1b2 = float_to_colorchannel( ( b1 + b2 ) / 2. );
+
+      unsigned char r0r2 = float_to_colorchannel( ( r0 + r2 ) / 2. );
+      unsigned char g0g2 = float_to_colorchannel( ( g0 + g2 ) / 2. );
+      unsigned char b0b2 = float_to_colorchannel( ( b0 + b2 ) / 2. );
+
+      unsigned char r0r1 = float_to_colorchannel( ( r0 + r1 ) / 2. );
+      unsigned char g0g1 = float_to_colorchannel( ( g0 + g1 ) / 2. );
+      unsigned char b0b1 = float_to_colorchannel( ( b0 + b1 ) / 2. );
+
+      std::string color0_end = rgb_to_string(r1r2, g1g2, b1b2);
+      std::string color1_end = rgb_to_string(r0r2, g0g2, b0b2);
+      std::string color2_end = rgb_to_string(r0r1, g0g1, b0b1);
+
+      // std::string color0_end   = rgb_to_string( (r1+r2)/2., (g1+g2)/2., (b1+b2)/2. );
+      // std::string color1_end   = rgb_to_string( (r0+r2)/2., (g0+g2)/2., (b0+b2)/2. );
+      // std::string color2_end   = rgb_to_string( (r0+r1)/2., (g0+g1)/2., (b0+b1)/2. );
       
       std::ostringstream grad0;
       std::ostringstream grad1;
