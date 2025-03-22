@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
     experiments_scalar_function.push_back( 
         [&](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
-                return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? vec[0] : 0. });
+                return FloatVector({ ( vec[0] > 0 and vec[1] > 0 ) ? vec[0] * vec[1] : 0. });
         }
     );
 
@@ -60,8 +60,8 @@ int main( int argc, char *argv[] )
         [&](const FloatVector& vec) -> FloatVector {
                 assert( vec.getdimension() == 2 );
                 return FloatVector( { 
-                        ( vec[0] > 0 and vec[1] > 0 ) ? 1. : -0. ,
-                        ( vec[0] > 0 and vec[1] > 0 ) ? 0. : -0. , // to disable warnings that the two branches are the same 
+                        ( vec[0] > 0. and vec[1] > 0. ) ? vec[1] : -0. ,
+                        ( vec[0] > 0. and vec[1] > 0. ) ? vec[0] : -0. , // to disable warnings that the two branches are the same 
                     });
         }
     );
@@ -236,16 +236,20 @@ int main( int argc, char *argv[] )
     
     
     
-    /*
-    No meaningful test for convergence possible as of now
     LOG << "Check that differences are below: " << desired_closeness_for_sqrt << nl;
     
     for( int l = l_min; l <= l_max; l++ ) 
     for( int r = r_min; r <= r_max; r++ ) 
     {
-        // if( r < r_max || l < 8 ) continue;
-    
-        // TODO(Martin): This test depends on convergence and cannot be exact
+        for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
+            Assert( std::isfinite( errors_scalar[i][l-l_min][r-r_min] ) );
+        
+        for( int i = 0; i < experiments_vector_function.size(); i++ ) 
+            Assert( std::isfinite( errors_vector[i][l-l_min][r-r_min] ) );
+
+        if( r < r_max or l < l_max ) continue;
+
+        continue; // TODO(Martin): This test depends on convergence and cannot be exact
         
         for( int i = 0; i < experiments_scalar_function.size(); i++ ) 
             Assert( errors_scalar[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_scalar[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
@@ -253,7 +257,7 @@ int main( int argc, char *argv[] )
         for( int i = 0; i < experiments_vector_function.size(); i++ ) 
             Assert( errors_vector[i][l-l_min][r-r_min] < desired_closeness_for_sqrt, errors_vector[i][l-l_min][r-r_min], desired_closeness_for_sqrt );
     }
-    */
+    
     
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;

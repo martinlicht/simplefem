@@ -135,11 +135,11 @@ int main( int argc, char *argv[] )
     
     const int r_min = 0;
     
-    const int r_max = 2;
+    const int r_max = 3;
     
     const int l_min = 0;
     
-    const int l_max = 2;
+    const int l_max = 3;
     
     Float errors_scalar[ experiments_scalar_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
     Float errors_vector[ experiments_vector_field.size() ][ l_max - l_min + 1 ][ r_max - r_min + 1 ];
@@ -186,7 +186,7 @@ int main( int argc, char *argv[] )
 
                 Float mass = interpol * ( massmatrix_scalar * interpol );
                 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 
                 errors_scalar[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                 
@@ -201,7 +201,7 @@ int main( int argc, char *argv[] )
 
                 Float mass = interpol * ( massmatrix_vector * interpol );
                 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 
                 errors_vector[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                 
@@ -216,7 +216,7 @@ int main( int argc, char *argv[] )
 
                 Float mass = interpol * ( massmatrix_pseudo * interpol );
                 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 
                 errors_pseudo[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                 
@@ -231,7 +231,7 @@ int main( int argc, char *argv[] )
 
                 Float mass = interpol * ( massmatrix_volume * interpol );
                 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 
                 errors_volume[i][l-l_min][r-r_min] = std::sqrt( std::abs( mass - should_be ) );
                 
@@ -323,14 +323,14 @@ int main( int argc, char *argv[] )
     
     
     
-    const Float threshold = 0.1;
+    const Float threshold = 0.01;
 
     LOG << "Check that differences are below: " << threshold << nl;
     
     for( int l      = l_min; l      <=      l_max; l++      ) 
     for( int r      = r_min; r      <=      r_max; r++      ) 
     {
-        if( r < r_max or l < 2 ) 
+        if( r < r_max or l < l_max ) 
             continue;
         
         // continue; // TODO(martinlicht): This test depends on convergence and cannot be exact

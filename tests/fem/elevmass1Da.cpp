@@ -134,7 +134,7 @@ int main( int argc, char *argv[] )
 
                 Float mass_elev = interpol_elev * ( massmatrix_scalar_plus * interpol_elev );
 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 Assert( mass_elev >= -desired_closeness, mass_elev);
                 
                 Float error_mass = mass - mass_elev;
@@ -155,7 +155,7 @@ int main( int argc, char *argv[] )
 
                 Float mass_elev = interpol_elev * ( massmatrix_volume_plus * interpol_elev );
 
-                Assert( mass >= -desired_closeness, mass );
+                Assert( std::isfinite(mass) and mass >= -desired_closeness, mass );
                 Assert( mass_elev >= -desired_closeness, mass_elev);
                 
                 Float error_mass = mass - mass_elev;

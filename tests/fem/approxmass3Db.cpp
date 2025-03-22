@@ -138,7 +138,7 @@ int main( int argc, char *argv[] )
     
     const int l_min = 0;
     
-    const int l_max = 2;
+    const int l_max = 3 ;
     
     const int r_ref = 4;
     
@@ -362,10 +362,19 @@ int main( int argc, char *argv[] )
     for( int l      = l_min; l      <=      l_max; l++      ) 
     for( int r      = r_min; r      <=      r_max; r++      ) 
     {
-        if( r < r_max or l < 2 ) 
+        for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
+            Assert( std::isfinite( errors_scalar[i][l-l_min][r-r_min] ) );
+        
+        for( int i = 0; i < experiments_vector_field.size(); i++ ) 
+            Assert( std::isfinite( errors_vector[i][l-l_min][r-r_min] ) );
+
+        for( int i = 0; i < experiments_pseudo_field.size(); i++ ) 
+            Assert( std::isfinite( errors_pseudo[i][l-l_min][r-r_min] ) );
+
+        if( r < r_max or l < l_max ) 
             continue;
         
-        // continue; // TODO(martinlicht): This test depends on convergence and cannot be exact
+        continue; // TODO(Martin): This test depends on convergence and cannot be exact
         
         for( int i = 0; i < experiments_scalar_field.size(); i++ ) 
             Assert( errors_scalar[i][l-l_min][r-r_min] < threshold, errors_scalar[i][l-l_min][r-r_min], threshold );

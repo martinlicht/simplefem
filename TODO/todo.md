@@ -112,7 +112,7 @@ __attribute__((unused))
 - [ ] Neumann estimate of eigenvalues 
 - [ ] Try out Neumann BC to mixed FEM for Poisson
 - [ ] Compilation error with: no exceptions, optimizations, OpenMP, sanitizers, tcmalloc, stripping, profiling, gold linker
-- [ ] `-Weffc++`: initializer lists and (const) iterators
+- [x] `-Weffc++`: initializer lists and (const) iterators
 - [ ] GCC: `-ffold-simple-inlines -fimplicit-constexpr -fno-implement-inlines ? -fvisibility-inlines-hidden` ?
 
 ## Reorder the compilation makefile
@@ -154,12 +154,11 @@ CXXFLAGS += ${CXXFLAGS_CODEGEN}
 
 # HIGH: DO THESE NEXT
 
-## (HIGH) Debug midpoint refinement 
+## (DONE/HIGH) FEM tests
 
-## (HIGH) Hodge star **READING**
-
-Review the Hodge star operations, combine the two implementations into one file. Combine the unit tests into one file. 
-Ensure that the results are uniform and correct. 
+FEM tests that depend on convergence are not easy to measure, but we can at least test for finiteness
+Figure out a scalar product implementation that guarantees positive output.
+Reduce the rounding errors in the mass matrix even further.
 
 ## (HIGH) Algebraic Preconditioners **READING**
 
@@ -177,11 +176,7 @@ They are possible alternatives to Gauss-Seidel with Eisenstatt and graph colorin
 - [ ] Overlapping blocks, then color the blocks, then Gauss-Seidel. Multiplicative Schwarz / Gauss-Seidel algorithms.
 - [ ] Algebraic multigrid. Read the article on the topic.
 
-## (HIGH) FEM tests
-
-FEM tests that depend on convergence are not easy to measure, but we can at least test for finiteness
-Figure out a scalar product implementation that guarantees positive output.
-Reduce the rounding errors in the mass matrix even further.
+## (HIGH) Debug midpoint refinement 
 
 ## (HIGH) Compare different Herzog-Soodhalter methods **READING**
 
@@ -213,7 +208,7 @@ Can we canonicalize everything already in the matrix assembly?
 
 - [ ] Summarize files: indexfunctions, polynomialmassmatrix, utilities -> utilities
 - [ ] Summarize: global functions
-- [ ] *inc -> inc* 
+- [x] *inc -> inc* 
 
 ## (HIGH) Dense Matrix rewrite **READING**
 
