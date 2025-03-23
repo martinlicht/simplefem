@@ -368,7 +368,7 @@ void MeshSimplicial2D::check() const
     #else
     
     /****************************/
-    /* 1. Check the array sizes */
+    /* 0. Check the array sizes */
     /****************************/
     
     assert( counter_triangles == data_triangle_edges.size() );
@@ -390,7 +390,7 @@ void MeshSimplicial2D::check() const
     
     
     /********************************************************************************/
-    /* 2. check that the internal data of each simplex make sense on each dimension */
+    /* 1. check that the internal data of each simplex make sense on each dimension */
     /********************************************************************************/
     
     /* each triangle: each edge is a valid index */
