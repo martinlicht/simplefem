@@ -909,9 +909,9 @@ inline MeshSimplicial2D SphericalSurface2D( int L = 0 )
     
     for( int n = 0; n < ret.getCoordinates().getnumber(); n++ )
     {
-        FloatVector point = ret.getCoordinates().getvectorclone( n );
+        FloatVector point = ret.getCoordinates().getdata_by_vertex( n );
         point.normalize();
-        ret.getCoordinates().loadvector( n, point );
+        ret.getCoordinates().setdata_by_vertex( n, point );
     }
     
     return ret;

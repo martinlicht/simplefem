@@ -21,7 +21,7 @@ inline void internal_print( const Mesh& M, std::string meshname, std::string fil
     {
         FloatVector V( M.count_simplices(0), 
                         [&M](int i)->Float{
-                        FloatVector point = M.getCoordinates().getvectorclone(i);
+                        FloatVector point = M.getCoordinates().getdata_by_vertex(i);
                         // return i / (Float) M.count_simplices(0);
                         Float x = point[0];
                         Float y = ( ( point.getdimension() >= 2 ) ? point[1] : 1. );

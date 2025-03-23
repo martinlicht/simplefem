@@ -2580,11 +2580,11 @@ DenseMatrix MeshSimplicial3D::get_reflection_along_face( int f ) const
     const auto v0 = get_subsimplex( 3, 0, t0, local_v0 );
     const auto v1 = get_subsimplex( 3, 0, t1, local_v1 );
 
-    const auto vec_f0 = getCoordinates().getvectorclone( face_vertices[0] );  assert( vec_f0.getdimension() == 3 );
-    const auto vec_f1 = getCoordinates().getvectorclone( face_vertices[1] );  assert( vec_f1.getdimension() == 3 );
-    const auto vec_f2 = getCoordinates().getvectorclone( face_vertices[2] );  assert( vec_f2.getdimension() == 3 );
-    const auto vec_v0 = getCoordinates().getvectorclone( v0 );                assert( vec_v0.getdimension() == 3 );
-    const auto vec_v1 = getCoordinates().getvectorclone( v1 );                assert( vec_v1.getdimension() == 3 );
+    const auto vec_f0 = getCoordinates().getdata_by_vertex( face_vertices[0] );  assert( vec_f0.getdimension() == 3 );
+    const auto vec_f1 = getCoordinates().getdata_by_vertex( face_vertices[1] );  assert( vec_f1.getdimension() == 3 );
+    const auto vec_f2 = getCoordinates().getdata_by_vertex( face_vertices[2] );  assert( vec_f2.getdimension() == 3 );
+    const auto vec_v0 = getCoordinates().getdata_by_vertex( v0 );                assert( vec_v0.getdimension() == 3 );
+    const auto vec_v1 = getCoordinates().getdata_by_vertex( v1 );                assert( vec_v1.getdimension() == 3 );
 
     DenseMatrix M0( 3, 3 );
     DenseMatrix M1( 3, 3 );

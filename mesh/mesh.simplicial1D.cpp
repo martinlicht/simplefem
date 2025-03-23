@@ -739,7 +739,7 @@ void MeshSimplicial1D::improved_uniformrefinement()
     
     for( int e = 0; e < counter_edges; e++ )
     {
-      getCoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
+      getCoordinates().setdata_by_vertex( counter_vertices + e, get_edge_midpoint( e ) );
     }
     
     

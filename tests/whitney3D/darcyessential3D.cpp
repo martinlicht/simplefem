@@ -130,15 +130,18 @@ int main( int argc, char *argv[] )
 
         for( int l = min_l; l <= max_l; l++ ){
             
-            LOG << "Level: " << l << "/" << max_l << nl;
+            LOG << "Level: " << min_l << " <= " << l << " <= " << max_l << nl;
             LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
             for( int r = min_r; r <= max_r; r++ ) 
             {
                 
+                LOG << "Level: " << min_l << " <= " << l << " <= " << max_l << nl;
+                LOG << "Polynomial degree: " <<  min_r << " <= " << r << " <= " << max_r << nl;
+                        
                 LOG << "... assemble matrices" << nl; 
         
-                LOG << "Polynomial degree: " << r << "/" << max_r << nl;
+                LOG << "Polynomial degree: " <<  min_r << " <= " << r << " <= " << max_r << nl;
                     
                 LOG << "... assemble mass matrices" << nl;
 

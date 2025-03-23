@@ -216,8 +216,8 @@ static Float NeumannEstimate( const Mesh& M ) {
                     
                     Assert( is_numerically_close( a, 1./volumeratio ), a, 1./volumeratio );
                 
-                    auto z_cell = M.getCoordinates().getvectorclone( v_opp_cell );
-                    auto z_next = M.getCoordinates().getvectorclone( v_opp_next );
+                    auto z_cell = M.getCoordinates().getdata_by_vertex( v_opp_cell );
+                    auto z_next = M.getCoordinates().getdata_by_vertex( v_opp_next );
 
                     auto b_cell = z_cell - ( z_cell * h_cell ) / h_cell.norm_sq() * h_cell;
                     auto b_next = z_next - ( z_next * h_next ) / h_next.norm_sq() * h_next;

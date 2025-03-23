@@ -332,11 +332,11 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                     for( int w1 = 0; w1 <= m; w1++ ) 
                         if( v1 != w1 ) 
-                            columns.push_back( mesh.getCoordinates().getvectorclone(       vertices[w1] ) - zs );
+                            columns.push_back( mesh.getCoordinates().getdata_by_vertex(       vertices[w1] ) - zs );
 
                     for( int w2 = 0; w2 <= dim-m-1; w2++ ) 
                         if( v2 != w2 ) 
-                            columns.push_back( mesh.getCoordinates().getvectorclone( other_vertices[w2] ) - zs );
+                            columns.push_back( mesh.getCoordinates().getdata_by_vertex( other_vertices[w2] ) - zs );
 
                     columns.push_back( zc - zs );
 
@@ -436,8 +436,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                     // LOG << vertex_first << space << vertex_other << nl;
 
-                    auto z_first = mesh.getCoordinates().getvectorclone( vertex_first );
-                    auto z_other = mesh.getCoordinates().getvectorclone( vertex_other );
+                    auto z_first = mesh.getCoordinates().getdata_by_vertex( vertex_first );
+                    auto z_other = mesh.getCoordinates().getdata_by_vertex( vertex_other );
 
                     auto b_first = z_first - z_first.scalarproductwith(height_vector_first) / height_vector_first.norm_sq() * height_vector_first;
                     auto b_other = z_other - z_other.scalarproductwith(height_vector_other) / height_vector_other.norm_sq() * height_vector_other;

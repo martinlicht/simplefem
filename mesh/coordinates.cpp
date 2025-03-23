@@ -107,10 +107,10 @@ void Coordinates::setdata( int n, int d, Float v )
 }
 
 
-FloatVector Coordinates::getvectorclone( int n ) const
+FloatVector Coordinates::getdata_by_vertex( int n ) const
 {
     assert( 0 <= n && n < number );
-    return getvectorclone( n, 1. );
+    return getdata_by_vertex( n, 1. );
 }
 
 /* get range of coordinates */
@@ -132,7 +132,7 @@ Float Coordinates::getmax( int d ) const {
         
         
         
-FloatVector Coordinates::getvectorclone( int n, Float scale ) const
+FloatVector Coordinates::getdata_by_vertex( int n, Float scale ) const
 {
     assert( 0 <= n && n < number );
     FloatVector ret( dimension );
@@ -141,12 +141,12 @@ FloatVector Coordinates::getvectorclone( int n, Float scale ) const
     return ret;
 }
 
-void Coordinates::loadvector( int n, const FloatVector& input ) 
+void Coordinates::setdata_by_vertex( int n, const FloatVector& input ) 
 {
-    loadvector( n, input, 1. );
+    setdata_by_vertex( n, input, 1. );
 }
 
-void Coordinates::loadvector( int n, const FloatVector& input, Float scale ) 
+void Coordinates::setdata_by_vertex( int n, const FloatVector& input, Float scale ) 
 {
     assert( 0 <= n && n < number );
     assert( input.getdimension() == dimension );
@@ -158,7 +158,7 @@ void Coordinates::loadvector( int n, const FloatVector& input, Float scale )
 
 /* get/set coordinates as vectors  */
         
-FloatVector Coordinates::getdimensionclone( int d, Float s ) const 
+FloatVector Coordinates::getdata_by_dimension( int d, Float s ) const 
 {
     assert( 0 <= d && d < dimension );
     FloatVector ret( number );
@@ -167,7 +167,7 @@ FloatVector Coordinates::getdimensionclone( int d, Float s ) const
     return ret;    
 }
 
-void Coordinates::loaddimension( int d, const FloatVector& value, Float s )
+void Coordinates::setdata_by_dimension( int d, const FloatVector& value, Float s )
 {
     assert( 0 <= d && d < dimension );
     assert( value.getdimension() == number );
@@ -197,9 +197,9 @@ void Coordinates::shift( const FloatVector& add )
 {
     assert( add.getdimension() == dimension );
     for( int n = 0; n < number; n++ ) {
-        FloatVector temp = getvectorclone( n );
+        FloatVector temp = getdata_by_vertex( n );
         temp += add;
-        loadvector( n, temp );
+        setdata_by_vertex( n, temp );
     }
 }
 
@@ -217,9 +217,9 @@ void Coordinates::lineartransform( const LinearOperator& op )
     assert( op.getdimin() == dimension );
     assert( op.getdimout() == dimension );
     for( int n = 0; n < number; n++ ) {
-        FloatVector temp = getvectorclone( n );
+        FloatVector temp = getdata_by_vertex( n );
         temp = op * temp;
-        loadvector( n, temp );
+        setdata_by_vertex( n, temp );
     }
 }
 
@@ -271,7 +271,7 @@ DenseMatrix Coordinates::getLinearPart( const IndexMap& im ) const
     
     for( int p = 1; p <= imsrc.max(); p++ )
         ret.setcolumn( p-1, 
-            getvectorclone( im[p] ) - getvectorclone( im[0] ) 
+            getdata_by_vertex( im[p] ) - getdata_by_vertex( im[0] ) 
             );
     
     return ret;
@@ -283,7 +283,7 @@ FloatVector Coordinates::getShiftPart( const IndexMap& im ) const
     IndexRange imsrc = im.getSourceRange();
     assert( !(im.is_empty()) && imsrc.min() == 0 && imsrc.max() <= getdimension() );
     int index = im[0];
-    return getvectorclone( index );
+    return getdata_by_vertex( index );
 }
 
 
