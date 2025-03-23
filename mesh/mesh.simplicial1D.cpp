@@ -192,7 +192,9 @@ void MeshSimplicial1D::check() const
     return;
     #else 
     
-    /* 1. Check the array sizes */
+    /****************************/
+    /* 0. Check the array sizes */
+    /****************************/
     
     assert( counter_edges == data_edge_vertices.size() );
     assert( counter_edges == data_edge_nextparents_of_vertices.size() );
@@ -204,11 +206,12 @@ void MeshSimplicial1D::check() const
     assert( counter_vertices == flags_vertices.size() );
     
     
-    /* 
-     * each edge: each vertex is a valid index
-     * each edge: each vertex is unique 
-     * each edge: the next parents make sense 
-     */
+    /********************************************************************************/
+    /* 1. check that the internal data of each simplex make sense on each dimension */
+    /********************************************************************************/
+    
+    /* each edge: each vertex is a valid index */
+    /* each edge: each vertex is unique        */
     
     for( int e = 0; e < counter_edges; e++ )
     {
@@ -217,7 +220,50 @@ void MeshSimplicial1D::check() const
         assert( 0 <= data_edge_vertices[e][0] && data_edge_vertices[e][0] < counter_vertices );
         assert( 0 <= data_edge_vertices[e][1] && data_edge_vertices[e][1] < counter_vertices );
         assert( data_edge_vertices[e][0] != data_edge_vertices[e][1] );
+    }    
+    
+    /****************************************/
+    /* 2. check the uniqueness of simplices */
+    /****************************************/
+    
+    /* Check that all edges are unique, even up to permutation */
+    
+    for( int e1 = 0; e1 < counter_edges; e1++ )
+    for( int e2 = 0; e2 < counter_edges; e2++ )
+    {
+        if( e1 == e2 ) continue;
+        assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][0] || data_edge_vertices[e1][1] != data_edge_vertices[e2][1] );
+        assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][1] || data_edge_vertices[e1][1] != data_edge_vertices[e2][0] );
+    }
+    
+    /********************************************************/
+    /* 3. check the data of each simplex accross dimensions */
+    /********************************************************/
+    
+    /**************************************************************/
+    /* 4. Check that the first parents are set and actual parents */
+    /**************************************************************/
+    
+    /* each vertex_firstparent: first parent is non-null */
+    
+    for( int v = 0; v < counter_vertices; v++ )
+    {
+        int p = data_vertex_firstparent_edge[v];
         
+        assert( p != nullindex );
+        assert( 0 <= p && p < counter_edges );
+        
+        assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
+    }
+    
+    /*****************************************************/
+    /* 5. Check that the next parents are actual parents */
+    /*****************************************************/
+    
+    /* each edge: the next parents make sense  */
+    
+    for( int e = 0; e < counter_edges; e++ )
+    {
         if( data_edge_nextparents_of_vertices[e][0] != nullindex || data_edge_nextparents_of_vertices[e][1] != nullindex )
           assert( data_edge_nextparents_of_vertices[e][0] != data_edge_nextparents_of_vertices[e][1] );
         
@@ -238,31 +284,9 @@ void MeshSimplicial1D::check() const
           
     }
     
-    /* 
-     * check that all edges are unique, even up to permutation
-     */
-    
-    for( int e1 = 0; e1 < counter_edges; e1++ )
-    for( int e2 = 0; e2 < counter_edges; e2++ )
-    {
-        if( e1 == e2 ) continue;
-        assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][0] || data_edge_vertices[e1][1] != data_edge_vertices[e2][1] );
-        assert( data_edge_vertices[e1][0] != data_edge_vertices[e2][1] || data_edge_vertices[e1][1] != data_edge_vertices[e2][0] );
-    }
-    
-    /* 
-     * each vertex_firstparent: first parent is non-null 
-     */
-    
-    for( int v = 0; v < counter_vertices; v++ )
-    {
-        int p = data_vertex_firstparent_edge[v];
-        
-        assert( p != nullindex );
-        assert( 0 <= p && p < counter_edges );
-        
-        assert( data_edge_vertices[p][0] == v || data_edge_vertices[p][1] == v );
-    }
+    /****************************************/
+    /* 6. Check that all parents are listed */
+    /****************************************/
     
     /* 
      * check that each is listed as parent somewhere 

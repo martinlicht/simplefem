@@ -639,7 +639,7 @@ void MeshSimplicial3D::check() const
     #else
     
     /****************************/
-    /* 1. Check the array sizes */ // OK
+    /* 0. Check the array sizes */ // OK
     /****************************/
     
     assert( counter_tetrahedra == data_tetrahedron_faces.size() );
@@ -677,7 +677,7 @@ void MeshSimplicial3D::check() const
     
     
     /********************************************************************************/
-    /* 2. check that the internal data of each simplex make sense on each dimension */
+    /* 1. check that the internal data of each simplex make sense on each dimension */
     /********************************************************************************/
     
     /* VERTEX EDGE STUFF */
