@@ -1101,13 +1101,13 @@ DenseMatrix Mesh::get_reflection_Jacobian_along_face( int f ) const
 
     int local_0 = get_subsimplex( dim-1, 0, f, 0 );
 
-    const auto pos_origin = getCoordinates().getvectorclone( local_0 );
+    const auto pos_origin = getCoordinates().getdata_by_vertex( local_0 );
 
     for( int v = 1; v <= dim-1; v++ )
     {
         int local_v = get_subsimplex( dim-1, 0, f, v );
         
-        const auto pos_v = getCoordinates().getvectorclone( local_v );
+        const auto pos_v = getCoordinates().getdata_by_vertex( local_v );
 
         const auto col = pos_v - pos_origin;
 
@@ -1124,8 +1124,8 @@ DenseMatrix Mesh::get_reflection_Jacobian_along_face( int f ) const
     const auto v0 = get_subsimplex( dim, 0, t0, local_opp_0 );
     const auto v1 = get_subsimplex( dim, 0, t1, local_opp_1 );
 
-    const auto pos_opp_0 = getCoordinates().getvectorclone( v0 );
-    const auto pos_opp_1 = getCoordinates().getvectorclone( v1 );
+    const auto pos_opp_0 = getCoordinates().getdata_by_vertex( v0 );
+    const auto pos_opp_1 = getCoordinates().getdata_by_vertex( v1 );
 
     jacobian0.setcolumn( dim-1, pos_opp_0 - pos_origin );
     jacobian1.setcolumn( dim-1, pos_opp_1 - pos_origin );

@@ -2261,7 +2261,7 @@ void MeshSimplicial2D::uniformrefinement()
     
     for( int e = 0; e < counter_edges; e++ )
     {
-      getCoordinates().loadvector( counter_vertices + e, get_edge_midpoint( e ) );
+      getCoordinates().setdata_by_vertex( counter_vertices + e, get_edge_midpoint( e ) );
     }
     
     
@@ -2777,7 +2777,7 @@ void MeshSimplicial2D::midpoint_refinement( int t )
     
     /* load the new coordinate */
     
-    getCoordinates().loadvector( counter_vertices, get_triangle_midpoint( t ) );
+    getCoordinates().setdata_by_vertex( counter_vertices, get_triangle_midpoint( t ) );
     
     
     /* assemble the data and auxiliary variables */

@@ -83,13 +83,14 @@ int main( int argc, char *argv[] )
     for( int l = min_l; l <= max_l; l++ )
     {
         
-        LOG << "Level: " << l << "/" << max_l << nl;
+        LOG << "Level: " << min_l << " <= " << l << " <= " << max_l << nl;
         LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
         for( int r = min_r; r <= max_r; r++ )
         {
             
-            LOG << "Polynomial degree: " << r << "/" << max_r << nl;
+            LOG << "Level: "             << min_l << " <= " << l << " <= " << max_l << nl;
+            LOG << "Polynomial degree: " << min_r << " <= " << r << " <= " << max_r << nl;
             
             LOG << "... assemble partial matrices" << nl;
     

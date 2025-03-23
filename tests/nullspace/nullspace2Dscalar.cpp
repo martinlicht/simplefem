@@ -89,7 +89,7 @@ int main( int argc, char *argv[] )
     for( int l = min_l; l <= max_l; l++ )
     {
         
-        LOG << "Level: " << l << "/" << max_l << nl;
+        LOG << "Level: " << min_l << " <= " << l << " <= " << max_l << nl;
         LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
         
         for( int r = min_r; r <= max_r; r++ )
@@ -99,7 +99,8 @@ int main( int argc, char *argv[] )
             if( b == 0 and not do_sullivan ) continue;
             if( b == 1 and not do_whitney  ) continue;
             
-            LOG << "Polynomial degree: " << r << "/" << max_r << " using " << (b==0?"Sullivan":"Whitney") << " forms" << nl;
+            LOG << "Level: "             << min_l << " <= " << l << " <= " << max_l << nl;
+            LOG << "Polynomial degree: " << min_r << " <= " << r << " <= " << max_r << " using " << (b==0?"Sullivan":"Whitney") << " forms" << nl;
             
             LOG << "... assemble matrices" << nl;
     

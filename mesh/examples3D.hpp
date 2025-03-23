@@ -489,12 +489,12 @@ inline MeshSimplicial3D RandomPolyhedralSphere( int number_of_iterations )
     for( int n = 0; n < M.count_vertices(); n++ )
     {
       if( n == 4 ) continue;
-      auto position = M.getCoordinates().getvectorclone(n);
+      auto position = M.getCoordinates().getdata_by_vertex(n);
       // LOG << position << nl;
       position.normalize();
       LOG << position << nl;
       assert( is_numerically_close( position.norm(), 1. ) );
-      M.getCoordinates().loadvector( n, position );
+      M.getCoordinates().setdata_by_vertex( n, position );
     }
 
 

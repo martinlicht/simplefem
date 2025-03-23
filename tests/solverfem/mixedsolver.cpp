@@ -141,12 +141,8 @@ int main( int argc, char *argv[] )
         
         const int max_l = 5;
         
-        const int min_r = 1; 
         
-        const int max_r = 1;
-
         assert( 0 <= min_l and min_l <= max_l );
-        assert( 0 <= min_r and min_r <= max_r );
         
         for( int l = 0; l < min_l; l++ )
             M.uniformrefinement();
@@ -154,13 +150,12 @@ int main( int argc, char *argv[] )
         for( int l = min_l; l <= max_l; l++ )
         {
             
-            LOG << "Level: " << l << "/" << max_l << nl;
+            LOG << "Level: " << min_l << " <= " << l << " <= " << max_l << nl;
             LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
-            for( int r = min_r; r <= max_r; r++ )
+            const int r = 1;
+
             {
-                
-                LOG << "Polynomial degree: " << r << "/" << max_r << nl;
                 
                 LOG << "... assemble partial matrices" << nl;
         

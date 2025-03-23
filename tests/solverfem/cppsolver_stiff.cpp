@@ -165,7 +165,7 @@ int main( int argc, char *argv[] )
 
         for( int l = min_l; l <= max_l; l++ ){
             
-            LOG << "Level: " << l << "/" << max_l << nl;
+            LOG << "Level: " << min_l << " <= " << l << " <= " << max_l << nl;
             LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
             const int r = 1;

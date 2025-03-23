@@ -60,8 +60,8 @@ int main( int argc, char *argv[] )
         for( int r_plus = 0;     r_plus <= r_plus_max;       r_plus++ ) 
         {
             
+            LOG << "Level: " << l_min << " <= " << l << " <= " << l_max << nl;
             LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << " +" << r_plus << nl;
-
             LOG << "Form degree: " << space << k << nl;
 
             LOG << "assemble matrices..." << nl;

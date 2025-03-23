@@ -70,15 +70,15 @@ class Coordinates final
         
         /* get/set points as vectors  */
         
-        FloatVector getvectorclone( int n ) const;
-        FloatVector getvectorclone( int n, Float s ) const;
-        void loadvector( int n, const FloatVector& input );
-        void loadvector( int n, const FloatVector& input, Float s );
+        FloatVector getdata_by_vertex( int n ) const;
+        FloatVector getdata_by_vertex( int n, Float s ) const;
+        void setdata_by_vertex( int n, const FloatVector& input );
+        void setdata_by_vertex( int n, const FloatVector& input, Float s );
         
         /* get/set coordinates as vectors  */
         
-        FloatVector getdimensionclone( int d, Float s = 1.0 ) const;
-        void loaddimension( int d, const FloatVector& value, Float s = 1.0 );
+        FloatVector getdata_by_dimension( int d, Float s = 1.0 ) const;
+        void setdata_by_dimension( int d, const FloatVector& value, Float s = 1.0 );
         
         /* transform all coordinates  */
         

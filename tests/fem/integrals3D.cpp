@@ -104,6 +104,7 @@ int main( int argc, char *argv[] )
         for( int r = r_min; r <= r_max; r++ ) 
         {
             
+            LOG << "Level: "      << l_min << " <= " << l << " <= " << l_max << nl;
             LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
 
             errors_scalar[ l-l_min ][ r-r_min ] = 0.;

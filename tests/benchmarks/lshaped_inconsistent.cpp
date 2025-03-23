@@ -54,8 +54,8 @@ int main( int argc, char *argv[] )
             int v0 = M.get_edge_vertex( e, 0 );
             int v1 = M.get_edge_vertex( e, 1 );
 
-            auto cs0 = M.getCoordinates().getvectorclone( v0 );
-            auto cs1 = M.getCoordinates().getvectorclone( v1 );
+            auto cs0 = M.getCoordinates().getdata_by_vertex( v0 );
+            auto cs1 = M.getCoordinates().getdata_by_vertex( v1 );
 
             if( cs0[1] == cs1[1] ) {
                 M0.set_flag( 0, v0, SimplexFlag::SimplexFlagDirichlet );
@@ -134,13 +134,14 @@ int main( int argc, char *argv[] )
         for( int l = min_l; l <= max_l; l++ )
         {
             
-            LOG << "Level: " << l << "/" << max_l << nl;
-            LOG << "# T/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+            LOG << "Level: " << min_l << " <= " << l << " <= " << max_l << nl;
+            LOG << "# T/F/E/V: " << M.count_triangles() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
             
             for( int r = min_r; r <= max_r; r++ )
             {
                 
-                LOG << "Polynomial degree: " << r << "/" << max_r << nl;
+                LOG << "Level: "             << min_l << " <= " << l << " <= " << max_l << nl;
+                LOG << "Polynomial degree: " << min_r << " <= " << r << " <= " << max_r << nl;
                 
                 LOG << "... assemble matrices" << nl;
                 

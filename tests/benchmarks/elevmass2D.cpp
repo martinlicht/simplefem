@@ -121,6 +121,10 @@ int main( int argc, char *argv[] )
         for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
         {
             
+            LOG << "Level: "             << l_min << " <= " << l << " <= " << l_max << nl;
+            LOG << "Polynomial degree: " << r_min << " <= " << r << " <= " << r_max << nl;
+            LOG << "additional degree: " <<   "0" << " <= " << r_plus << " <= " << r_plus_max << nl;
+            
             SparseMatrix massmatrix_scalar_plus = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r + r_plus );
             
             SparseMatrix massmatrix_vector_plus = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r + r_plus );
