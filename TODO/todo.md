@@ -83,7 +83,7 @@ None of the above can be done in a day, so it most likely requires regular grind
 - [x] Coordinate class, rename methods to be get/clone by vertex/dimension
 - [x] Check whether the << and >> and bitwise operations are executed on signed integral types
 - [!] Compilation error with: no exceptions, optimizations, OpenMP, sanitizers, tcmalloc, stripping, profiling, gold linker: wontfix
-- [x] `LOG << "Polynomial degree: " <<  min_r << " <= " << r << " <= " << max_r << nl;`
+- [x] `LOG << "Polynomial degree: " << min_r << " <= " << r << " <= " << max_r << nl;`
 - [x] `-Weffc++`: initializer lists and (const) iterators
 
 ```c

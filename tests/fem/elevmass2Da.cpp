@@ -126,6 +126,7 @@ int main( int argc, char *argv[] )
         for( int r_plus =     0; r_plus <= r_plus_max; r_plus++ ) 
         {
             
+            LOG << "Level: "      << l_min << " <= " << l << " <= " << l_max << nl;
             LOG << "Polydegree: " << r_min << " <= " << r << " <= " << r_max << nl;
             LOG << "Adding: 0 <= " << r_plus << " <= " << r_plus_max << nl;
 

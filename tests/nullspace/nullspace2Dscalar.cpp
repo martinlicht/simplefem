@@ -99,8 +99,8 @@ int main( int argc, char *argv[] )
             if( b == 0 and not do_sullivan ) continue;
             if( b == 1 and not do_whitney  ) continue;
             
-            LOG << "Level: " << min_l << " <= " << l << " <= " << max_l << nl;
-            LOG << "Polynomial degree: " << r << "/" << max_r << " using " << (b==0?"Sullivan":"Whitney") << " forms" << nl;
+            LOG << "Level: "             << min_l << " <= " << l << " <= " << max_l << nl;
+            LOG << "Polynomial degree: " << min_r << " <= " << r << " <= " << max_r << " using " << (b==0?"Sullivan":"Whitney") << " forms" << nl;
             
             LOG << "... assemble matrices" << nl;
     

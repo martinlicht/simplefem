@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
             LOG << "Polydegree:  " << r_min << " <= " << r << " <= " << r_max                 << nl;
             LOG << "Form degree: " <<     0 << " <= " << k << " <= " << M.getinnerdimension() << nl;
 
-            LOG << "# T/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
+            LOG << "# T/F/E/V: " << M.count_tetrahedra() << "/" << M.count_faces() << "/" << M.count_edges() << "/" << M.count_vertices() << nl;
 
 
             LOG << "assemble matrices..." << nl;

@@ -231,8 +231,8 @@ int main( int argc, char *argv[] )
         for( int r = min_r; r <= max_r; r++ ) 
         {
             
-            LOG << "Level: " << min_l << " <= " << l << " <= " << max_l << nl;
-            LOG << "Polynomial degree: " <<  min_r << " <= " << r << " <= " << max_r << nl;
+            LOG << "Level: "             << min_l << " <= " << l << " <= " << max_l << nl;
+            LOG << "Polynomial degree: " << min_r << " <= " << r << " <= " << max_r << nl;
                     
             LOG << "integration with: " << r_plus_vector << ", " << r_plus_scalar << nl;
                     
