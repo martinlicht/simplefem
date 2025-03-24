@@ -97,6 +97,8 @@ typedef double Float;
 #endif
 
 
+// Constexpr sqrt 
+
 template<typename T>
 constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type Sqrt( T a, int i = 40 )
 {
@@ -106,11 +108,21 @@ constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type Sq
     return x;    
 }
 
+// Constexpr is_finite
+
+template<typename T>
+constexpr typename std::enable_if< std::is_floating_point<T>::value, T>::type is_finite( T x )
+{
+    return ( x == x ) and ( x != std::numeric_limits<T>::infinity() ) and ( x != -std::numeric_limits<T>::infinity() );
+}
+
+
+
 static const constexpr Float notanumber = std::numeric_limits<Float>::quiet_NaN();
 
 static const constexpr Float machine_epsilon = std::numeric_limits<Float>::epsilon();
 
-static_assert( std::isfinite(machine_epsilon), "machine_epsilon must be finite." );
+static_assert( is_finite(machine_epsilon), "machine_epsilon must be finite." );
 
 static const constexpr Float desired_precision = 
                                     sizeof(Float) == sizeof(float) ? 1e-5 : Sqrt( machine_epsilon );
@@ -121,9 +133,9 @@ static const constexpr Float desired_closeness =
 static const constexpr Float desired_closeness_for_sqrt = 
                                     sizeof(Float) == sizeof(float) ? 1e-5 : 100 * desired_closeness;
 
-static_assert( std::isfinite(desired_precision), "desired_precision must be finite." );
-static_assert( std::isfinite(desired_closeness), "desired_closeness must be finite." );
-static_assert( std::isfinite(desired_closeness_for_sqrt), "desired_closeness_for_sqrt must be finite." );
+static_assert( is_finite(desired_precision), "desired_precision must be finite." );
+static_assert( is_finite(desired_closeness), "desired_closeness must be finite." );
+static_assert( is_finite(desired_closeness_for_sqrt), "desired_closeness_for_sqrt must be finite." );
 
 
 
