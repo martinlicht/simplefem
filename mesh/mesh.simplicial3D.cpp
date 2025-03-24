@@ -639,7 +639,7 @@ void MeshSimplicial3D::check() const
     #else
     
     /****************************/
-    /* 0. Check the array sizes */ // OK
+    /* 0. Check the array sizes */
     /****************************/
     
     assert( counter_tetrahedra == data_tetrahedron_faces.size() );

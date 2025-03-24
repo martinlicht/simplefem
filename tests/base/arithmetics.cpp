@@ -9,6 +9,21 @@ int main( int argc, char *argv[] )
 {
     LOG << "Unit Test: arithmetics" << nl;
     
+    LOG << "Test finiteness predicate\n";
+    
+    assert(std::isfinite( 1.3) == is_finite( 1.3));
+    assert(std::isfinite( 1.0) == is_finite( 1.0));
+    assert(std::isfinite( 0.0) == is_finite( 0.0));
+    assert(std::isfinite(-0.0) == is_finite(-0.0));
+    assert(std::isfinite(-1.0) == is_finite(-1.0));
+    assert(std::isfinite(-1.3) == is_finite(-1.3));
+    
+    assert(std::isfinite(  std::numeric_limits<Float>::quiet_NaN()  ) == is_finite(  std::numeric_limits<Float>::quiet_NaN()  ));
+    assert(std::isfinite(  std::numeric_limits<Float>::infinity()   ) == is_finite(  std::numeric_limits<Float>::infinity()   ));
+    assert(std::isfinite(  std::numeric_limits<Float>::denorm_min() ) == is_finite(  std::numeric_limits<Float>::denorm_min() ));
+    assert(std::isfinite( -std::numeric_limits<Float>::infinity()   ) == is_finite( -std::numeric_limits<Float>::infinity()   ));
+    assert(std::isfinite( -std::numeric_limits<Float>::denorm_min() ) == is_finite( -std::numeric_limits<Float>::denorm_min() ));
+    
     LOG << "Test absolute\n";
     
     assert(absolute<int>(0) == 0);

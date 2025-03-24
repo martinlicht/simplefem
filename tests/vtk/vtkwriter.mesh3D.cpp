@@ -17,9 +17,23 @@ int main( int argc, char *argv[] )
     
     {
         
-        const MeshSimplicial3D Mx = FicheraCorner3D();  std::string meshname = "Fichera Corner 3D";
+        const MeshSimplicial3D Mx = UnitSimplex3D();  std::string meshname = "Fichera Corner 3D";
         
         internal_print( Mx, meshname );
+        
+        {
+            
+            auto M = Mx;
+            
+            for( int c = 0; c < 2; c++ ) {
+            
+                M.midpoint_refinement_global();
+                
+                internal_print( M, meshname, get_basename(__FILE__) + "mp" );
+            
+            }
+            
+        }    
         
         {
             
@@ -31,7 +45,7 @@ int main( int argc, char *argv[] )
 
                 M.shake_interior_vertices();
                 
-                internal_print( M, meshname );
+                internal_print( M, meshname, get_basename(__FILE__) + "ur" );
             
             }
             
@@ -55,7 +69,7 @@ int main( int argc, char *argv[] )
                 
                 M.longest_edge_bisection_recursive( refinementedges );
 
-                internal_print( M, meshname );
+                internal_print( M, meshname, get_basename(__FILE__) + "le" );
             
             }
             
