@@ -11,7 +11,7 @@ the testing is automatized. Maybe all the tests are run
 and errors are just collected.
 
 
-## structure of tests 
+## Structure of tests 
 
 The tests should have a similar form. 
 For example, they should state the test topic and when they are done.
@@ -28,7 +28,7 @@ and output of data. The former occurs at sequence points
 and typically does not depend on the parameters of the computation,
 it is fixed, so to say. The latter, by contrast, typically 
 involves the data and is only written to demonstrate the results 
-of the computation. It's length does depend on data.
+of the computation. Its length does depend on data.
 The logging output is of interest to the general debugging,
 whereas the data output is only helpful for visual inspection.
 
@@ -36,7 +36,7 @@ whereas the data output is only helpful for visual inspection.
 ## Virtual files 
 
 In some circumstances, such as testing the input/output routines,
-it seems reasonable to avoid actual harddrive files in favor of 
+it seems reasonable to avoid actual hard drive files in favor of 
 purely virtual files. 
 
 It seems natural that the input/routines 

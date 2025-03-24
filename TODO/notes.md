@@ -6,18 +6,22 @@ CODING STYLE GUIDE
 Naming Conventions
 ================================
 
-Use `CapitalizedCamelCase` for classes, structs, enums and namespaces.
+Use `CapitalizedCamelCase` for classes, structs, enums.
+Alternatively, `snake_case` for plain-old-structs.
 
-Use `CapitalizedCamelCase`, `camelCase` or `snake_case` for functions.
+Use `CapitalizedCamelCase`, `camelCase` or `snake_case` for global functions and class methods.
 
-Use `snake_case` for variables.
+Use `snake_case` for variables, constants, and parameters, and also for data members.
 
-Underscores also be used in the names of classes, structs, enums, and functions, if they indicate variations of a common principle, such as different implementations of the same idea.
+Use `snake_case` for namespaces.
+
+Underscores also be used in the names of classes, structs, enums, and functions, if they indicate variations of a common principle, such as different implementations of the same idea. In that case, the underscore separates off a suffix.
 
 As by common and nearly universal convention, macros must always be in `UPPERCASE_WITH_UNDERSCORES`.
 
-In general, do not abbreviate when naming classes and functions. An exception is using common abbreviations (such as 'VTK') specific to the domain of knowledge. 
+Avoid abbreviations when naming classes and functions. An exception is using common abbreviations (such as 'VTK') specific to the domain of knowledge. 
 
+Do not start any identifier with underscores ever.
 
 
 
@@ -76,7 +80,7 @@ Enum Policy
 ===========
  
 All enumerations must be `enum class` as opposed to the usual enums.
-The program is possibly compiled with `-fstrict-enum`, which effectively prohibits any fancy arithmetics.
+The program is possibly compiled with `-fstrict-enum`, which effectively prohibits any fancy arithmetic.
 All enumerations must have a base type, typically `unsigned char`, large enough to represent all values.
 
 Contrary to the usual C conventions, the enumeration values have simpler names, there is no need to include

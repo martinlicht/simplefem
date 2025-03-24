@@ -1,3 +1,7 @@
+# For each directory of tests, we define a list of modules necessary for linking
+# the executables. These also enter the dependencies of the makefile targets.
+# Each new category of tests must be added here together with all necessary modules.
+
 affix.external      := 
 affix.base          := base
 affix.utility       := utility base external
@@ -20,4 +24,3 @@ affix.eigenvalue    := fem vtk mesh solver dense sparse operators combinatorics 
 affix.nullspace     := fem vtk mesh solver dense sparse operators combinatorics utility base external
 affix.afem          := fem vtk mesh solver dense sparse operators combinatorics utility base external
 affix.benchmark     := fem vtk mesh solver dense sparse operators combinatorics utility base external
-# TODO: Descending order for these lists ...

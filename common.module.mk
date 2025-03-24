@@ -1,14 +1,17 @@
 
 # This file contains makefile rules for object creation
-# that can be applied in every single source directory
-# They create the dependency auxiliary files, 
-# the object files, and the shared libraries. 
+# that can be applied in every single source directory.
+# They create the dependency auxiliary files,
+# the object files, and the shared libraries.
 
 ######################################################################################
 # EXPECTED VARIABLES:
 # - projectdir : path/to/project/directory
 # - moddir     : path/to/module/directory
-# - module     : name of the module 
+# - module     : name of the module
+ifndef projectdir
+$(error Expect 'projectdir')
+endif
 ifndef module
 $(error Expect 'module')
 endif
@@ -18,8 +21,7 @@ endif
 
 
 ######################################################################################
-# Set the variables for this file 
-# determine whether to use static or dynamic linking 
+# Set the variables for this file, determine whether to use static or dynamic linking.
 
 $(module).depdir  := $(moddir)/.deps
 
@@ -32,28 +34,29 @@ $(module).libraryobject := $(moddir)/lib$(module).o
 $(module).sharedlibrary := $(moddir)/lib$(module).so
 $(module).staticlibrary := $(moddir)/lib$(module).a
 
-# Set target specific variables for all recipes
+# Set target specific variables for all recipes.
 $(module).%: mymodule := $(module)
 $(module).%: mymoddir := $(moddir)
 
 ###################################################################################################
-# All object files that are compiled (and their descendants) also depend on the makefiles 
+# All object files that are compiled (and their descendants) also depend on the makefiles.
 
 $(moddir)/*.o $(moddir)/.all.o: $(moddir)/makefile
-$(moddir)/*.o $(moddir)/.all.o: $(projectdir)/makefile $(projectdir)/common.compile.mk $(projectdir)/common.module.mk 
+$(moddir)/*.o $(moddir)/.all.o: $(projectdir)/makefile $(projectdir)/common.compile.mk $(projectdir)/common.module.mk
 
 
 ###################################################################################################
-# How to compile the .o files and .all.o file 
+# How to compile the .o files and .all.o file.
 
+# Create the directory for dependency files if it does not exist yet.
 $($(module).depdir):
 	@echo $@
 	@"mkdir" -p $@
 
-# We generate dependency files during compilation using the following compiler flags 
+# We generate dependency files during compilation using the following compiler flags:
 # -MT $@ : sets the target of the makefile rule, stripped of any directory components
 # -MP    : add dependencies as phony targets
-# -MF ...: sets the output file for the rules 
+# -MF ...: sets the output file for the rules
 # -MMD   : list headers as a by-product of compiling, excluding system headers
 # alternatively,
 # -MM    : list headers, excluding system headers, and do not compile anything
@@ -66,11 +69,11 @@ $(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module)
 #	 @echo module        $(mymodule)
 #	 @echo mymoddir      $(mymoddir)
 #	 @echo module.depdir $(mymodule).depdir
-#	 @echo depdir        $($(mymodule).depdir) 
-#	 @echo sources       $($(mymodule).sources) 
-#	 @echo headers       $($(mymodule).headers) 
-#	 @echo objects       $($(mymodule).objects) 
-#	 @echo dependencies  $($(mymodule).dependencies) 
+#	 @echo depdir        $($(mymodule).depdir)
+#	 @echo sources       $($(mymodule).sources)
+#	 @echo headers       $($(mymodule).headers)
+#	 @echo objects       $($(mymodule).objects)
+#	 @echo dependencies  $($(mymodule).dependencies)
 #	 @echo sobase        $($(mymodule).sharedlibrarybasename)
 #	 @echo libobject     $($(mymodule).libraryobject)
 #	 @echo so            $($(mymodule).sharedlibrary)
@@ -81,7 +84,7 @@ $(moddir)/$($(module).objects): %.o: %.cpp $($(module).depdir)/%.d | $($(module)
 #	 @echo all prereq:   $^
 #	 @echo DEPFLAGS:     $(DEPFLAGS)
 #	 @echo $($(mymodule).depdir)/$(notdir $*.d)
-	@echo Compiling and listing dependencies: $@ 
+	@echo Compiling and listing dependencies: $@
 #	$(CXX) $(CXXFLAGS) $(CPPFLAGS)                       $< -c -o $@ $(DEPFLAGS)
 	@touch $@
 
@@ -96,11 +99,11 @@ $(moddir)/.all.o: $($(module).sources) $(moddir)/.all.cpp $($(module).depdir)/.a
 #	 @echo module        $(mymodule)
 #	 @echo mymoddir      $(mymoddir)
 #	 @echo module.depdir $(mymodule).depdir
-#	 @echo depdir        $($(mymodule).depdir) 
-#	 @echo sources       $($(mymodule).sources) 
-#	 @echo headers       $($(mymodule).headers) 
-#	 @echo objects       $($(mymodule).objects) 
-#	 @echo dependencies  $($(mymodule).dependencies) 
+#	 @echo depdir        $($(mymodule).depdir)
+#	 @echo sources       $($(mymodule).sources)
+#	 @echo headers       $($(mymodule).headers)
+#	 @echo objects       $($(mymodule).objects)
+#	 @echo dependencies  $($(mymodule).dependencies)
 #	 @echo sobase        $($(mymodule).sharedlibrarybasename)
 #	 @echo libobject     $($(mymodule).libraryobject)
 #	 @echo so            $($(mymodule).sharedlibrary)
@@ -124,7 +127,7 @@ $($(module).dependencies):
 -include $($(module).dependencies)
 
 
-# We can also generate the dependency files without compiling anything 
+# We can also generate the dependency files without compiling anything.
 
 .PHONY: make_dependencies $(module).make_dependencies
 make_dependencies: $(module).make_dependencies
@@ -134,7 +137,7 @@ $(module).make_dependencies: $($(module).depdir)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $$item -MM -MP -MF $$item.d; \
 	done
 
-# How to the .o files into library objects 
+# How to the .o files into library objects.
 
 $($(module).libraryobject): $(moddir)/.all.o
 	@echo Library object: $@
@@ -152,7 +155,7 @@ $($(module).staticlibrary): $($(module).libraryobject)
 
 
 ###################################################################################################
-# Finally, determine the build target depending on whether shared libraries are poossible or not
+# Finally, determine the build target depending on whether shared libraries are poossible or not.
 
 .PHONY: buildobjects buildso builda
 .PHONY: $(module).buildobjects $(module).buildso $(module).builda
@@ -172,13 +175,13 @@ $(module).build: $($(module).libraryobject)
 else
 ifeq ($(LINKINGTYPE),static)
 $(module).build: $(module).builda
-else 
+else
 ifeq ($(LINKINGTYPE),dynamic)
 $(module).build: $(module).buildso
-else 
-$(error Unknown linkingtype $(LINKINGTYPE))
-endif 
-endif 
+else
+$(error Unknown linkingtype: $(LINKINGTYPE))
+endif
+endif
 endif
 
 # ifeq ($(OS),Windows_NT)
@@ -192,14 +195,14 @@ endif
 
 
 ##########################################################################################
-# List several objects. Read-only
+# List several objects. Read-only.
 
 .PHONY:  list_of_objects $(module).list_of_objects
 .SILENT: list_of_objects $(module).list_of_objects
 
 list_of_objects: $(module).list_of_objects
 
-$(module).list_of_objects: 
+$(module).list_of_objects:
 	@echo Project directory: $(projecdir);
 	@echo Module name:       $(mymodule);
 	@echo Module directory:  $(mymoddir);
@@ -212,7 +215,11 @@ $(module).list_of_objects:
 	@echo Build:             $($(mymodule).build);
 
 
+
+# We proceed with some upkeep targets, such as linting. We exclude the module for
+# external source code:
 ifneq ($(module),external)
+
 ##########################################################################################
 # Check whether the header files have correct syntax. Read-only.
 
@@ -224,9 +231,6 @@ $($(module).headerchecks): check-%.hpp :
 	$(info Check header: $*.hpp)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.hpp -fsyntax-only
 
-
-
-
 ##########################################################################################
 # Check whether the source files have correct syntax. Read-only.
 
@@ -237,8 +241,6 @@ checksources: $($(module).sourcechecks)
 $($(module).sourcechecks): check-%.cpp : 
 	$(info Check source: $*.cpp)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.cpp -fsyntax-only
-
-
 
 ##########################################################################################
 # Target 'check' is a generic test. Currently, it defaults to 'tidy'
@@ -263,9 +265,8 @@ tidy: $(module).tidy
 $(module).tidy:
 	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/.Tools/clang-tidy.yaml -- 
 
-
 ##########################################################################################
-# Apply cppcheck to all cpp and hpp files in the directory. Read-only. 
+# Apply cppcheck to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: cppcheck $(module).cppcheck
 cppcheck: $(module).cppcheck
@@ -275,21 +276,19 @@ $(module).cppcheck:
 	--suppress=duplicateCondition --suppress=toomanyconfigs --suppress=sizeofFunctionCall --suppress=variableScope --suppress=missingReturn --suppress=assertWithSideEffect --suppress=useStlAlgorithm --suppress=knownConditionTrueFalse --suppress=unsignedPositive \
 	--std=c++17 -q $(mymoddir)/*pp
 
-
 ##########################################################################################
 # Apply uncrustify to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: uncrustify $(module).uncrustify
 uncrustify: $(module).uncrustify
 $(module).uncrustify:
-	uncrustify -c - --check $($(mymodule).sources) 
-
+	uncrustify -c - --check $($(mymodule).sources)
 
 ##########################################################################################
-# Regex several useful things. Read-only. 
-# - find trailing white spaces 
-# - find non-ASCII characters 
-# - find consecutive spaces 
+# Regex several useful things. Read-only.
+# - find trailing white spaces
+# - find non-ASCII characters
+# - find consecutive spaces
 
 .PHONY: grepissues $(module).grepissues
 grepissues: $(module).grepissues
@@ -311,7 +310,8 @@ $(module).grepissues:
 #	@-grep --line-number --color -E '(0-9)e' $(mymoddir)/*pp
 #	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mymoddir)/*pp
 
-endif
+##########################################################################################
+endif # Done with all upkeep targets.
 
 
 
@@ -322,9 +322,9 @@ endif
 # - outputclean: delete all *vtk output files
 # - dependclean: delete .deps directories and their content
 
-CMD_CLEAN       = rm -f .all.o .all.json .json *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.orig *.out.stackdump 
+CMD_CLEAN       = rm -f .all.o .all.json .json *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.out *.orig *.out.stackdump
 CMD_OUTPUTCLEAN = rm -f ./*.bmp ./*/*.bmp ./*/*/*.bmp ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
-CMD_DEPCLEAN    = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
+CMD_DEPCLEAN    = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi
 
 .PHONY: clean outputclean dependclean
 .PHONY: $(module).clean $(module).outputclean $(module).dependclean
@@ -336,16 +336,16 @@ dependclean: $(module).dependclean
 $(module).clean $(module).outputclean $(module).dependclean: mymodule := $(module)
 $(module).clean $(module).outputclean $(module).dependclean: mymoddir := $(moddir)
 
-$(module).clean: 
+$(module).clean:
 #	@-echo $(PWD)
-	@-cd $(mymoddir); $(CMD_CLEAN); $(CMD_OUTPUTCLEAN); $(CMD_DEPCLEAN); 
+	@-cd $(mymoddir); $(CMD_CLEAN); $(CMD_OUTPUTCLEAN); $(CMD_DEPCLEAN);
 
-$(module).outputclean: 
+$(module).outputclean:
 #	@-echo $(PWD)
-	@-cd $(mymoddir); $(CMD_OUTPUTCLEAN); 
+	@-cd $(mymoddir); $(CMD_OUTPUTCLEAN);
 
-$(module).dependclean: 
+$(module).dependclean:
 #	@-echo $(PWD)
-	@-cd $(mymoddir); $(CMD_DEPCLEAN); 
+	@-cd $(mymoddir); $(CMD_DEPCLEAN);
 
 

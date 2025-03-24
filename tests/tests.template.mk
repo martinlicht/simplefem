@@ -1,9 +1,9 @@
-# 
-# This file is supposed to be included in one of the subdirectories 
-# within the 'tests' folder. It imports all the stuff it needs.
-# 
+#################################################################################################
+# This file is supposed to be included in one of the subdirectories within the 'tests' folder.
+# It imports all the necessary targets for building the tests in the respective directory.
+#################################################################################################
 
-.PHONY: default 
+.PHONY: default
 default: build
 
 context    :=$(notdir $(CURDIR))
@@ -12,20 +12,12 @@ testsdir   :=../
 projectdir :=../../
 pathvar    :=$(CURDIR)/../../
 
-include ../../common.compile.mk 
+include ../../common.compile.mk
 
 include ../tests.affices.mk
 
-.PHONY: build 
+.PHONY: build
 build: $(context).tests
 
 include ../tests.rules.mk
 
-# clean:
-# 	echo $(cleanfiles)
-
-# outputclean:
-# 	echo $(outputcleanfiles)
-
-# depclean:
-# 	echo $(depcleanfiles)
