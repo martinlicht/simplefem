@@ -82,7 +82,7 @@ None of the above can be done in a day, so it most likely requires regular grind
 - [x] FEM: *inc -> inc* 
 - [x] Coordinate class, rename methods to be get/clone by vertex/dimension
 - [x] Check whether the << and >> and bitwise operations are executed on signed integral types
-- [!] Compilation error with: no exceptions, optimizations, OpenMP, sanitizers, tcmalloc, stripping, profiling, gold linker: wontfix
+- [!] Compilation error with: no exceptions, optimizations, OpenMP, sanitizers, TCMalloc, stripping, profiling, gold linker: wontfix
 - [x] `LOG << "Polynomial degree: " << min_r << " <= " << r << " <= " << max_r << nl;`
 - [x] `-Weffc++`: initializer lists and (const) iterators
 
@@ -821,7 +821,7 @@ Compare with the order of setting CXXFLAGS
 - Optimization flags 
 - Macro definitions 
 - Linker flags 
-- Options if tcmalloc is used 
+- Options if TCMalloc is used 
 - Whether to strip debug information: `-ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--strip-all`
 
 ```makefile
