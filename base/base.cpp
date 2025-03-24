@@ -326,7 +326,7 @@ int string_to_integer( const char* s, const char* __restrict__ *endptr, unsigned
     has_overflown = false;
     
     // Skip leading whitespace
-    while( std::isspace( (unsigned char)*s ) ) { s++; }
+    while( std::isspace( (unsigned char)*s ) != 0 ) { s++; }
 
     if( *s == '\0' ) {
         // printf("Only white space\n");
@@ -369,7 +369,7 @@ int string_to_integer( const char* s, const char* __restrict__ *endptr, unsigned
     }
 
     // Convert digits
-    while( *s ) {
+    while( *s != '\0' ) {
         
         int digit;
         

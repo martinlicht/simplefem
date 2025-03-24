@@ -822,7 +822,8 @@ Float DenseMatrix::min() const
 
 Float DenseMatrix::average() const 
 {
-    return sum() / ( getdimin() > 0 and getdimout() );
+    assert( getdimin() > 0 and getdimout() > 0 );
+    return sum() / ( getdimin() * getdimout() );
 }
 
 Float DenseMatrix::sum() const 
