@@ -1,7 +1,7 @@
 # # Example usage:
 # # 
 # # 
-# # include ../../common.compile.mk 
+# # include ../../common.compile.mk
 # # 
 # # include ../../common.upkeep.mk
 # # 
@@ -14,11 +14,12 @@
 # # pathvar=$(shell pwd)/../../
 
 
-################################################################################
+############################################################################################
 # EXPECTED VARIABLES:
 # - projectdir : path/to/project/directory
 # - context    : path/to/test/component/directory
 # - contextdir : name of the test component
+# - pathvar    : path variable for the linker, absolute path
 ifndef projectdir
 $(error Expect 'projectdir')
 endif
@@ -28,12 +29,15 @@ endif
 ifndef contextdir
 $(error Expect 'contextdir')
 endif
+ifndef pathvar
+$(error Expect 'pathvar')
+endif
 
 $(context).%: mycontext    := $(context)
 $(context).%: mycontextdir := $(contextdir)
 
-######################################################################################
-# Decide whether to use .exe or .out as executable file ending 
+############################################################################################
+# Decide whether to use .exe or .out as executable file ending.
 
 ifeq ($(OS),Windows_NT)
 ending := exe
@@ -43,9 +47,8 @@ endif
 
 
 
-######################################################################################
-# Set the variables for this file 
-# determine whether to use static or dynamic linking 
+############################################################################################
+# Set the variables for this file, and determine whether to use static or dynamic linking.
 
 $(context).sources := $(sort $(wildcard $(contextdir)/*.cpp))
 
@@ -57,8 +60,8 @@ $(context).dependencies := $(patsubst $(contextdir)/%.cpp,$(contextdir)/.deps/%.
 
 $(context).include := $(patsubst %,-L$(projectdir)/%,$(affix.$(context)))
 linkerprefix       :=-Wl,
-$(context).rpath_t := $(patsubst %,-rpath=$(pathvar)/%,$(affix.$(context))) 
-$(context).rpath   := $(patsubst %,$(linkerprefix)%,$($(context).rpath_t)) 
+$(context).rpath_t := $(patsubst %,-rpath=$(pathvar)/%,$(affix.$(context)))
+$(context).rpath   := $(patsubst %,$(linkerprefix)%,$($(context).rpath_t))
 
 $(context).olib    := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(X).o  )
 $(context).alib    := $(foreach X, $(affix.$(context)), $(projectdir)/$(X)/lib$(X).a  )
@@ -96,28 +99,28 @@ $(context).mylib := $($(context).linklib)
 
 else
 
-$(error No linking mode recognized: $(LINKINGTYPE)) 
+$(error No linking mode recognized: $(LINKINGTYPE))
 
 endif
 
 
-###################################################################################################
-# All executables compiled depend on the makefiles 
+############################################################################################
+# All executables compiled depend on the makefiles.
 
 %.$(ending): $(testsdir)/makefile $(testsdir)/tests.rules.mk $(testsdir)/tests.affices.mk $(projectsdir)/common.compile.mk
 
-##########################################################################
-# Specific definitions and recipes on how to compile the executables 
+############################################################################################
+# Specific definitions and recipes on how to compile the executables.
 
 .PHONY: $($(context).depdir)
 $($(context).depdir):
 	@"mkdir" -p $@
 
 DEPFLAGS = -MT $@ -MF $($(mycontext).depdir)/$*.d -MP -MMD
-# We generate dependency files during compilation using the following compiler flags 
+# We generate dependency files during compilation using the following compiler flags:
 # -MT $@ : sets the target of the makefile rule, stripped of any directory components
 # -MP    : add dependencies as phony targets
-# -MF ...: sets the output file for the rules 
+# -MF ...: sets the output file for the rules
 # -MMD   : list headers as a by-product of compiling, excluding system headers
 
 
@@ -150,17 +153,17 @@ else ifeq ($(LINKINGTYPE),static)
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDFLAGS) $(LDLIBS) $(DEPFLAGS)
 else ifeq ($(LINKINGTYPE),objectfile)
 	@$(CXX) $(CXXFLAGS_EXECUTABLE) $(CPPFLAGS) $< $($(mycontext).include)                       $($(mycontext).mylib) -o $@ $(LDFLAGS) $(LDLIBS) $(DEPFLAGS)
-else 
+else
 	@echo Unable to compile the final object $@!
 endif
 	@touch $@
-	
+
 $($(context).dependencies):
 
 -include $($(context).dependencies)
 
-$($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/makefile 
-$($(context).outs): $(contextdir)/%.$(ending): $(projectdir)/makefile 
+$($(context).outs): $(contextdir)/%.$(ending): $(contextdir)/makefile
+$($(context).outs): $(contextdir)/%.$(ending): $(projectdir)/makefile
 $($(context).outs): $(contextdir)/%.$(ending): $(projectdir)/*.mk $(projectdir)/tests/*.mk
 
 .PHONY: $(context).tests
@@ -170,8 +173,8 @@ $(context).tests: $($(context).outs)
 
 
 
-###################################################
-# How to automatically run the executables
+############################################################################################
+# How to automatically run the executables.
 
 $(context).runs        := $(patsubst %.cpp,%.run,$($(context).sources))
 
@@ -194,7 +197,9 @@ $(context).valgrind_run: $($(context).valgrind_runs)
 $($(context).valgrind_runs): %.valgrind_run : %.$(ending)
 	valgrind ./$< 
 
-.PHONY: run $(context).run $($(context).runs) silent_run $(context).silent_run $($(context).silent_runs) valgrind_run $(context).valgrind_run $($(context).valgrind_runs) 
+.PHONY: run $(context).run $($(context).runs)
+.PHONY: silent_run $(context).silent_run $($(context).silent_runs)
+.PHONY: valgrind_run $(context).valgrind_run $($(context).valgrind_runs)
 
 # # 2> /dev/null
 
@@ -206,7 +211,7 @@ $($(context).valgrind_runs): %.valgrind_run : %.$(ending)
 # TODO: clean out the stuff below and adapt to the test directory
 
 
-########################################################################
+############################################################################################
 # Check whether the source files have correct syntax. Read-only.
 
 $(context).sourcechecks := $(patsubst %.cpp,check-%.cpp,$($(context).sources))
@@ -217,10 +222,7 @@ $($(context).sourcechecks): check-%.cpp :
 	$(info Check source: $*.cpp)
 	@$(CXX) $(CXXFLAGS) $(CPPFLAGS) $*.cpp -fsyntax-only
 
-
-
-
-##########################################################################################
+############################################################################################
 # Apply astyle (dry-run) to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: astyle $(context).astyle
@@ -228,8 +230,7 @@ astyle: $(context).astyle
 $(context).astyle:
 	astyle --dry-run --mode=c --options=$(projectdir)/.astylerc --ascii $(mycontextdir)/*.?pp
 
-
-########################################################################
+############################################################################################
 # Apply clang-tidy to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: tidy $(context).tidy
@@ -237,9 +238,8 @@ tidy: $(context).tidy
 $(context).tidy:
 	clang-tidy $(mycontextdir)/*.?pp --config-file=$(projectdir)/.Tools/clang-tidy.yaml --
 
-
-########################################################################
-# Apply cppcheck to all cpp and hpp files in the directory. Read-only. 
+############################################################################################
+# Apply cppcheck to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: cppcheck $(context).cppcheck
 cppcheck: $(context).cppcheck
@@ -249,24 +249,19 @@ $(context).cppcheck:
 	--suppress=duplicateCondition --suppress=toomanyconfigs --suppress=sizeofFunctionCall --suppress=variableScope --suppress=missingReturn --suppress=assertWithSideEffect --suppress=useStlAlgorithm --suppress=knownConditionTrueFalse --suppress=unsignedPositive \
 	--std=c++17 -q $(mycontextdir)/*pp
 
-
-########################################################################
+############################################################################################
 # Apply uncrustify to all cpp and hpp files in the directory. Read-only.
 
 .PHONY: uncrustify $(context).uncrustify
 uncrustify: $(context).uncrustify
 $(context).uncrustify:
-	uncrustify -c - --check $($(mymodule).sources) 
+	uncrustify -c - --check $($(mymodule).sources)
 
-
-
-
-
-########################################################################
-# Regex several useful things. Read-only. 
-# - find trailing white spaces 
-# - find non-ASCII characters 
-# - find consecutive spaces 
+############################################################################################
+# Regex several useful things. Read-only.
+# - find trailing white spaces
+# - find non-ASCII characters
+# - find consecutive spaces
 
 .PHONY: grepissues $(context).grepissues
 grepissues: $(context).grepissues
@@ -288,8 +283,7 @@ $(context).grepissues:
 #	@-grep --line-number --color -E '(0-9)e' $(mycontextdir)/*pp
 	@-grep --line-number --color -E '([0-9]+e[0-9]+)|([0-9]+\.[0-9]+)|((+-\ )\.[0-9]+)|((+-\ )[0-9]+\.)' $(mycontextdir)/*pp
 
-
-########################################################################
+############################################################################################
 # Target 'check' is a generic test. Currently, it defaults to 'tidy'
 
 check: tidy
@@ -297,7 +291,7 @@ check: tidy
 .PHONY: check
 
 
-########################################################################
+############################################################################################
 # Commands for cleaning out numerous files that are not part of the project.
 # These remove the following:
 # - clean: delete all binary files and temporary output, and the following two.
@@ -306,7 +300,7 @@ check: tidy
 
 # TODO: rewrite the entire thing ...
 
-# $(context).cleanpattern    := .all.o *.a *.o *.d *.so *.gch *.exe *.exe.stackdump *.orig *.out *.out.stackdump OUTPUT_CPPLINT.txt callgrind.out.* 
+# $(context).cleanpattern    := .all.o *.a *.o *.d *.so *.gch *.exe *.exe.stackdump *.orig *.out *.out.stackdump OUTPUT_CPPLINT.txt callgrind.out.*
 # $(context).outputcleanpattern := *.vtk
 # $(context).depcleanpattern := .deps
 
@@ -318,9 +312,9 @@ check: tidy
 # outputcleanfiles += $($(context).outputcleanfiles)
 # depcleanfiles += $($(context).depcleanfiles)
 
-CMD_CLEAN       = rm -f .all.o *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.orig *.out *.out.stackdump 
+CMD_CLEAN       = rm -f .all.o *.a *.o *.d *.so *.json *.gch OUTPUT_CPPLINT.txt callgrind.out.* *.exe *.exe.stackdump *.orig *.out *.out.stackdump
 CMD_OUTPUTCLEAN = rm -f ./*.bmp ./*/*.bmp ./*/*/*.bmp ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
-CMD_DEPCLEAN    = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi 
+CMD_DEPCLEAN    = if [ -d .deps/ ]; then rm -f .deps/*.d .deps/.all.d; rmdir .deps/; fi
 
 .PHONY: clean vktclean dependclean
 .PHONY: $(context).clean $(context).vktclean $(context).dependclean
@@ -332,16 +326,16 @@ dependclean: $(context).dependclean
 $(context).clean $(context).outputclean $(context).dependclean: mycontext    := $(context)
 $(context).clean $(context).outputclean $(context).dependclean: mycontextdir := $(contextdir)
 
-$(context).clean: 
+$(context).clean:
 #	@-echo $(PWD)
-	@-cd $(mycontextdir); $(CMD_CLEAN); $(CMD_OUTPUTCLEAN); $(CMD_DEPCLEAN); 
+	@-cd $(mycontextdir); $(CMD_CLEAN); $(CMD_OUTPUTCLEAN); $(CMD_DEPCLEAN);
 
-$(context).outputclean: 
+$(context).outputclean:
 #	@-echo $(PWD)
-	@-cd $(mycontextdir); $(CMD_OUTPUTCLEAN); 
+	@-cd $(mycontextdir); $(CMD_OUTPUTCLEAN);
 
-$(context).dependclean: 
+$(context).dependclean:
 #	@-echo $(PWD)
-	@-cd $(mycontextdir); $(CMD_DEPCLEAN); 
+	@-cd $(mycontextdir); $(CMD_DEPCLEAN);
 
 

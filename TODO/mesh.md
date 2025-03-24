@@ -3,7 +3,7 @@
 
 The bisection methods should return the count of triangles that have been bisected. 
 That should not depend on the order of the edges being listed for marking, which can essentially just be a set.
-Generally speaking, it should be a transversable container. 
+Generally speaking, it should be a traversable container. 
 
 # Mesh module
 
@@ -99,7 +99,7 @@ and several implementations
   
   
   o uniform refinement 2D
-    implement the two dimensional refinement algorithm 
+    implement the two-dimensional refinement algorithm 
     with optimal complexity.
   
   
@@ -116,10 +116,8 @@ and several implementations
   
   o implement submesh class 
     - These objects inherit the mesh interface and implement it. 
-    - Their internal function consists of the capabilities.  
-      of pointing to another mesh. 
-    - pointers to the original mesh objects so that data 
-      can be transfered.
+    - Their internal function consists of the capabilities of pointing to another mesh. 
+    - pointers to the original mesh objects so that data can be transferred.
 
   o implement patch constructor 
     - The star constructor will construct submeshes from a given mesh

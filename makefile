@@ -1,20 +1,19 @@
-##########################################################################
-##########################################################################
-##########################################################################
-################## Project directory makefile ############################
-##########################################################################
-##########################################################################
-##########################################################################
+###########################################################################################
+###########################################################################################
+##################                                                 ########################
+##################            Project directory makefile           ########################
+##################                                                 ########################
+###########################################################################################
+###########################################################################################
 
 SHELL = /bin/sh
 
-# TODO: all phony targets should be declared as such in all files 
-
-# The main targets are 
-#  - all 
-#  - build 
-#  - tests
-# The default target builds all files  
+# This is the main makefile of the project. Running `make` or any compatible
+# program will build the software. The main targets are:
+#  - build : build all modules and unit tests
+#  - tests : run the tests
+#  - all   : build and tests
+# The default target builds all files.
 
 .PHONY: default all
 
@@ -24,14 +23,11 @@ all: build tests
 	@echo "Finished all"
 
 
+###########################################################################################
+# Prints the help message: a list of possible makefile targets
+###########################################################################################
 
-
-
-#####################################################################################
-# Prints the help message: a list of possible makefile targets                       
-#####################################################################################
-
-.PHONY: help 
+.PHONY: help
 help:
 	@echo "Use one of the following targets:"
 	@echo ""
@@ -51,25 +47,17 @@ help:
 	@echo " build and tests require a C++14 compiler and GNU Make."
 
 
+###########################################################################################
+###########################################################################################
+###########################################################################################
+###########################################################################################
 
+###########################################################################################
+# We introduce the different modules of the software and define all targets
+# required for building the software.
+###########################################################################################
 
-
-
-
-
-
-
-
-############################################################################ 
-############################################################################
-############################################################################
-############################################################################ 
-
-############################################################################
-# Describe the different modules of the software							
-# Define all targets for the different modules in building the modules   
-############################################################################
-
+# Define the module build targets
 modules:=
 modules+=external
 modules+=base
@@ -84,12 +72,13 @@ modules+=vtk
 #modules+=matrixmarket
 modules+=fem
 
-.PHONY: .buildmodules
-.buildmodules: $(patsubst %,%.build,$(modules))
+# Introduce the compilation paramters. We provide `projectdir` as a variable.
 
 projectdir :=.
 
 include common.compile.mk
+
+# Define the build targets for each module.
 
 moddir :=./external
 module:=external
@@ -137,38 +126,39 @@ include common.module.mk
 
 
 
-############################################################################## 
-############################################################################## 
-############################################################################## 
-############################################################################## 
+###########################################################################################
+###########################################################################################
+###########################################################################################
+###########################################################################################
 
-##############################################################################
-# The 'build' target depends on the builds of modules, tests, and benchmarks  
-##############################################################################
+###########################################################################################
+# The 'build' target depends on the builds of modules and tests.
+###########################################################################################
 
-.PHONY: build .buildmodules .buildtests # .buildbenchmarks
+.PHONY: build .buildmodules .buildtests
 
-build: .buildmodules .buildtests # .buildbenchmarks
+build: .buildmodules .buildtests
 
-.buildmodules:
-	@echo Built modules 
-	
+.buildmodules: $(patsubst %,%.build,$(modules))
+	@echo Built modules
+
 .buildtests: .buildmodules
 	@cd ./tests/ && $(MAKE) --no-print-directory build
 	@echo Built tests
 
-##############################################################################
-# The target 'test' runs all the tests in the test directory 
-##############################################################################
 
-.PHONY: test # benchmarks
+###########################################################################################
+# The target 'test' runs all the tests in the test directory.
+###########################################################################################
+
+.PHONY: test
 
 test:
 	@cd ./tests && $(MAKE) --no-print-directory run
 	@echo Run all tests
 
 # benchmarks:
-# 	@cd ./benchmarks && $(MAKE) --no-print-directory 
+# 	@cd ./benchmarks && $(MAKE) --no-print-directory
 
 
 
@@ -176,14 +166,14 @@ test:
 
 
 
-#######################################################################################
-# Upkeep targets that remove clutter and temporary files 
-# Also commands for source code checking 
-# More targets are defined in each module 
-#######################################################################################
+###########################################################################################
+# Upkeep targets that remove clutter and temporary files.
+# Also commands for source code checking.
+# More targets are defined in each module.
+###########################################################################################
 
 .PHONY: clean
-clean: 
+clean:
 	@cd ./tests && $(MAKE) --no-print-directory clean
 	@rm -f ./*.bmp ./*/*.bmp ./*/*/*.bmp ./*.svg ./*/*.svg ./*/*/*.svg ./*.tex ./*/*.tex ./*/*/*.tex ./*.vtk ./*/*.vtk ./*/*/*.vtk
 	@echo "Finished cleaning."
@@ -223,7 +213,7 @@ check:
 
 
 ###########################################################################################
-#   Apply cpplint to all cpp and hpp files in the entire source directory. Read-only.   
+# Apply cpplint to all cpp and hpp files in the entire source directory. Read-only.
 ###########################################################################################
 
 .PHONY: cpplint
@@ -240,9 +230,9 @@ cpplint:
 
 
 
-#########################################################################################
-#    Display the value of all variables defined after parsing this makefile     
-#########################################################################################
+###########################################################################################
+# Display the value of all variables defined after parsing this makefile.
+###########################################################################################
 
 # Display information on a specific variable
 

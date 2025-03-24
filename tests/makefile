@@ -1,14 +1,25 @@
+###########################################################################################
+#
+# Primary makefile from within the test directory.
+#
+###########################################################################################
+
 SHELL = /bin/sh
 
-.PHONY: default 
+.PHONY: default
 default: build
 
-.PHONY: build 
-# build is set up below 
+.PHONY: build
+# build is set up below.
 
+# We define the project directory as a variable ...
 projectdir :=..
 
-include ../common.compile.mk 
+# ... to be expected by include file that sets the compilation variables.
+include ../common.compile.mk
+
+# List all the directories of tests that we want to build.
+# Any new directory must be added explicitly here.
 
 components:=
 components+=base
@@ -33,11 +44,18 @@ components+=nullspace
 components+=afem
 components+=benchmark
 
+# For each directory, we include the lists of dependencies:
 include tests.affices.mk
 
+# We provide the general variables `testdir`, `projectdir` and `pathvar`
+# for the subsequent definitions of targets. These targets will be defined
+# via includes of other makefiles, and expect those variables.
 testsdir:=.
 projectdir:=../
 pathvar:=$(CURDIR)/../
+
+# In addition, for each directory we need to define the name explicitly
+# and the explicit directory prefix.
 
 contextdir:=./base
 context:=base
@@ -161,16 +179,16 @@ build: nullspace.tests
 
 
 
+# We define targets for cleaning. The details are provided via the above inclusions of makefiles,
+# which set further dependencies for the following phony targets.
 
 .PHONY: clean
 clean:
-	@echo "Finished cleaning test directory." 
-
+	@echo "Finished cleaning test directory."
 
 .PHONY: dependclean
 dependclean:
-	@echo "Finished cleaning test directory dependency information files." 
-
+	@echo "Finished cleaning test directory dependency information files."
 
 .PHONY: outputclean
 outputclean:
@@ -182,7 +200,6 @@ outputclean:
 
 
 
-	
 
 
 

@@ -85,36 +85,74 @@
 #include <cstdio>   // printf
 #include <cstdlib>  // possibly for abort()
 
-inline void myActualUnreachable [[noreturn]] ( const char* filename, const int linenumber )
+// If a backtracer is requested, then provide if available
+#if defined(USE_BACKTRACER) 
+#include <version>
+#if defined(__cpp_lib_stacktrace)
+#include <stacktrace> // stack trace capability (C++23)
+inline void myStackTrace( unsigned int skip )
 {
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    unsigned int i_max = 20;
+    auto st = std::stacktrace::current();
+    fprintf( stderr, "!! printing stack trace (%u-%u):\n", skip, i_max );
+    for( std::size_t i = skip; i < 20 && i < st.size(); i++ ) 
+    {
+        const auto& entry = st.at(i);
+        fprintf( stderr, "!! #%5lu %s\n",   i, entry.description().c_str() );
+        fprintf( stderr, "!!      @ %s:%u \n", entry.source_file().c_str(), entry.source_line() );
+    }
+    fprintf( stderr, "-------------------------------\n");
+}
+#else
+#error "Backtracer requested but unavailable."
+#endif
+#endif
+// #endif
+
+
+static void myActualUnreachable [[noreturn]] ( const char* filename, const int linenumber )
+{
+    fprintf( stderr, "\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
     fprintf( stderr, "!!\n" ); 
     fprintf( stderr, "!!\tUnreachable code reached:\n" ); 
     fprintf( stderr, "!!\t%s:%d\n", filename, linenumber ); 
     fprintf( stderr, "!!\n" ); 
     fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
+
+    #if defined(USE_BACKTRACER) && defined(__cpp_lib_stacktrace)
+    myStackTrace(2); // Print a stack trace if requested and available
+    #endif
+
     TERMINATION_COMMAND();
 }
 
 inline void myActualUnimplemented [[noreturn]] ( const char* filename, const int linenumber )
 {
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
     fprintf( stderr, "!!\n" ); 
     fprintf( stderr, "!!\tUnimplemented execution path reached:\n" ); 
     fprintf( stderr, "!!\t%s:%d\n", filename, linenumber ); 
     fprintf( stderr, "!!\n" ); 
     fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
     fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+
+    #if defined(USE_BACKTRACER) && defined(__cpp_lib_stacktrace)
+    myStackTrace(2); // Print a stack trace if requested and available
+    #endif
+
     TERMINATION_COMMAND();
 }
 
 inline void myActualAssert [[noreturn]] ( const char* filename, const int linenumber, const char* expression, const char* message )
 {
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
     fprintf( stderr, "!!\n" );
     fprintf( stderr, "!!\tThe following assertion failed.\n" );
     fprintf( stderr, "!!\t%s,l.%d\n", filename, linenumber );
@@ -125,8 +163,13 @@ inline void myActualAssert [[noreturn]] ( const char* filename, const int linenu
     fprintf( stderr, "!!\t\t%s\n", message );
     }
     fprintf( stderr, "!!\n" );
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
-    fprintf( stderr, "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" ); 
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
+    fprintf( stderr, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" );
+
+    #if defined(USE_BACKTRACER) && defined(__cpp_lib_stacktrace)
+    myStackTrace(2); // Print a stack trace if requested and available
+    #endif
+
     TERMINATION_COMMAND();
 }
 
@@ -139,7 +182,7 @@ inline void myActualAssert [[noreturn]] ( const char* filename, const int linenu
 
 
 // ============================================================================
-// Compile-time string concatenation (if necessary for building)
+// Compile-time string concatenation (if necessary for debug build)
 // ============================================================================
 
 /* 
