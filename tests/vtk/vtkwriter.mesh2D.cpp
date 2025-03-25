@@ -34,7 +34,7 @@ int main( int argc, char *argv[] )
 
                 M.shake_interior_vertices();
                 
-                internal_print( M, meshname );
+                internal_print( M, meshname, get_basename(__FILE__) );
             
             }
             
@@ -58,7 +58,7 @@ int main( int argc, char *argv[] )
                 
                 M.longest_edge_bisection_recursive( refinementedges );
 
-                internal_print( M, meshname );
+                internal_print( M, meshname, get_basename(__FILE__) );
             
             }
             
@@ -82,7 +82,7 @@ int main( int argc, char *argv[] )
                 
                 M.newest_vertex_bisection_recursive( refinementedges );
                 
-                internal_print( M, meshname );
+                internal_print( M, meshname, get_basename(__FILE__) );
             
             }
         

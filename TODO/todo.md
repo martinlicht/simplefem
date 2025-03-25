@@ -22,6 +22,10 @@ None of the above can be done in a day, so it most likely requires regular grind
 
 # HOT FIXES / TINY FIXES
 
+- [ ] https://clang.llvm.org/extra/clang-tidy/#suppressing-undesired-diagnostics
+- [ ] MatrixEntry initialization
+- [ ] disable: cppcoreguidelines-pro-type-member-init,hicpp-member-init
+
 - [x] ensure that self-assignment is handled _explicitly_ whenever assignment operators are defined
 - [x] all destructors noexcept 
       <https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-destructor.html>
@@ -179,7 +183,6 @@ They are possible alternatives to Gauss-Seidel with Eisenstadt and graph colorin
 - [ ] `lshaped maxwell`: the glyphs have unexplained gaps. Try to fix those. 
 - [ ] How stable is the VTK Python interface?
 
-## (MEDIUM) Debug midpoint refinement (10h)
 
 
 
@@ -225,6 +228,8 @@ If something does not appear right, then make a fix or a TODO note.
 ## Rename identifiers 
 
 Follow the guidelines in renaming identifiers to make the code more readable.
+
+## Check for efficiency opportunities with 3D Tests
 
 ## Documentation in the finite element component 
 
@@ -1083,6 +1088,8 @@ mdl todo.md -r ~MD009,~MD012,~MD013,~MD026,~MD032,~MD034
 
 
 # DONE!
+
+## (DONE) Debug midpoint refinement (10h)
 
 ## (DONE/MEDIUM) Review SVG output for 2D meshes and document / make self-documenting    
 

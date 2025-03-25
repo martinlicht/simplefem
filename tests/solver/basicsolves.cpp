@@ -123,10 +123,9 @@ int main( int argc, char *argv[] )
             CGM.max_iteration_count = 2 * dimension;
             CGM.precision = desired_precision;
             
-            timestamp start, end;
-            start = timestampnow();
+            timestamp start = timestampnow();
             CGM.solve(y,b);
-            end = timestampnow();
+            timestamp end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
@@ -139,10 +138,9 @@ int main( int argc, char *argv[] )
             PCGM.max_iteration_count = 2 * dimension;
             PCGM.precision = desired_precision;
             
-            timestamp start, end;
-            start = timestampnow();
+            timestamp start = timestampnow();
             PCGM.solve(y,b);
-            end = timestampnow();
+            timestamp end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
@@ -155,10 +153,9 @@ int main( int argc, char *argv[] )
             CRM.max_iteration_count = 2 * dimension;
             CRM.precision = desired_precision;
             
-            timestamp start, end;
-            start = timestampnow();
+            timestamp start = timestampnow();
             CRM.solve_explicit(y,b);
-            end = timestampnow();
+            timestamp end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
@@ -171,10 +168,9 @@ int main( int argc, char *argv[] )
             PCRM.max_iteration_count = 2 * dimension;
             PCRM.precision = desired_precision;
             
-            timestamp start, end;
-            start = timestampnow();
+            timestamp start = timestampnow();
             PCRM.solve(y,b);
-            end = timestampnow();
+            timestamp end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
@@ -187,10 +183,9 @@ int main( int argc, char *argv[] )
             MINRES.max_iteration_count = 2 * dimension;
             MINRES.precision = desired_precision;
             
-            timestamp start, end;
-            start = timestampnow();
+            timestamp start = timestampnow();
             MINRES.solve(y,b);
-            end = timestampnow();
+            timestamp end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         
@@ -229,10 +224,9 @@ int main( int argc, char *argv[] )
             MINRES.max_iteration_count = 2 * dimension;
             MINRES.precision = desired_precision;
             
-            timestamp start, end;
-            start = timestampnow();
+            timestamp start = timestampnow();
             MINRES.solve(y,b);
-            end = timestampnow();
+            timestamp end = timestampnow();
             LOG << timestamp2measurement( end - start ) << nl;
         }
         

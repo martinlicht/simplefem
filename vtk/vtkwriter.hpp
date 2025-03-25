@@ -73,8 +73,9 @@ class VTKWriter final
             preamble     =  0,
             coordinate   =  1,
             cells        =  2,
-            fielddata    =  3,
-            appendix     =  4 
+            pointdata    =  3,
+            celldata     =  4,
+            appendix     =  5 
         };
         
         Stage current_stage;
