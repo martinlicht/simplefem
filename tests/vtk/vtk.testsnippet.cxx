@@ -11,8 +11,10 @@ inline void internal_print( const Mesh& M, std::string meshname, std::string fil
 {
     
     std::string basename = ( filename == "" ) ? get_basename(__FILE__) : filename;
+    std::string usedname = get_available_filename( basename );
+    LOG << "Writing into: " << usedname << nl;
     
-    std::fstream fs( get_available_filename( basename ), std::fstream::out );
+    std::fstream fs( usedname, std::fstream::out );
     
     VTKWriter vtk( M, fs, meshname );
     // vtk.write_coordinate_block();

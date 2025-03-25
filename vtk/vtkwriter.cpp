@@ -172,15 +172,15 @@ VTKWriter VTKWriter::write_top_dimensional_cells()
 VTKWriter VTKWriter::write_vertex_scalar_data( const std::function<Float(int)>& datafunction, const std::string& name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
-    assert( current_stage <= Stage::fielddata );
+    assert( current_stage <= Stage::pointdata );
     
     assert( 0 < name.size() and name.size() <= 256 );
     assert( name.find('\n') == std::string::npos );
     assert( count_white_space( name ) == 0 );
     
-    if( current_stage != Stage::fielddata ){
+    if( current_stage != Stage::pointdata ){
         os << "POINT_DATA " << mesh.count_simplices(0) << nl << nl;
-        current_stage = Stage::fielddata;
+        current_stage = Stage::pointdata;
     }
     
     os << "SCALARS " << name << " double 1" << nl;
@@ -198,7 +198,7 @@ VTKWriter VTKWriter::write_vertex_scalar_data( const std::function<Float(int)>& 
 VTKWriter VTKWriter::write_cell_scalar_data( const std::function<Float(int)>& datafunction, const std::string& name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
-    assert( current_stage <= Stage::fielddata );
+    assert( current_stage <= Stage::celldata );
     
     const int topdim = mesh.getinnerdimension();
     
@@ -206,9 +206,9 @@ VTKWriter VTKWriter::write_cell_scalar_data( const std::function<Float(int)>& da
     assert( name.find('\n') == std::string::npos );
     assert( count_white_space( name ) == 0 );
     
-    if( current_stage != Stage::fielddata ){
+    if( current_stage != Stage::celldata ){
         os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
-        current_stage = Stage::fielddata;
+        current_stage = Stage::celldata;
     }
     
     os << "SCALARS " << name << " double 1" << nl;
@@ -399,7 +399,7 @@ VTKWriter VTKWriter::write_cell_scalar_data_barycentricvolumes( const FloatVecto
 VTKWriter VTKWriter::write_cell_vector_data( const std::function<FloatVector(int)>& datafunction, const std::string& name, Float scaling )
 {
     assert( current_stage >= Stage::cells );
-    assert( current_stage <= Stage::fielddata );
+    assert( current_stage <= Stage::celldata );
     
     assert( 0 < name.size() and name.size() <= 256 );
     assert( name.find('\n') == std::string::npos );
@@ -407,9 +407,9 @@ VTKWriter VTKWriter::write_cell_vector_data( const std::function<FloatVector(int
     
     const int topdim = mesh.getinnerdimension();
     
-    if( current_stage != Stage::fielddata ){
+    if( current_stage != Stage::celldata ){
         os << "CELL_DATA " << mesh.count_simplices(topdim) << nl << nl;
-        current_stage = Stage::fielddata;
+        current_stage = Stage::celldata;
     }
     
     os << "VECTORS " << name << " double" << nl;
@@ -646,7 +646,7 @@ VTKWriter VTKWriter::write_cell_vector_data_Euclidean( int outerdim, const Float
 
 VTKWriter VTKWriter::write_point_cloud( const DenseMatrix& coords )
 {
-    assert( current_stage <= Stage::fielddata );
+    assert( current_stage >= Stage::cells );
     current_stage = Stage::appendix;
     
     assert( coords.getdimin() == 2 or coords.getdimin() == 3 );

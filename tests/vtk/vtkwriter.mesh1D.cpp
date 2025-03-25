@@ -18,7 +18,7 @@ int main( int argc, char *argv[] )
         
         MeshSimplicial1D Mx = StandardInterval1D(); std::string meshname = std::string("One-dimensional Test Mesh: ") + get_basename(__FILE__);
         
-        internal_print( Mx, meshname );
+        internal_print( Mx, meshname, get_basename(__FILE__) );
         
         {
             
@@ -30,7 +30,7 @@ int main( int argc, char *argv[] )
 
                 // M.shake_interior_vertices(); // only if inner and outer dimension match
                 
-                internal_print( M, meshname );
+                internal_print( M, meshname, get_basename(__FILE__) );
             
             }
             
