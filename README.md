@@ -16,48 +16,55 @@
 
 ![Cpp](https://img.shields.io/badge/-C++14-deepskyblue?logo=c%2B%2B&style=flat-square)
 
-Welcome to the FEEC++ project!
+**Welcome to the FEEC++ Project!**
 
-This repository contains the source code for FEEC++, a work-in-progress C++ finite element library that adheres to the spirit of finite element exterior calculus (FEEC). The library aims to enable easy and rapid prototyping for fundamental research on numerical methods whilst taking the FEEC point-of-view. 
+This repository contains the source code for **FEEC++**, a work-in-progress C++ finite element library designed in the spirit of finite element exterior calculus (FEEC). The library aims to facilitate easy and rapid prototyping for fundamental research on numerical methods from the FEEC perspective.
 
-FEEC++ aims to be versatile and self-contained: it builds and runs on Linux, Windows (Cygwin and MinGW), and macOS.
-Its only necessary prerequisites are a C++14 compiler (such as GCC and Clang) and GNU Make.
+**FEEC++** is intended to be versatile and self-contained: It builds and runs on Linux, Windows (Cygwin and MinGW), and macOS. Its only prerequisites are a C++14 compiler (such as GCC or Clang) and GNU Make.
 
-This project is currently in a pre-release phase. Frequent substantial changes are likely. 
+This project is currently in a pre-release phase, with frequent and substantial changes expected.
 That even includes the name of project, which recently changed from `simplefem` to `FEEC++`.
 
-FEEC++ implements finite element spaces of arbitrary (uniform) polynomial degree over simplicial meshes, including Whitney forms and Sullivan forms.
-In addition, it comes with all necessary linear algebra subroutines and a mesh library that supports uniform refinement and longest edge bisection.
+### Features of FEEC++  
+FEEC++ implements finite element spaces of arbitrary (uniform) polynomial degree over simplicial meshes, including Whitney forms and Sullivan forms. Additionally, it comes with all necessary linear algebra subroutines and a mesh library that supports uniform refinement and longest edge bisection.
 
-Finite element features:
+Finite element features include:
 
-- [x] Simplicial meshes in dimension 1, 2, and 3
+- [x] Simplicial meshes in dimensions 1, 2, and 3
 - [x] uniform mesh refinement and longest edge bisection
 - [x] Whitney and Sullivan k-forms of any polynomial degree in any dimension
 - [x] Exterior derivative, traces, exterior and interior products
 - [x] Metric linear operations such as mass operator and Hodge star operator
 - [x] Mass matrices with constant or non-uniform coefficients
-
-C++ design guidelines:
-
-- [x] C++14 with optional C++17 enhancements
-- [x] Minimal dependencies: C++14 compiler and GNU Make
-- [x] Minimal requirements and fast compilation
-- [x] Any necessary external library included
-- [x] Fail-fast philosophy
+- [x] Krylov subspace methods for sparse matrices and block systems
+- [x] Parallelized SSOR preconditioner for CSR matrices
+- [x] Operator preconditioning of Systems
 
 Planned finite element features:
 
 - [ ] Polynomial multigrid
-- [ ] Finite element spaces with non-uniform polynomial degree
+- [ ] Finite element spaces with non-uniform polynomial degrees
 - [ ] Additional spectrally optimized bases of finite element differential forms
-- [ ] Curved geometries (surfaces supported already)
+- [ ] Curved geometries (surfaces already supported)
 - [ ] Duality-based error estimators and adaptive strategies
 - [ ] Discontinuous Galerkin and Hybridized Higher-Order Methods
 
-This codebase aims for facilitating easy proof-of-concept implementations for finite element methods not found in the standard textbooks, with minimal dependencies and easily portable with regard to OS and machine power. 
+### C++ Design Guidelines  
 
-At its current stage, the project does not aim for massively distributed-memory parallelism and peak high-performance computing. These features may enter the scope of the scope of this project once its milestones have been reached. 
+- **C++14 with optional C++17/C++20/C++23 enhancements**
+- **Minimal dependencies:** Requires only a C++14 compiler and GNU Make
+- **Self-contained:** All necessary external libraries are included
+- **Minimal requirements and fast compilation**
+- **Fail-fast philosophy**
+- **Comprehensive testing:** Includes numerous tests and examples
+
+Moreover, the code is regularly tested against various compiler warnings, linters, sanitizers, and memory checkers.
 
 
+### Project Scope  
 
+The key objective of this finite element software is to enable proof-of-concept implementations of finite element methods that go beyond what is usually found in standard textbooks.
+
+This software prioritizes minimal dependencies and portability across different operating systems and hardware capabilities. It is supposed to remain operational even on a budget laptop while being able to leverage any additional hardware.
+
+At its current stage, the project does not target massively distributed-memory parallelism or peak high-performance computing. These features may be considered once key milestones have been achieved.
