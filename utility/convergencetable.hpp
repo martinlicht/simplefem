@@ -52,13 +52,13 @@ class ConvergenceTable final
         
         void lg() const;
         
-        void lg( bool display_convergence_rates ) const;
+        void lg( bool do_display_convergence_rates ) const;
 
-        std::string text( bool display_convergence_rates ) const;
+        std::string text( bool do_display_convergence_rates ) const;
         
-        std::string text_standard( bool display_convergence_rates ) const;
+        std::string text_standard( bool do_display_convergence_rates ) const;
 
-        std::string text_transpose( bool display_convergence_rates ) const;
+        std::string text_transpose( bool do_display_convergence_rates ) const;
 
 
         std::string TeXtabular() const;

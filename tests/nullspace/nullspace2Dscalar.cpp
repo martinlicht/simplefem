@@ -76,7 +76,7 @@ int main( int argc, char *argv[] )
     {
         if( b == 0 and not do_sullivan ) continue;
         if( b == 1 and not do_whitney  ) continue;
-        contable << printf_into_string("#nullvec%c%i", b?'W':'S', r );
+        contable << printf_into_string("#nullvec%c%i", b==0?'S':'W', r );
     }
     contable << nl;
     

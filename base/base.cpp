@@ -1,9 +1,10 @@
 
 #include <cctype>   // char is ... checks
+#include <cfenv>    // For controlling the floating-point behavior
 #include <cfloat>   // FLT_EVAL_METHOD, _controlfp_s on Windows 
 #include <cstdio>   // print
 #include <cstdarg>  // variadic function macros
-#include <ctime>
+#include <ctime>    // localtime 
 
 #include <chrono>
 #include <limits> // for std::float_round_style
@@ -14,12 +15,6 @@
 #include "logging.hpp"
 
 
-
-
-
-// For controlling the floating-point behavior
-#include <cfenv>
-
 #if defined(__SSE__)
 #include <xmmintrin.h> // _MM_SET_FLUSH_ZERO_MODE
 #endif
@@ -27,13 +22,29 @@
 #include <pmmintrin.h> // _MM_SET_DENORMALS_ZERO_MODE
 #endif
 
-
 #if defined(_OPENMP)
 #include <omp.h>
 #endif // #if defined(_OPENMP)
 
+
+// ===============================================================================================
+// The following global variable (!) will be constructed before the control flow enters 
+// the main function. Its constructor will print several system settings on the standard output
+// and additionally set several floating-point switches.
+// ===============================================================================================
+
+const SystemSetup system_setup;
+
 SystemSetup::SystemSetup() noexcept
 {
+    // ===============================================================================================
+    // Print numerous information on the compilation configuration:
+    // - Current git commit 
+    // - _DEBUG (MSVC, whether debug is on)
+    // - NDEBUG
+    // - __OPTIMIZE__ (GCC< whether any optimization is on)
+    // - Operating system
+    // ===============================================================================================
     
     #if defined(GIT_COMMIT_ID)
     LOG << "---\tCurrent Git commit ID: " << GIT_COMMIT_ID << nl;
@@ -71,6 +82,10 @@ SystemSetup::SystemSetup() noexcept
     #endif
 
 
+    // ===============================================================================================
+    // Print information on OpenMP, if enabled.
+    // ===============================================================================================
+    
     #if defined(_OPENMP)
     
     LOG << "---\tOpenMP Value                   : " << _OPENMP                                                                     << nl;
@@ -109,10 +124,12 @@ SystemSetup::SystemSetup() noexcept
     // #else
     // LOGPRINTF("OpenMP is not enabled.\n");
     // #endif
-
     
-
-
+    
+    // ===============================================================================================
+    // Print numerous information on the floating-point environment.
+    // ===============================================================================================
+    
     LOG << "---\tFLT_EVAL_METHOD: " << FLT_EVAL_METHOD << space;
 
     switch (FLT_EVAL_METHOD) {
@@ -163,6 +180,7 @@ SystemSetup::SystemSetup() noexcept
 
 
     #if __cplusplus >= 201703L
+    
     LOG << "---\tFLT_HAS_SUBNORM: " << FLT_HAS_SUBNORM << space;
     switch (FLT_HAS_SUBNORM) {
         case -1:
@@ -210,10 +228,10 @@ SystemSetup::SystemSetup() noexcept
             LOG << "Unknown value for LDBL_HAS_SUBNORM." << nl;
             break;
     }
+    
     #endif 
 
-    
-    #if true and defined(_WIN32)
+    #if defined(_WIN32)
     {
         // Query the current floating-point control word
         unsigned int currentControlWord = _controlfp(0, 0);
@@ -237,7 +255,8 @@ SystemSetup::SystemSetup() noexcept
     #endif
 
 
-    // The following settings enable the flushing of denormals, both operands and results, to zero
+    // ===============================================================================================
+    // The following settings enable the flushing of denormals, both operands and results, to zero.
     // 
     // If OpenMP is active, then we execute it in a parallel region, 
     // so that each thread sets the flushing mode 
@@ -247,7 +266,8 @@ SystemSetup::SystemSetup() noexcept
     // 
     // Generally, we use the floating-point intrinsics headers. 
     // On Windows, however, we use the native headers
-
+    // ===============================================================================================
+    
     #if defined(_OPENMP)
     #pragma omp parallel
     {
@@ -273,12 +293,11 @@ SystemSetup::SystemSetup() noexcept
 
 SystemSetup::~SystemSetup() noexcept
 {
-    #if defined(_OPENMP)
+    // #if defined(_OPENMP)
     // LOG << "---\tSystem Reporter: finished\n";
-    #endif
+    // #endif
 }   
 
-const SystemSetup system_setup;
 
 
 
@@ -288,6 +307,9 @@ const SystemSetup system_setup;
 
 
 
+// ===============================================================================================
+// Text-related functions
+// ===============================================================================================
 
 
 // Since all floating-point literals throughout are double unless marked otherwise 
@@ -326,7 +348,7 @@ int string_to_integer( const char* s, const char* __restrict__ *endptr, unsigned
     has_overflown = false;
     
     // Skip leading whitespace
-    while( std::isspace( (unsigned char)*s ) ) { s++; }
+    while( std::isspace( (unsigned char)*s ) != 0 ) { s++; }
 
     if( *s == '\0' ) {
         // printf("Only white space\n");
@@ -369,7 +391,7 @@ int string_to_integer( const char* s, const char* __restrict__ *endptr, unsigned
     }
 
     // Convert digits
-    while( *s ) {
+    while( *s != '\0' ) {
         
         int digit;
         

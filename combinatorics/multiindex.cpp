@@ -14,13 +14,13 @@
 
 
 MultiIndex::MultiIndex( const IndexRange& ir )
-: IndexMap( ir, NonNegativeIntegers, std::vector<int>( ir.cardinality(), 0 ) )
+: IndexMap( ir, MaxRangeZerobased, std::vector<int>( ir.cardinality(), 0 ) )
 {
     MultiIndex::check();
 }
 
 MultiIndex::MultiIndex( const IndexRange& ir, const std::vector<int>& vals )
-: IndexMap( ir, NonNegativeIntegers, vals )
+: IndexMap( ir, MaxRangeZerobased, vals )
 {
     assert( ir.cardinality() == vals.size() );
     MultiIndex::check();
@@ -28,14 +28,14 @@ MultiIndex::MultiIndex( const IndexRange& ir, const std::vector<int>& vals )
 
 
 MultiIndex::MultiIndex( const IndexRange& ir, const std::function<int(int)>& generator )
-: IndexMap( ir, NonNegativeIntegers, generator )
+: IndexMap( ir, MaxRangeZerobased, generator )
 {
     MultiIndex::check();
 }
 
 
 MultiIndex::MultiIndex( const IndexRange& ir, const std::initializer_list<int>& il )
-: IndexMap( ir, NonNegativeIntegers, il )
+: IndexMap( ir, MaxRangeZerobased, il )
 {
     MultiIndex::check();
 }

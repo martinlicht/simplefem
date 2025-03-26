@@ -22,6 +22,10 @@ None of the above can be done in a day, so it most likely requires regular grind
 
 # HOT FIXES / TINY FIXES
 
+- [ ] https://clang.llvm.org/extra/clang-tidy/#suppressing-undesired-diagnostics
+- [ ] MatrixEntry initialization
+- [ ] disable: cppcoreguidelines-pro-type-member-init,hicpp-member-init
+
 - [x] ensure that self-assignment is handled _explicitly_ whenever assignment operators are defined
 - [x] all destructors noexcept 
       <https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-destructor.html>
@@ -79,7 +83,7 @@ None of the above can be done in a day, so it most likely requires regular grind
 - [x] `mixedsolver.cpp` should test each variant of Hodge-CRM
 - [x] Learn about the __SSE__ macro
 - [x] How to turn off particular unused variable warnings? -> Blog post
-- [x] FEM: *inc -> inc* 
+- [x] FEM: *inc -> inc*
 - [x] Coordinate class, rename methods to be get/clone by vertex/dimension
 - [x] Check whether the << and >> and bitwise operations are executed on signed integral types
 - [!] Compilation error with: no exceptions, optimizations, OpenMP, sanitizers, TCMalloc, stripping, profiling, gold linker: wontfix
@@ -108,7 +112,7 @@ __attribute__((unused))
 
 # HIGH: DO THESE NEXT
 
-## (HIGH) Adaptive solution of the Poisson problem (3h)
+## (HIGH) Adaptive solution of the Poisson problem (5h)
 
 Combine the primal and mixed formulation for the Poisson Problem in the AFEM test, together with the Hodge star, and compute a posteriori error estimates. 
 
@@ -147,6 +151,16 @@ They are possible alternatives to Gauss-Seidel with Eisenstadt and graph colorin
 - [ ] Ensure that `FloatVector` and `SparseMatrix` allocate aligned memory 
 - [ ] Use aligned memory parallelism for the coordinate format 
 
+## (HIGH) Block Operators (10h)
+
+- [ ] Block diagonal operators of dense matrices 
+- [ ] FE Matrices as block operators: first decompose matrices into blocks, in particular metric operations
+- [ ] Transition to block format 
+
+## (HIGH) Eigenvalue cleanup (4h)
+
+Polish the names of all functions and classes, even if there are several implementations of the same idea. 
+Avoid compiler warnings and clean up any redundancies. 
 
 
 
@@ -176,10 +190,9 @@ They are possible alternatives to Gauss-Seidel with Eisenstadt and graph colorin
 
 - [ ] Write up instructions on how to use Paraview
 - [ ] Include visualization script
-- [ ] `lshaped maxwell`: the glyphs have unexplained gaps. Try to fix those. 
+- [ ] `lshaped maxwell`: the glyphs have unexplained gaps. Try to fix those. Perhaps incomplete, mismatching data?
 - [ ] How stable is the VTK Python interface?
 
-## (MEDIUM) Debug midpoint refinement (10h)
 
 
 
@@ -215,6 +228,8 @@ They are possible alternatives to Gauss-Seidel with Eisenstadt and graph colorin
 - Compile with full excessive warnings and then some 
 - Compile with full optimization 
 - cpplint, clang-tidy
+- grepissues, uncommenting actions
+- cppcheck + configuration
 
 ## Interface proof-reading
 
@@ -225,6 +240,8 @@ If something does not appear right, then make a fix or a TODO note.
 ## Rename identifiers 
 
 Follow the guidelines in renaming identifiers to make the code more readable.
+
+## Check for efficiency opportunities with 3D Tests
 
 ## Documentation in the finite element component 
 
@@ -378,7 +395,7 @@ The diagonal preconditioner seems to work well for the CGM and the mass matrix.
 
 The diagonal entries of the Poisson stiffness matrix seem to converge to about 4 as the mesh is refined uniformly. This is compatible with our theoretical scaling estimates. In particular, the diagonal preconditioner will be ineffective here. 
 
-2. Some reading:
+**Some reading:**
 
 - [ ] The solution of Laplacian problems over L-shaped domains with a singular boundary integral method.
 - [ ] ON ERROR ESTIMATION IN THE CONJUGATE GRADIENT METHOD AND WHY IT WORKS IN FINITE PRECISION COMPUTATIONS
@@ -1083,6 +1100,8 @@ mdl todo.md -r ~MD009,~MD012,~MD013,~MD026,~MD032,~MD034
 
 
 # DONE!
+
+## (DONE) Debug midpoint refinement (10h)
 
 ## (DONE/MEDIUM) Review SVG output for 2D meshes and document / make self-documenting    
 

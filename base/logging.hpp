@@ -4,20 +4,17 @@
 #include "base.hpp"
 #include "safedouble.hpp"
 
-
 // ============================================================================
-// Provides a simple logging stream so that we can write 
+// Provides a simple logging stream so that we can write:
 // 
 //     LOG << "Value = " << value << nl;
 // 
-// If the variable `USE_PRIMITIVE_LOGGING` is defined, 
-// then we default to the C++ streams 
+// If the variable `USE_PRIMITIVE_LOGGING` is defined,
+// then we default to the C++ streams.
 // Otherwise, we use the following custom Logger class
 // 
-// The custom logger relies on a global state, just like the std C++ streams 
+// The custom logger relies on a global state, just like the std C++ streams.
 // ============================================================================
-
-
 
 
 // ============================================================================
@@ -30,7 +27,7 @@
 
 #include <string>
 
-// Global boolean variable to signal whether the last write finished with a fresh line 
+// (Disabled) Global boolean variable to signal whether the last write finished with a fresh line.
 // extern bool log_has_a_fresh_line;
 
 class Logger final
@@ -43,8 +40,8 @@ class Logger final
         bool pad_newline_if_there_is_none;
         std::string filename;
         int linenumber;
-    
-        // Class-scope boolean variable to signal whether the last write finished with a fresh line 
+        
+        // Class-scope boolean variable to signal whether the last write finished with a fresh line.
         static bool log_has_a_fresh_line;
 
         // static const bool print_file_and_line = false;
@@ -52,14 +49,14 @@ class Logger final
     public:
     
         // inline
-        explicit Logger( 
+        explicit Logger(
             bool use_cerr, //std::ostream& os,
             const bool do_newline = false,
             const char* filename = "UNKNOWN",
             const int linenumber = -1
         )
         ;
-        // : 
+        // :
         // internalstream( os ),
         // pad_newline_if_there_is_none( do_newline ),
         // filename( filename ),
@@ -93,7 +90,7 @@ class Logger final
         }
 
         Logger& operator<<( const void* input ) {
-            char buffer[ sizeof(decltype(input)) * 2 + 10 + 1 ]; // how pointers are printed is implementation-defined 
+            char buffer[ sizeof(decltype(input)) * 2 + 10 + 1 ]; // how pointers are printed is implementation-defined.
             (void_discard)std::snprintf( buffer, sizeof(buffer), "%p", input );
             internal += buffer;
             return *this;
@@ -170,33 +167,28 @@ class Logger final
 #endif // USE_PRIMITIVE_LOGGING
 
 
-
-
-
-
 // ============================================================================
 // Define macros LOG and ERR for streaming
 // ============================================================================
 
 #ifndef USE_PRIMITIVE_LOGGING
 
-// Returns a temporary logger to write stuff to, and line breaks on destruction 
+// Returns a temporary logger to write stuff to, and line breaks on destruction
 // Example usage:
-//     LOG << "This is a short message with a number: " << 5;      
-//     ERR << "This is an error message.";      
+//     LOG << "This is a short message with a number: " << 5;
+//     ERR << "This is an error message.";
 
-#define LOG     Logger( false, false, __FILE__, __LINE__ )
-#define ERR     Logger( true, false, __FILE__, __LINE__ )
+#define LOG Logger( false, false, __FILE__, __LINE__ )
+#define ERR Logger( true, false, __FILE__, __LINE__ )
 
-#else 
+#else
 
 #include <iostream>
 
-#define LOG     std::cout
-#define ERR     std::cerr
+#define LOG std::cout
+#define ERR std::cerr
 
 #endif // USE_PRIMITIVE_LOGGING
-
 
 
 // ============================================================================
@@ -212,9 +204,8 @@ class Logger final
 #endif
 
 
-
 // ============================================================================
-// The following macros work as simple PRINT "str" commands
+// The following macros work as simple PRINT "str" commands:
 // 
 //     NOTE "This is a note"
 //     WARN "This is a warning"
@@ -231,7 +222,7 @@ class Logger final
 #define ALERT   Logger( true, true, __FILE__, __LINE__ ) <<
 #define ERROR   Logger( true, true, __FILE__, __LINE__ ) <<
 
-#else 
+#else
 
 #define NOTE    std::cout <<
 #define NOTICE  std::cout <<
@@ -243,18 +234,12 @@ class Logger final
 #endif // USE_PRIMITIVE_LOGGING
 
 
-
-
 // ============================================================================
 // Emit the current file and line number into the log stream.
 // Use this macro like a usual statement: PING;
 // ============================================================================
 
 #define PING LOG << "PING: " << __FILE__ << ":" << __LINE__ << nl;
-
-
-
-
 
 
 #endif // INCLUDEGUARD_BASE_LOGGING_HPP

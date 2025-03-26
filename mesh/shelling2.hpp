@@ -21,28 +21,27 @@ struct mesh_information_for_shelling
     Float min_height_of_vertex = notanumber;
     Float max_volume_ratio     = notanumber;
 
-    std::vector<Float> diameters;
-    std::vector<Float> volumes;
-    std::vector<Float> heights;
+    std::vector<Float> diameters = {};
+    std::vector<Float> volumes   = {};
+    std::vector<Float> heights   = {};
     
-    std::vector<Float> trafo_singular_max;
-    std::vector<Float> trafo_singular_min;
+    std::vector<Float> trafo_singular_max = {};
+    std::vector<Float> trafo_singular_min = {};
     
-    std::vector<Float> aspect_condition_number;
-    std::vector<Float> algebraic_condition_number;
+    std::vector<Float> aspect_condition_number    = {};
+    std::vector<Float> algebraic_condition_number = {};
 
-    std::vector<std::vector<FloatVector>> midpoints;                // [dimension][simplex index]
-    std::vector<std::vector<Float>>       heights_of_vertex;        // [volume index][local vertex index]
-    std::vector<std::vector<FloatVector>> heightvectors_of_vertex;  // [volume index][local vertex index]
+    std::vector<std::vector<FloatVector>> midpoints               = {}; // [dimension][simplex index]
+    std::vector<std::vector<Float>>       heights_of_vertex       = {}; // [volume index][local vertex index]
+    std::vector<std::vector<FloatVector>> heightvectors_of_vertex = {}; // [volume index][local vertex index]
     
-    std::vector<std::vector<std::vector<std::vector<Float>>>> C5;   // [volume index][form_degree][level][subsimplex]
-    std::vector<std::vector<std::vector<std::vector<Float>>>> C6;
-    std::vector<std::vector<std::vector<std::vector<Float>>>> C7;
-    std::vector<std::vector<std::vector<std::vector<Float>>>> C8;
+    std::vector<std::vector<std::vector<std::vector<Float>>>> C5 = {};  // [volume index][form_degree][level][subsimplex]
+    std::vector<std::vector<std::vector<std::vector<Float>>>> C6 = {};
+    std::vector<std::vector<std::vector<std::vector<Float>>>> C7 = {};
+    std::vector<std::vector<std::vector<std::vector<Float>>>> C8 = {};
     
     // Constructor
     explicit mesh_information_for_shelling( const Mesh& mesh );
-
 };
 
 mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
