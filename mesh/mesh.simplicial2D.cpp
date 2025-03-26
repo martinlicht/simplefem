@@ -1391,7 +1391,7 @@ void MeshSimplicial2D::bisect_edge( int e )
     FloatVector midcoordinate = get_edge_midpoint( e );
     
     
-    SimplexFlag e_flag UNUSED = flags_edges[e];
+    SimplexFlag e_flag = flags_edges[e];
     
     
     /*
@@ -1465,12 +1465,10 @@ void MeshSimplicial2D::bisect_edge( int e )
     /*
      * flags of the bisected edge, its immediate children, and the new vertex 
      */
-    SimplexFlag flag_oldedge = flags_edges[e];
+    flags_edges[ e             ] = e_flag;
+    flags_edges[ counter_edges ] = e_flag;
     
-    flags_edges[ e             ] = flag_oldedge;
-    flags_edges[ counter_edges ] = flag_oldedge;
-    
-    flags_vertices[ counter_vertices ] = flag_oldedge;
+    flags_vertices[ counter_vertices ] = e_flag;
     
     
     
@@ -1830,7 +1828,7 @@ int MeshSimplicial2D::longest_edge_bisection_recursive( const std::vector<int>& 
 
     }
 
-    // 3. check the result 
+    // 2. check the result 
     
     for( const int& e : edges )
         assert( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count );

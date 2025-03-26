@@ -31,9 +31,9 @@
  * * * * * VERTEX BISECTION
  */
     
-void MeshSimplicial3D::bisect_edge( int e )
+void MeshSimplicial3D::bisect_edge( int edge )
 {
-    assert( 0 <= e && e < counter_edges );
+    assert( 0 <= edge && edge < counter_edges );
     // check();
     
     
@@ -45,17 +45,17 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     // gather basic data about the bisection, in particular the number of simplices involved.
     
-    int e_back_vertex  = data_edge_vertices[ e ][ 0 ];
-    int e_front_vertex = data_edge_vertices[ e ][ 1 ];
+    int e_back_vertex  = data_edge_vertices[ edge ][ 0 ];
+    int e_front_vertex = data_edge_vertices[ edge ][ 1 ];
     
-    std::vector<int> old_faces      = get_face_parents_of_edge( e );
-    std::vector<int> old_tetrahedra = get_tetrahedron_parents_of_edge( e );
+    std::vector<int> old_faces      = get_face_parents_of_edge( edge );
+    std::vector<int> old_tetrahedra = get_tetrahedron_parents_of_edge( edge );
     
     std::vector<int> localindex_of_face_refinementedge( old_faces.size() );
     std::vector<int> localindex_of_tetrahedron_refinementedge( old_tetrahedra.size() );
     
     
-    FloatVector midcoordinate = get_edge_midpoint( e );
+    FloatVector midcoordinate = get_edge_midpoint( edge );
     
     
     
@@ -177,7 +177,8 @@ void MeshSimplicial3D::bisect_edge( int e )
         flags_edges.resize     ( counter_edges + 1 + old_faces.size(),                     SimplexFlag::SimplexFlagInvalid );
         flags_vertices.resize  ( counter_vertices + 1,                                     SimplexFlag::SimplexFlagInvalid );
         
-        SimplexFlag flag_e = flags_edges[e];
+        SimplexFlag flag_e = flags_edges[edge];
+
         flags_vertices[ counter_vertices ] = flag_e;
         flags_edges   [ counter_edges    ] = flag_e;
         
@@ -227,8 +228,8 @@ void MeshSimplicial3D::bisect_edge( int e )
     
     /* vertices of the children of the bisected edge */
     
-    data_edge_vertices[ e             ][ 0 ] = e_back_vertex;
-    data_edge_vertices[ e             ][ 1 ] = counter_vertices;
+    data_edge_vertices[ edge          ][ 0 ] = e_back_vertex;
+    data_edge_vertices[ edge          ][ 1 ] = counter_vertices;
       
     data_edge_vertices[ counter_edges ][ 0 ] = counter_vertices;
     data_edge_vertices[ counter_edges ][ 1 ] = e_front_vertex;
@@ -259,8 +260,8 @@ void MeshSimplicial3D::bisect_edge( int e )
       int v_2 = data_face_vertices[ f_old ][ 2 ];
       
       
-      localindex_of_face_refinementedge[ of ] = ( e_0_1 == e ) ? 0 : ( ( e_0_2 == e ) ? 1 : 2 );
-      assert( data_face_edges[ f_old ][ localindex_of_face_refinementedge[ of ] ] == e );
+      localindex_of_face_refinementedge[ of ] = ( e_0_1 == edge ) ? 0 : ( ( e_0_2 == edge ) ? 1 : 2 );
+      assert( data_face_edges[ f_old ][ localindex_of_face_refinementedge[ of ] ] == edge );
       
       
       /* insert the new face and the new edge into the micropatch and macropatch */
@@ -274,7 +275,7 @@ void MeshSimplicial3D::bisect_edge( int e )
       
       if( localindex_of_face_refinementedge[ of ] == 0 ) { // 0 1 
         
-        assert( v_0 == e_back_vertex && v_1 == e_front_vertex && e == e_0_1 );
+        assert( v_0 == e_back_vertex && v_1 == e_front_vertex && edge == e_0_1 );
         
         /* face vertices */
         data_face_vertices[ f_old ][0] = v_0;
@@ -286,7 +287,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         data_face_vertices[ f_new ][2] = v_2;
         
         /* face edges */
-        data_face_edges[ f_old ][0] = e;
+        data_face_edges[ f_old ][0] = edge;
         data_face_edges[ f_old ][1] = e_0_2;
         data_face_edges[ f_old ][2] = counter_edges + 1 + of;
         
@@ -300,7 +301,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         
       } else if( localindex_of_face_refinementedge[ of ] == 1 ) { // 0 2 
         
-        assert( v_0 == e_back_vertex && v_2 == e_front_vertex && e == e_0_2 );
+        assert( v_0 == e_back_vertex && v_2 == e_front_vertex && edge == e_0_2 );
         
         /* face vertices */
         data_face_vertices[ f_old ][0] = v_0;
@@ -313,7 +314,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         
         /* face edges */
         data_face_edges[ f_old ][0] = e_0_1;
-        data_face_edges[ f_old ][1] = e;
+        data_face_edges[ f_old ][1] = edge;
         data_face_edges[ f_old ][2] = counter_edges + 1 + of;
         
         data_face_edges[ f_new ][0] = counter_edges + 1 + of;
@@ -326,7 +327,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         
       } else if( localindex_of_face_refinementedge[ of ] == 2 ) { // 1 2 
         
-        assert( v_1 == e_back_vertex && v_2 == e_front_vertex && e == e_1_2 );
+        assert( v_1 == e_back_vertex && v_2 == e_front_vertex && edge == e_1_2 );
         
         /* face vertices */
         data_face_vertices[ f_old ][0] = v_0;
@@ -340,7 +341,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         /* face edges */
         data_face_edges[ f_old ][0] = e_0_1;
         data_face_edges[ f_old ][1] = counter_edges + 1 + of;
-        data_face_edges[ f_old ][2] = e;
+        data_face_edges[ f_old ][2] = edge;
         
         data_face_edges[ f_new ][0] = counter_edges + 1 + of;
         data_face_edges[ f_new ][1] = e_0_2;
@@ -387,14 +388,14 @@ void MeshSimplicial3D::bisect_edge( int e )
       int v_n = counter_vertices; 
       
       localindex_of_tetrahedron_refinementedge[ ot ] = nullindex;
-      if( e_0_1 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 0;
-      if( e_0_2 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 1;
-      if( e_0_3 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 2;
-      if( e_1_2 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 3;
-      if( e_1_3 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 4;
-      if( e_2_3 == e ) localindex_of_tetrahedron_refinementedge[ ot ] = 5;
+      if( e_0_1 == edge ) localindex_of_tetrahedron_refinementedge[ ot ] = 0;
+      if( e_0_2 == edge ) localindex_of_tetrahedron_refinementedge[ ot ] = 1;
+      if( e_0_3 == edge ) localindex_of_tetrahedron_refinementedge[ ot ] = 2;
+      if( e_1_2 == edge ) localindex_of_tetrahedron_refinementedge[ ot ] = 3;
+      if( e_1_3 == edge ) localindex_of_tetrahedron_refinementedge[ ot ] = 4;
+      if( e_2_3 == edge ) localindex_of_tetrahedron_refinementedge[ ot ] = 5;
       assert( localindex_of_tetrahedron_refinementedge[ ot ] != nullindex );
-      assert( data_tetrahedron_edges[ t_old ][ localindex_of_tetrahedron_refinementedge[ ot ] ] == e );
+      assert( data_tetrahedron_edges[ t_old ][ localindex_of_tetrahedron_refinementedge[ ot ] ] == edge );
       
       
       /* insert the new face and the new edge into the micropatch and macropatch */
@@ -412,7 +413,7 @@ void MeshSimplicial3D::bisect_edge( int e )
       
       if(        localindex_of_tetrahedron_refinementedge[ ot ] == 0 ) { // 0 1 
         
-        assert( v_0 == e_back_vertex && v_1 == e_front_vertex && e == e_0_1 );
+        assert( v_0 == e_back_vertex && v_1 == e_front_vertex && edge == e_0_1 );
         
         /* prepare stuff */ 
         int index_f_012 = std::find( old_faces.begin(), old_faces.end(), f_012 ) - old_faces.begin();
@@ -481,7 +482,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         
       } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 1 ) { // 0 2 
         
-        assert( v_0 == e_back_vertex && v_2 == e_front_vertex && e == e_0_2 );
+        assert( v_0 == e_back_vertex && v_2 == e_front_vertex && edge == e_0_2 );
         
         /* prepare stuff */ 
         int index_f_012 = std::find( old_faces.begin(), old_faces.end(), f_012 ) - old_faces.begin();
@@ -550,7 +551,7 @@ void MeshSimplicial3D::bisect_edge( int e )
         
       } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 2 ) { // 0 3 
         
-        assert( v_0 == e_back_vertex && v_3 == e_front_vertex && e == e_0_3 );
+        assert( v_0 == e_back_vertex && v_3 == e_front_vertex && edge == e_0_3 );
         
         /* prepare stuff */ 
         int index_f_013 = std::find( old_faces.begin(), old_faces.end(), f_013 ) - old_faces.begin();
@@ -619,7 +620,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     
       } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 3 ) { // 1 2 
         
-        assert( v_1 == e_back_vertex && v_2 == e_front_vertex && e == e_1_2 );
+        assert( v_1 == e_back_vertex && v_2 == e_front_vertex && edge == e_1_2 );
         
         /* prepare stuff */ 
         int index_f_012 = std::find( old_faces.begin(), old_faces.end(), f_012 ) - old_faces.begin();
@@ -688,7 +689,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     
       } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 4 ) { // 1 3 
         
-        assert( v_1 == e_back_vertex && v_3 == e_front_vertex && e == e_1_3 );
+        assert( v_1 == e_back_vertex && v_3 == e_front_vertex && edge == e_1_3 );
         
         /* prepare stuff */ 
         int index_f_013 = std::find( old_faces.begin(), old_faces.end(), f_013 ) - old_faces.begin();
@@ -757,7 +758,7 @@ void MeshSimplicial3D::bisect_edge( int e )
     
       } else if( localindex_of_tetrahedron_refinementedge[ ot ] == 5 ) { // 2 3 
         
-        assert( v_2 == e_back_vertex && v_3 == e_front_vertex && e == e_2_3 );
+        assert( v_2 == e_back_vertex && v_3 == e_front_vertex && edge == e_2_3 );
         
         /* prepare stuff */ 
         int index_f_023 = std::find( old_faces.begin(), old_faces.end(), f_023 ) - old_faces.begin();
@@ -1261,7 +1262,38 @@ int MeshSimplicial3D::longest_edge_bisection_recursive( const std::vector<int>& 
 
     int counter = 0;
 
-    // 1. run over the edges and apply the recursion
+    // 1. for improved efficiency, increase container capacities:
+
+    // {
+    //     int count_old_tetrahedra = 0;
+    //     int count_old_faces      = 0;
+    //     for( int e : edges ) count_old_tetrahedra += count_edge_tetrahedron_parents(e);
+    //     for( int e : edges ) count_old_faces      += count_face_tetrahedron_parents(e);
+    //     data_tetrahedron_nextparents_of_faces.reserve( counter_tetrahedra + count_old_tetrahedra );
+    //     data_tetrahedron_faces.reserve               ( counter_tetrahedra + count_old_tetrahedra );
+    //     data_face_firstparent_tetrahedron.reserve    ( counter_faces      + count_old_faces + count_old_tetrahedra );
+    //     data_tetrahedron_nextparents_of_edges.reserve( counter_tetrahedra + count_old_tetrahedra );
+    //     data_tetrahedron_edges.reserve               ( counter_tetrahedra + count_old_tetrahedra );
+    //     data_edge_firstparent_tetrahedron.reserve    ( counter_edges      + count_old_faces + edges.size() );
+    //     data_tetrahedron_nextparents_of_vertices.reserve( counter_tetrahedra + count_old_tetrahedra );
+    //     data_tetrahedron_vertices.reserve               ( counter_tetrahedra + count_old_tetrahedra );
+    //     data_vertex_firstparent_tetrahedron.reserve     ( counter_vertices   + edges.size()         );
+    //     data_face_nextparents_of_edges.reserve( counter_faces + count_old_faces + count_old_tetrahedra );
+    //     data_face_edges.reserve               ( counter_faces + count_old_faces + count_old_tetrahedra );
+    //     data_edge_firstparent_face.reserve    ( counter_edges     + count_old_faces + edges.size()     );
+    //     data_face_nextparents_of_vertices.reserve( counter_faces + count_old_faces + count_old_tetrahedra );
+    //     data_face_vertices.reserve               ( counter_faces + count_old_faces + count_old_tetrahedra );
+    //     data_vertex_firstparent_face.reserve     ( counter_vertices + edges.size()                        );
+    //     data_edge_nextparents_of_vertices.reserve( counter_edges    + count_old_faces + edges.size() );
+    //     data_edge_vertices.reserve               ( counter_edges    + count_old_faces + edges.size() );
+    //     data_vertex_firstparent_edge.reserve     ( counter_vertices + edges.size()                   );
+    //     flags_tetrahedra.resize( counter_tetrahedra + count_old_tetrahedra );
+    //     flags_faces.resize     ( counter_faces      + count_old_faces + count_old_tetrahedra );
+    //     flags_edges.resize     ( counter_edges      + edges.size() + count_old_faces );
+    //     flags_vertices.resize  ( counter_vertices   + edges.size() );
+    // }
+
+    // 2. run over the edges and apply the recursion
 
     const int old_vertex_count = counter_vertices;
 
