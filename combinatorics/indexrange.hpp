@@ -147,9 +147,9 @@ inline bool operator!=( const IndexRange& ir1, const IndexRange& ir2 )
 }
 
 
-static const IndexRange  NonNegativeIntegers = IndexRange( 0, std::numeric_limits<int>::max() );
+static const IndexRange  MaxRangeZerobased = IndexRange( 0, std::numeric_limits<int>::max() );
 
-static const IndexRange  PositiveIntegers    = IndexRange( 1, std::numeric_limits<int>::max() );
+static const IndexRange  MaxRangeOnebased    = IndexRange( 1, std::numeric_limits<int>::max() );
 
 
 

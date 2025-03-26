@@ -100,9 +100,9 @@ void ConvergenceTable::lg() const
     LOG << str;
 }
 
-void ConvergenceTable::lg( bool display_convergence_rates ) const
+void ConvergenceTable::lg( bool do_display_convergence_rates ) const
 {
-    LOG << text( display_convergence_rates );
+    LOG << text( do_display_convergence_rates );
 }
 
 // void ConvergenceTable::print( std::ostream& os )
@@ -111,7 +111,7 @@ void ConvergenceTable::lg( bool display_convergence_rates ) const
 // }
         
 
-std::string ConvergenceTable::text( bool display_convergence_rates ) const
+std::string ConvergenceTable::text( bool do_display_convergence_rates ) const
 {
     std::ostringstream ss;
 
@@ -120,9 +120,9 @@ std::string ConvergenceTable::text( bool display_convergence_rates ) const
     ss << std::string( separator_stripe_length, '-' ) << nl;
     
     if( print_rowwise_instead_of_columnwise )
-        ss << text_transpose( display_convergence_rates );
+        ss << text_transpose( do_display_convergence_rates );
     else
-        ss << text_standard( display_convergence_rates );
+        ss << text_standard( do_display_convergence_rates );
     
     ss << nl;
     
@@ -131,7 +131,7 @@ std::string ConvergenceTable::text( bool display_convergence_rates ) const
     return ss.str();
 }
 
-std::string ConvergenceTable::text_standard( bool display_convergence_rates ) const
+std::string ConvergenceTable::text_standard( bool do_display_convergence_rates ) const
 {
     
     std::ostringstream ss;
@@ -202,7 +202,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
             
             printf_into_stream( ss,  "%*s%s", nc_cell_width, seriesheader.c_str(), column_separator );
             
-            if( display_convergence_rates ) {
+            if( do_display_convergence_rates ) {
                 printf_into_stream( ss,  "%s%s", std::string( nc_rate_width, ' ' ).c_str(), column_separator ); // printf_into_stream( ss, "          \t");
             }
 
@@ -226,7 +226,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
             
             printf_into_stream( ss, "% *.*le%s", nc_cell_width, nc_cell_precision, (double)(safedouble) entries[i][j], column_separator ); 
             
-            if( display_convergence_rates ){
+            if( do_display_convergence_rates ){
                 
                 if( i == 0 ) {
                     
@@ -266,7 +266,7 @@ std::string ConvergenceTable::text_standard( bool display_convergence_rates ) co
 }
 
 
-std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) const
+std::string ConvergenceTable::text_transpose( bool do_display_convergence_rates ) const
 {
     
     std::ostringstream ss;
@@ -348,7 +348,7 @@ std::string ConvergenceTable::text_transpose( bool display_convergence_rates ) c
 
         printf_into_stream( ss, "\n");
         
-        if( display_convergence_rates )
+        if( do_display_convergence_rates )
         {
             
             if( not seriesheaders.empty() )

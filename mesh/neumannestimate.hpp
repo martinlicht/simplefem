@@ -233,9 +233,9 @@ static Float NeumannEstimate( const Mesh& M ) {
                 }
 
                 // we try to be a bit better than the Payne-Weinberger bound whenever feasible
-                Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
+                // TODO(martin): delete // Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
 
-                Float natural_poincare_constant = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
+                // TODO(martin): delete // Float natural_poincare_constant = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
                 
                 Float pf_simplex_with_bc = minimum( natural_poincare_constant, 1./sqrt(2.) ) * diameters[cell];
                 
