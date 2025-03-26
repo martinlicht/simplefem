@@ -4,11 +4,11 @@
 [![FEM 3D tests](https://github.com/martinlicht/simplefem/actions/workflows/unittests_3D.yml/badge.svg)](https://github.com/martinlicht/simplefem/actions/workflows/unittests_3D.yml)
 
 ```
-                  [ FFFFF EEEEE EEEEE  CCCC    +       +   ]
-                  [ F     E     E     C        +       +   ]
-                  [ FFFF  EEEE  EEEE  C     +++++++ +++++++]
-                  [ F     E     E     C        +       +   ]
-                  [ F     EEEEE EEEEE  CCCC    +       +   ]
+                  [ FFFFF EEEEE EEEEE  CCCC    +       +    ]
+                  [ F     E     E     C        +       +    ]
+                  [ FFFF  EEEE  EEEE  C     +++++++ +++++++ ]
+                  [ F     E     E     C        +       +    ]
+                  [ F     EEEEE EEEEE  CCCC    +       +    ]
 
                  [ C++ Finite element library based on FEEC ]
                     [www.github.com/martinlicht/simplefem]
@@ -68,3 +68,7 @@ The key objective of this finite element software is to enable proof-of-concept 
 This software prioritizes minimal dependencies and portability across different operating systems and hardware capabilities. It is supposed to remain operational even on a budget laptop while being able to leverage any additional hardware.
 
 At its current stage, the project does not target massively distributed-memory parallelism or peak high-performance computing. These features may be considered once key milestones have been achieved.
+
+### Contact
+
+martin.licht@epfl.ch
