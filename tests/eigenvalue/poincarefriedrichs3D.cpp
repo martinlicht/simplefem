@@ -71,7 +71,7 @@ int main( int argc, char *argv[] )
         
         PF_estimate_via_shellings[k] = std::numeric_limits<Float>::infinity();
 
-        auto shellings_found = generate_shellings2( M, k );
+        auto shellings_found = generate_shellings_elaborate( M, k );
 
         LOG << shellings_found.size() << nl;
 
@@ -99,7 +99,7 @@ int main( int argc, char *argv[] )
     /*
     if(false)
     {
-        const auto shellings_found = generateShellings( M );
+        const auto shellings_found = generate_shellings_generously( M );
 
         LOG << shellings_found.size() << nl;
 
@@ -117,7 +117,7 @@ int main( int argc, char *argv[] )
     
     if(false)
     {
-        const auto shellings_found = generate_ranked_shelling( M );
+        const auto shellings_found = generate_shellings_via_ranking( M );
 
         LOG << shellings_found.size() << nl;
 
@@ -187,7 +187,7 @@ int main( int argc, char *argv[] )
             
 
             
-            const auto shellings_found = generateShellings( M, acceptable_face_list );
+            const auto shellings_found = generate_shellings_generously( M, acceptable_face_list );
 
             LOG << shellings_found.size() << nl;
 
@@ -201,14 +201,14 @@ int main( int argc, char *argv[] )
 
         }
         
-        // LOG << "Print ordered spanning trees..." << nl;
-        // for( int t = 0; t < trees.size(); t++ )
-        // {
-        //     LOG << t << "\t";
-        //     const auto& tree = trees[t];
-        //     const auto& results = list_ordered_face_spanning_trees( M, index2face, trees[t] );
-        //     LOG << results.size() << nl;
-        // }
+        LOG << "Print ordered spanning trees..." << nl;
+        for( int t = 0; t < trees.size(); t++ )
+        {
+            LOG << t << "\t";
+            const auto& tree = trees[t];
+            const auto& results = list_ordered_face_spanning_trees( M, trees[t] );
+            LOG << results.size() << nl;
+        }
         
     }
 

@@ -407,7 +407,7 @@ std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_
 
 std::vector<std::vector<int>> list_ordered_face_spanning_trees( 
     const Mesh& mesh, 
-    const std::vector<int>& index2face, 
+    // const std::vector<int>& index2face, 
     const std::vector<int>& spanning_tree
 );
 

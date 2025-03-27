@@ -545,12 +545,12 @@ struct shelling
 
 
 
-std::vector<shelling> generate_shellings2( 
+std::vector<shelling> generate_shellings_elaborate( 
     const Mesh& mesh,
     int form_degree
 );
 
-void generate_shellings2(
+void generate_shellings_elaborate(
     const Mesh& mesh,
     const int form_degree,
     const mesh_information_for_shelling& info,
@@ -560,7 +560,7 @@ void generate_shellings2(
     Float multweight
 );
 
-std::vector<shelling> generate_shellings2( 
+std::vector<shelling> generate_shellings_elaborate( 
     const Mesh& mesh,
     const int form_degree
 ){
@@ -577,13 +577,13 @@ std::vector<shelling> generate_shellings2(
 
     current_prefix.reserve( mesh.count_simplices(mesh.getinnerdimension()) );
 
-    generate_shellings2( mesh, form_degree, info, shellings_found, current_prefix, coefficient_table, multweight );
+    generate_shellings_elaborate( mesh, form_degree, info, shellings_found, current_prefix, coefficient_table, multweight );
 
     return shellings_found;
 }
 
 
-void generate_shellings2(
+void generate_shellings_elaborate(
     const Mesh& mesh,
     const int form_degree,
     const mesh_information_for_shelling& info,
@@ -1202,7 +1202,7 @@ void generate_shellings2(
 
                     Assert( next_prefix_from_node[s].size() > 0 );
                     
-                    generate_shellings2( mesh, form_degree, info, 
+                    generate_shellings_elaborate( mesh, form_degree, info, 
                                          shellings_found_from_node[s], 
                                          next_prefix_from_node[s], 
                                          next_coefficient_table_from_node[s], 
@@ -1257,7 +1257,7 @@ void generate_shellings2(
 
             Float next_multweight = multweight * weight_for_node_morphin[i];
 
-            generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table, next_multweight );
+            generate_shellings_elaborate( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table, next_multweight );
         }
 
     }
