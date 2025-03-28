@@ -15,10 +15,13 @@
 ```
 
 ![Cpp](https://img.shields.io/badge/-C++14-deepskyblue?logo=c%2B%2B&style=flat-square)
+![Cpp](https://img.shields.io/badge/-C++17-deepskyblue?logo=c%2B%2B&style=flat-square)
+![Cpp](https://img.shields.io/badge/-C++20-deepskyblue?logo=c%2B%2B&style=flat-square)
+![Cpp](https://img.shields.io/badge/-C++23-deepskyblue?logo=c%2B%2B&style=flat-square)
 
 **Welcome to the FEEC++ Project!**
 
-This repository contains the source code for **FEEC++**, a work-in-progress C++ finite element library designed in the spirit of finite element exterior calculus (FEEC). The library aims to facilitate easy and rapid prototyping for fundamental research on numerical methods from the FEEC perspective.
+This repository contains the source code for **FEEC++**, a work-in-progress C++ finite element library designed in the spirit of **finite element exterior calculus** (FEEC). The library aims to facilitate easy and rapid prototyping for fundamental research on numerical methods from the FEEC perspective.
 
 **FEEC++** is intended to be versatile and self-contained: It builds and runs on Linux, Windows (Cygwin and MinGW), and macOS. Its only prerequisites are a C++14 compiler (such as GCC or Clang) and GNU Make.
 
@@ -26,7 +29,7 @@ This project is currently in a pre-release phase, with frequent and substantial 
 That even includes the name of project, which recently changed from `simplefem` to `FEEC++`.
 
 ### Features of FEEC++  
-FEEC++ implements finite element spaces of arbitrary (uniform) polynomial degree over simplicial meshes, including Whitney forms and Sullivan forms. Additionally, it comes with all necessary linear algebra subroutines and a mesh library that supports uniform refinement and longest edge bisection.
+FEEC++ implements finite element spaces of arbitrary (uniform) polynomial degree over simplicial meshes, including Whitney forms and Sullivan forms. Additionally, it comes with all necessary linear algebra subroutines (dense matrices, sparse matrices, solvers) and a mesh library that supports uniform refinement and longest edge bisection.
 
 Finite element features include:
 
@@ -38,7 +41,7 @@ Finite element features include:
 - [x] Mass matrices with constant or non-uniform coefficients
 - [x] Krylov subspace methods for sparse matrices and block systems
 - [x] Parallelized SSOR preconditioner for CSR matrices
-- [x] Operator preconditioning of Systems
+- [x] Operator preconditioning for block systems
 
 Planned finite element features:
 
@@ -47,7 +50,7 @@ Planned finite element features:
 - [ ] Additional spectrally optimized bases of finite element differential forms
 - [ ] Curved geometries (surfaces already supported)
 - [ ] Duality-based error estimators and adaptive strategies
-- [ ] Discontinuous Galerkin and Hybridized Higher-Order Methods
+- [ ] Discontinuous Galerkin and hybridized higher-order methods
 
 ### C++ Design Guidelines  
 
@@ -65,7 +68,7 @@ Moreover, the code is regularly tested against various compiler warnings, linter
 
 The key objective of this finite element software is to enable proof-of-concept implementations of finite element methods that go beyond what is usually found in standard textbooks.
 
-This software prioritizes minimal dependencies and portability across different operating systems and hardware capabilities. It is supposed to remain operational even on a budget laptop while being able to leverage any additional hardware.
+This software prioritizes minimal dependencies and portability across different operating systems and hardware capabilities. It is supposed to remain operational even on a budget laptop whilst being able to leverage any additional hardware.
 
 At its current stage, the project does not target massively distributed-memory parallelism or peak high-performance computing. These features may be considered once key milestones have been achieved.
 

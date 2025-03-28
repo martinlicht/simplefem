@@ -162,9 +162,29 @@ They are possible alternatives to Gauss-Seidel with Eisenstadt and graph colorin
 Polish the names of all functions and classes, even if there are several implementations of the same idea. 
 Avoid compiler warnings and clean up any redundancies. 
 
+## (HIGH) Smoothed particles 
 
+1. Introduction 
+   - introduction on the type of PDEs to be solved: elliptic functionals
+   - intoduction on the type of numerical methods considered
+   - review: FEM, smoothed particle methods, Deep Ritz
+   - duality-based error estimation
+   ? where to overview all the different methods being used ?
 
+TODO: RBFN for Poisson problem, smoothed particle methods
 
+2. Model problem
+   p-Laplacian + semilinear reaction term
+
+3. Overview of the primal methods being used 
+
+4. Overview of dual formulation, flux reconstructions, different forms
+   a) solve mixed fem b) minimize quadratic residual functional c) integral operators Green/Bogovskii...
+
+5. Duality-based error estimation for model problems
+   ? Deep ritz dual formulation ? Duality-based error estimates with nonlinear reaction term?
+
+6. Computational examples
 
 
 

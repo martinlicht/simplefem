@@ -1,5 +1,5 @@
-#ifndef SPANNING_TREE_LISTER_HPP
-#define SPANNING_TREE_LISTER_HPP
+#ifndef INCLUDEGUARD_SPANNING_TREE_LISTER_HPP
+#define INCLUDEGUARD_SPANNING_TREE_LISTER_HPP
 
 #include <algorithm>
 #include <vector>
@@ -557,4 +557,4 @@ std::vector<std::vector<int>> list_ordered_face_spanning_trees(
 
 
 
-#endif // SPANNING_TREE_LISTER_HPP
+#endif // INCLUDEGUARD_SPANNING_TREE_LISTER_HPP
