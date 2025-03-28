@@ -42,6 +42,7 @@ Finite element features include:
 - [x] Krylov subspace methods for sparse matrices and block systems
 - [x] Parallelized SSOR preconditioner for CSR matrices
 - [x] Operator preconditioning for block systems
+- [x] VTK-ready output
 
 Planned finite element features:
 

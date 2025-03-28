@@ -38,23 +38,11 @@ int main( int argc, char *argv[] )
     auto f1 = SimplexFlag::SimplexFlagDirichlet;
     auto f2 = SimplexFlag::SimplexFlagDirichlet;
     M.set_flags( 1, { f0, f1, f2 } );
+    M.complete_dirichlet_flags_from_facets();
 
     M.check_dirichlet_flags();
 
     
-    LOG << "Prepare scalar fields for testing..." << nl;
-    
-
-    
-            
-    
-    
-    
-    
-    
-
-    
-
     LOG << "Estimating Poincare-Friedrichs constant of grad operator (Sullivan)" << nl;
 
     const int min_l = 3; 
@@ -92,26 +80,26 @@ int main( int argc, char *argv[] )
                     
             LOG << "... assemble mass matrices" << nl;
     
-            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
+            auto scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 ) );
+            auto vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   ) );
             
             LOG << "... assemble inclusion matrices" << nl;
     
-            SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
+            auto scalar_incmatrix   = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 ) );
+            auto scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
-            SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
-            SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+            auto vector_incmatrix   = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   ) );
+            auto vector_incmatrix_t = vector_incmatrix.getTranspose();
 
             LOG << "... assemble algebraic matrices" << nl;
     
-            SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
+            auto scalar_diffmatrix   = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 ) );
+            auto scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
             LOG << "... compose system matrices" << nl;
 
-            auto mat_A  = scalar_incmatrix_t & scalar_diffmatrix_t & ( vector_massmatrix ) & scalar_diffmatrix & scalar_incmatrix;
-            mat_A.sortandcompressentries();
+            auto mat_A  = Conjugation( vector_massmatrix, scalar_diffmatrix & scalar_incmatrix );
+            // mat_A.sortandcompressentries();
                 
             LOG << "... compose CSR system matrices" << nl;
     

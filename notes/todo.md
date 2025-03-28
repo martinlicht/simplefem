@@ -162,6 +162,15 @@ They are possible alternatives to Gauss-Seidel with Eisenstadt and graph colorin
 Polish the names of all functions and classes, even if there are several implementations of the same idea. 
 Avoid compiler warnings and clean up any redundancies. 
 
+- [x] div3D and curl3D are okay
+- [x] `triangle_div_estimate.cpp` and `curlwithtetbc` are okay
+- [x] grad3D recursive Neumann estimate needs debugging or replacement.
+- [ ] Move `curlwithtetbc` into curl3DSestimate.cpp 
+- [ ] If an input is given, then overwrite the defaults. Terminate if impossible.
+- [ ] Debug gradient estimator 
+- [ ] Combine all 3D estimators into one file 
+- [ ] Adapt the combined 3D estimator to a 2D estimator
+
 ## (HIGH) Smoothed particles 
 
 1. Introduction 

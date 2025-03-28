@@ -396,6 +396,8 @@ int main( int argc, char *argv[] )
 
                         {
                             DenseMatrix Bt( A.getdimout(), 1, 1. );
+                            Bt.setcolumn(0, conforming_one );
+
                             DenseMatrix B = Transpose(Bt);
                             DenseMatrix C(1,1,0.);
                             
@@ -811,15 +813,11 @@ int main( int argc, char *argv[] )
             
             }
 
-
         }
 
-
         if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-        
 
     } 
-
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     
