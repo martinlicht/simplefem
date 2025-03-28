@@ -225,7 +225,7 @@ cpplint:
 	sort | uniq | \
 	cat > $(projectdir)/OUTPUT_CPPLINT.txt; \
 	cat $(projectdir)/OUTPUT_CPPLINT.txt
-# ( $(projectdir)/.Tools/cpplint.py \
+# ( $(projectdir)/.tools/cpplint.py \
 
 
 

@@ -263,7 +263,7 @@ $(module).astyle:
 .PHONY: tidy $(module).tidy
 tidy: $(module).tidy
 $(module).tidy:
-	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/.Tools/clang-tidy.yaml -- 
+	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/.tools/clang-tidy.yaml -- 
 
 ##########################################################################################
 # Apply cppcheck to all cpp and hpp files in the directory. Read-only.

@@ -1,9 +1,9 @@
-#ifndef SHELLING_LISTER_HPP
-#define SHELLING_LISTER_HPP
+#ifndef INCLUDEGUARD_SHELLING_LISTER_HPP
+#define INCLUDEGUARD_SHELLING_LISTER_HPP
 
 #include <algorithm>
 #include <vector>
-#include <queue>
+// #include <queue>
 #include <utility> // For std::pair
 
 #include "../base/include.hpp"
@@ -13,16 +13,20 @@
 
 
 
-std::vector<std::vector<int>> generateShellings(
+// ========================================================================
+// Various routines to generate shellings for a given mesh to assess their
+// quality in terms of geometric indicators. 
+// ========================================================================
+std::vector<std::vector<int>> generate_shellings_generously(
     const Mesh& mesh
 );
 
-std::vector<std::vector<int>> generateShellings(
+std::vector<std::vector<int>> generate_shellings_generously(
     const Mesh& mesh,
     const std::vector<bool>& acceptable_face_list
 );
 
-void generateShellings(
+void generate_shellings_generously(
     const Mesh& mesh,
     const std::vector<bool>& acceptable_face_list,
     std::vector<std::vector<int>>& shellings_found,
@@ -30,10 +34,30 @@ void generateShellings(
     std::vector<int> remaining_nodes
 );
 
+std::vector<std::vector<std::pair<int,Float>>> generate_shellings_via_ranking(
+    const Mesh& mesh
+);
+
+void generate_shellings_via_ranking(
+    const Mesh& mesh,
+    std::vector<std::vector<std::pair<int,Float>>>& shellings_found,
+    std::vector<std::pair<int,Float>> current_prefix,
+    std::vector<std::pair<int,Float>> remaining_nodes
+);
+
+Float estimate_shelling_quality( 
+    const Mesh& mesh,
+    std::vector<int> shelling,
+    int form_degree
+);
 
 
 
-std::vector<std::vector<int>> generateShellings(
+
+// ============================================================================================
+// Generate shellings for a given mesh.
+// ============================================================================================
+std::vector<std::vector<int>> generate_shellings_generously(
     const Mesh& mesh
 ){
     const int dim = mesh.getinnerdimension();
@@ -46,11 +70,16 @@ std::vector<std::vector<int>> generateShellings(
         acceptable_face_list[face] = ( parents.size() != 1 );
     }
 
-    return generateShellings( mesh, acceptable_face_list );
+    return generate_shellings_generously( mesh, acceptable_face_list );
 }
 
 
-std::vector<std::vector<int>> generateShellings(
+// ============================================================================================
+// Internal auxiliary function. 
+// Generate shellings for a given mesh with a given list of acceptable faces that must be 
+// part of the interface of the next simplex. 
+// ============================================================================================
+std::vector<std::vector<int>> generate_shellings_generously(
     const Mesh& mesh,
     const std::vector<bool>& acceptable_face_list
 ){
@@ -65,15 +94,17 @@ std::vector<std::vector<int>> generateShellings(
     std::vector<int> remaining_nodes( mesh.count_simplices( dim ) );
     for( int node = 0; node < remaining_nodes.size(); node++ ) remaining_nodes[node] = node;
 
-    generateShellings( mesh, acceptable_face_list, shellings_found, current_prefix, remaining_nodes );
+    generate_shellings_generously( mesh, acceptable_face_list, shellings_found, current_prefix, remaining_nodes );
     
     return shellings_found;
 }
 
 
-
-
-void generateShellings(
+// ============================================================================================
+// Internal auxiliary function. 
+// Used for the recursive construction of shellings.
+// ============================================================================================
+void generate_shellings_generously(
     const Mesh& mesh,
     const std::vector<bool>& acceptable_face_list,
     std::vector<std::vector<int>>& shellings_found,
@@ -81,20 +112,20 @@ void generateShellings(
     std::vector<int> remaining_nodes
 ){
     
+    const int max_number_shellings_found = 3; 
+
     // check that input mesh is reasonable 
     const int dim = mesh.getinnerdimension();
     assert( dim >= 1 );
 
-
-    // count all the simplices of the mesh 
+    // Count all the simplices of the mesh.
     const auto counts = mesh.count_simplices();
 
-
-    // if enough shellings have been found already, then return 
+    // if enough shellings have been found already, then return. 
+    // In that case, the recursion will quickly finish without further work.
     if( false and shellings_found.size() >= 1 )
         return;
-
-
+    
     // if the current prefix is already containing all volumes, 
     // then a shelling has been found and can be added 
     if( current_prefix.size() == counts[dim] )
@@ -112,15 +143,13 @@ void generateShellings(
         
         assert( not contains( current_prefix, node ) );
         
-        
-        {
+        if( /* DISABLES CODE */(false)){
             for( int t : current_prefix ) LOG << t << space;
             LOG << node << nl;    
         }
         
-
-        // list the faces adjacent to the node
-        // and check whether it is connected to one of the prefix nodes  
+        // List the faces adjacent to the node.
+        // Check whether it is connected to one of the prefix nodes.
         
         const auto faces_of_node = mesh.get_subsimplices( dim, dim-1, node ).getvalues();
         assert( faces_of_node.size() == dim+1 );
@@ -137,21 +166,20 @@ void generateShellings(
 
             assert( parents[0] == node or parents[1] == node );
             assert( parents[0] != node or parents[1] != node );
-
+        
             if( parents[0] != node and contains( current_prefix, parents[0] ) ) face_is_connected[index_f] = true;
             if( parents[1] != node and contains( current_prefix, parents[1] ) ) face_is_connected[index_f] = true;
         }
-
         
-        // OPTIMIZATION
         // if current_prefix is not empty and volume node has no common face with the volumes in current_prefix, then skip 
         
         if( current_prefix.size() != 0 )
         if( not std::any_of( face_is_connected.begin(), face_is_connected.end(), [](bool b) { return b; } ) )
             continue;
-
-
-        // If the connection to the previous volumes is not via an acceptable face, then skip
+        
+        // If the connection to the previous volumes is not via an acceptable face, then skip.
+        // Without further modification, any face with more than one parent volume is acceptable,
+        // so this condition might be vacuous.
         
         bool acceptable_connection = false;
         
@@ -164,14 +192,11 @@ void generateShellings(
                 acceptable_connection = true;
         }
 
-        if( not acceptable_connection ) {
-            LOG << "no acceptable face" << nl;
+        if( not acceptable_connection ) 
             continue;
-        }
         
-        
-        // for each proper subsimplex index_f of the volume s
-        // if index_f is a subsimplex of one of the previous volumes 
+        // for each proper subsimplex index_f of the volume s:
+        // if index_f is a subsimplex of one of the previous volumes, 
         // then it must be contained in one of the connected faces 
 
         bool is_compatible = true;
@@ -220,8 +245,6 @@ void generateShellings(
 
         // We have determined whether node is compatible. If not, then continue with the next one
 
-        // is_compatible = true; // TODO(martinlicht)
-
         if( not is_compatible ) {
             LOG << "reject" << nl;
             continue;
@@ -239,7 +262,7 @@ void generateShellings(
             assert( it != next_remaining_nodes.end() );
             next_remaining_nodes.erase( it );
 
-            generateShellings( mesh, acceptable_face_list, shellings_found, next_prefix, next_remaining_nodes );
+            generate_shellings_generously( mesh, acceptable_face_list, shellings_found, next_prefix, next_remaining_nodes );
         }
 
     }
@@ -266,21 +289,13 @@ void generateShellings(
 
 
 
+// ============================================================================================
+// Internal auxiliary function. 
+// Generate shellings for a given mesh. The internal recursion uses a ranking of the possible 
+// next simplices, trying to prioritize cheaper shellings over more expensive ones.
+// ============================================================================================
 
-
-std::vector<std::vector<std::pair<int,Float>>> generate_ranked_shelling(
-    const Mesh& mesh
-);
-
-void generate_ranked_shelling(
-    const Mesh& mesh,
-    std::vector<std::vector<std::pair<int,Float>>>& shellings_found,
-    std::vector<std::pair<int,Float>> current_prefix,
-    std::vector<std::pair<int,Float>> remaining_nodes
-);
-
-
-std::vector<std::vector<std::pair<int,Float>>> generate_ranked_shelling(
+std::vector<std::vector<std::pair<int,Float>>> generate_shellings_via_ranking(
     const Mesh& mesh
 ){
     const int dim = mesh.getinnerdimension();
@@ -306,7 +321,7 @@ std::vector<std::vector<std::pair<int,Float>>> generate_ranked_shelling(
         for( const auto& node2 : remaining_nodes ) 
             assert( node1.first != node2.first );
 
-        generate_ranked_shelling( mesh, shellings_found, current_prefix, remaining_nodes );
+        generate_shellings_via_ranking( mesh, shellings_found, current_prefix, remaining_nodes );
         
         ret.insert( ret.end(), shellings_found.begin(), shellings_found.end() ); 
     }
@@ -314,35 +329,34 @@ std::vector<std::vector<std::pair<int,Float>>> generate_ranked_shelling(
 }
 
 
-void generate_ranked_shelling(
+void generate_shellings_via_ranking(
     const Mesh& mesh,
     std::vector<std::vector<std::pair<int,Float>>>& shellings_found,
     std::vector<std::pair<int,Float>> current_prefix,
     std::vector<std::pair<int,Float>> remaining_nodes
 ){
     
+    const int max_number_shellings_found = 3; 
+
     // check that input mesh is reasonable 
     const int dim = mesh.getinnerdimension();
     assert( dim >= 1 );
-
 
     // CHECK that current and remaining nodes are disjoint
     for( const auto& node1 : current_prefix ) 
     for( const auto& node2 : remaining_nodes ) 
         assert( node1.first != node2.first );
 
-    
-    // count all the simplices of the mesh 
+    // Count all the simplices of the mesh.
     const auto counts = mesh.count_simplices();
-
     
-    // if enough shellings have been found already, then return 
-    if( true and shellings_found.size() >= 3 )
+    // if enough shellings have been found already, then return. 
+    // In that case, the recursion will quickly finish without further work.
+    if( true and shellings_found.size() >= max_number_shellings_found )
         return;
 
-
     // if the current prefix is already containing all volumes, 
-    // then a shelling has been found and can be added 
+    // then a shelling has been found and can be added.
     if( current_prefix.size() == counts[dim] )
     {
         shellings_found.push_back( current_prefix );
@@ -350,15 +364,17 @@ void generate_ranked_shelling(
         return;
     }
 
+    // If the current prefix has only one node, then we are at the very start.
+    // We initialize the weight to zero.
     if( current_prefix.size() == 1 ) 
     {
         current_prefix[0].second = 0;
     }
 
-    // re-eval the ranks of the remaining_nodes and sort them 
+    // Re-eval the ranks of the remaining_nodes and sort them.
+    // The ranking is only by combinatorial distance.
     for( auto& node : remaining_nodes )
     {
-        
         const auto faces = mesh.get_subsimplices( dim, dim-1, node.first ).getvalues();
         
         for( int index_f = 0; index_f < faces.size(); index_f++ )
@@ -374,8 +390,10 @@ void generate_ranked_shelling(
                 
                 if( parent == node.first ) continue;
                 
-                for( auto c : current_prefix ) if( c.first == parent ) node.second = minimum( node.second, c.second + 1 );
-                
+                for( auto c : current_prefix ) if( c.first == parent ) {
+                    node.second = minimum( node.second, c.second + 1 );
+                }
+                    
             }
         }
     }
@@ -387,25 +405,20 @@ void generate_ranked_shelling(
         }
     );
 
-
-    // There are still volumes to be added
-    // Run over all volumes and check whether they can be added 
+    // There are still volumes to be added.
+    // Run over all volumes and check whether they can be added.
     for( auto node : remaining_nodes )
     {
-        
+
+        // The remaining nodes have higher rank than the ones in the prefix.
         assert( not any_of( current_prefix.begin(), current_prefix.end(), [=]( const std::pair<int,Float>& ranked_node ){ return node.first == ranked_node.first; } ) );
-        
-        
-        
         
         {
             for( auto prefixnode : current_prefix ) LOG << prefixnode.first << " (" << prefixnode.second << ")" << space;
             LOG << node.first << " (" << node.second << ")" << nl;    
         }
         
-
-        // list the faces adjacent to the node
-        // and check whether it is connected to one of th prefix nodes  
+        // List the faces adjacent to the node and check whether it is connected to any node in the current prefix.
         
         const auto faces_of_node = mesh.get_subsimplices( dim, dim-1, node.first ).getvalues();
         assert( faces_of_node.size() == dim+1 );
@@ -426,9 +439,7 @@ void generate_ranked_shelling(
             if( parents[0] != node.first and any_of( current_prefix.begin(), current_prefix.end(), [=]( const std::pair<int,Float>& ranked_node ){ return parents[0] == ranked_node.first; } ) ) face_is_connected[index_f] = true;
             if( parents[1] != node.first and any_of( current_prefix.begin(), current_prefix.end(), [=]( const std::pair<int,Float>& ranked_node ){ return parents[1] == ranked_node.first; } ) ) face_is_connected[index_f] = true;
         }
-
         
-        // OPTIMIZATION
         // if current_prefix is not empty and volume node has no common face with the volumes in current_prefix, then skip 
         
         if( current_prefix.size() != 0 )
@@ -436,13 +447,13 @@ void generate_ranked_shelling(
             continue;
 
 
-        // for each proper subsimplex index_f of the volume s
-        // if index_f is a subsimplex of one of the previous volumes 
+        // For each proper subsimplex index_f of the volume s:
+        // If index_f is a subsimplex of one of the previous volumes,
         // then it must be contained in one of the connected faces 
 
         bool is_compatible = true;
 
-        // List all proper subsimplices of the node, excluding itself and its faces 
+        // List all proper subsimplices of the node, excluding itself and its faces.
         for( int d = 0; d <= dim-2; d++ )
         {
             if( not is_compatible ) break;
@@ -455,7 +466,7 @@ void generate_ranked_shelling(
                 
                 if( not is_compatible ) break;
 
-                // check whether it has got a supersimplex within the prefix
+                // check whether it has got a supersimplex within the prefix.
                 const auto supersimplices_of_sub = mesh.get_supersimplices( dim, d, sub );
 
                 bool sub_of_prefix = std::any_of( 
@@ -471,11 +482,11 @@ void generate_ranked_shelling(
                     }
                 );
 
-                // if not, there is nothing to check 
+                // If not, there is nothing to check.
                 if( not sub_of_prefix ) continue;
 
-                // otherwise, there exist some nodes in the prefix,
-                // and we check whether the subsimplex contained within one of the active faces 
+                // Otherwise, there exist some nodes in the prefix,
+                // and we check whether the subsimplex contained within one of the active faces.
                 bool within_connected_face = false;
 
                 const auto faces_containing_sub = mesh.get_supersimplices( dim-1, d, sub );
@@ -486,7 +497,7 @@ void generate_ranked_shelling(
                         within_connected_face = true;
                 }
 
-                // if sub is not within a connected face, then node is not compatible 
+                // If sub is not within a connected face, then node is not compatible.
                 assert( current_prefix.size() > 0 );
                 if( not within_connected_face )
                     is_compatible = false;
@@ -494,16 +505,12 @@ void generate_ranked_shelling(
             }
         }
 
-        // We have determined whether node is compatible. If not, then continue with the next one
-
-        // is_compatible = true; // TODO(martinlicht)
+        // We have determined whether node is compatible. If not, then continue with the next one.
 
         if( not is_compatible ) {
             LOG << "reject" << nl;
             continue;
         }
-
-        
         
         // What is the dimension of the subsimplex around which the interface is made?
 
@@ -516,7 +523,7 @@ void generate_ranked_shelling(
             // get the subsimplices of the proposed node of dimension k
             const auto k_subsimplices_of_node = mesh.get_subsimplices( dim, k, node.first ).getvalues();
 
-            // find the node which is contained in all connected faces
+            // Find the node which is contained in all connected faces.
             
             int common_subsimplex = mesh.nullindex;
             
@@ -566,15 +573,6 @@ void generate_ranked_shelling(
             assert( all_parents_are_here );
 
         }
-
-        
-
-        
-        
-        
-        
-        
-        
         
         // node is compatible with the prefix, then recursion 
 
@@ -599,7 +597,7 @@ void generate_ranked_shelling(
             for( const auto& node2 : next_remaining_nodes ) 
                 assert( node1.first != node2.first );
 
-            generate_ranked_shelling( mesh, shellings_found, next_prefix, next_remaining_nodes );
+            generate_shellings_via_ranking( mesh, shellings_found, next_prefix, next_remaining_nodes );
         }
 
     }
@@ -612,12 +610,15 @@ void generate_ranked_shelling(
 
 
 
-Float estimate_shelling_quality( 
-    const Mesh& mesh,
-    std::vector<int> shelling,
-    int form_degree
-);
 
+
+
+
+
+// ============================================================================================
+// Given a mesh and a shelling, estimate the quality of the shelling when used as in the 
+// estimation of the Poincar-Friedrichs constant over k-forms. 
+// ============================================================================================
 Float estimate_shelling_quality( 
     const Mesh& mesh,
     std::vector<int> shelling,
@@ -667,7 +668,6 @@ Float estimate_shelling_quality(
     
     LOG << "Max aspect condition number:    " << *std::max_element(    aspect_condition_number.begin(),    aspect_condition_number.end() ) << nl;
     LOG << "Max algebraic condition number: " << *std::max_element( algebraic_condition_number.begin(), algebraic_condition_number.end() ) << nl;
-
     
     // run over all the n-simplices and compare their diameters
     // Lazy estimate 
@@ -692,11 +692,7 @@ Float estimate_shelling_quality(
     }
 
     LOG << "Max diameter ratio: " << max_diameter_ratio << nl;
-
     
-
-    
-
     std::vector<Float> C5(      shelling.size(), notanumber );
     std::vector<Float> C5prime( shelling.size(), notanumber );
     std::vector<Float> C5det(   shelling.size(), notanumber );
@@ -712,15 +708,12 @@ Float estimate_shelling_quality(
     std::vector<Float> C8(      shelling.size(), notanumber );
     std::vector<Float> C8prime( shelling.size(), notanumber );
     std::vector<Float> C8det(   shelling.size(), notanumber );
-
-
-
+    
     std::vector<FloatVector> coefficient_table( counts[dim], FloatVector( counts[dim], 0. ) );
     
     // start computing the relevant data on each piece 
     for( int i = 0; i < shelling.size(); i++ )
     {
-        
         int current_node = shelling[i];
         assert( 0 <= current_node and current_node < counts[dim] );
         
@@ -749,14 +742,12 @@ Float estimate_shelling_quality(
             for( int j = 0; j < i; j++ ) 
                 face_is_connected[index_f] = face_is_connected[index_f] or ( parents[0] == shelling[j] or parents[1] == shelling[j] );
         }
-
-
+        
         // What is the dimension of the subsimplex around which the interface is made?
         
         int k = dim - std::count_if( face_is_connected.begin(), face_is_connected.end(), [](bool b){return b;} );
         Assert( i == 0 or k < dim, i, k );
-
-
+        
         // Determine the common subsimplex
         int common_subsimplex = mesh.nullindex; 
 
@@ -801,12 +792,9 @@ Float estimate_shelling_quality(
                 assert( not is_match or common_subsimplex == k_sub );
             }
 
-            
-
             // check that all of its parents are here
             const auto& parents = mesh.get_supersimplices( dim, k, common_subsimplex );
             std::vector<bool> parent_is_already_here( parents.size(), false );
-
             
             LOG << "Parents ";
             for( int parent_index = 0; parent_index < parents.size(); parent_index++ ) LOG << space << parents[parent_index];
@@ -815,7 +803,6 @@ Float estimate_shelling_quality(
             for( int j = 0; j <= i; j++ ) LOG << shelling[j] << tab;
             LOG << nl;
                 
-            
             for( int parent_index = 0; parent_index < parents.size(); parent_index++ )
             {
                 if ( parents[parent_index] == shelling[i] ) parent_is_already_here[parent_index] = true;
@@ -828,11 +815,8 @@ Float estimate_shelling_quality(
             bool all_parents_are_here = std::all_of( parent_is_already_here.begin(), parent_is_already_here.end(), [](bool b){return b;} );
 
             assert( all_parents_are_here );
-
         }
-
-
-
+        
         // We can now compute all the relevant quantities 
         {
             const int n = dim;
@@ -844,34 +828,28 @@ Float estimate_shelling_quality(
             const Float kappa = aspect_condition_number[i];
 
             LOG << i << ":\t" << k << ":\t" << B << space << Ctheta << space << kappa << nl;
-
-
+            
             const Float Psi_estimate1 = ( 1. + (k+1) * (1+B) * kappa );
             const Float Psi_estimate = std::sqrt( 1. + square( (k+1) * (1+B) * kappa ) / 4 ) + ( (k+1) * (1+B) * kappa ) / 2;
             // LOG << Psi_estimate1 << space << Psi_estimate << nl;
-            
-
             
             C5[i]      = (k+1) * Ctheta * kappa * (B*B) * Psi_estimate;
             
             C5prime[i] = (k+1) * B * Ctheta * kappa * B;
 
             C5det[i]   = power_numerical( (k+1) * B * Ctheta * kappa, n );
-
             
             C6[i]      = (k+1) * Ctheta * kappa * B * Psi_estimate;
             
             C6prime[i] = (k+1) * B * Ctheta * kappa;
 
             C6det[i]   = power_numerical( (k+1) * Ctheta * kappa, n );
-
             
             C7[i]      = ( 1. + 3./2. * (k+1) * kappa ) * (k+1) * kappa * B * Psi_estimate;
             
             C7prime[i] = ( 1. + 3./2. * (k+1) * kappa ) * (k+1) * B * Ctheta * kappa;
 
             C7det[i]   = 0.5 * power_numerical( (k+1) * B * Ctheta * kappa, n );
-
 
             C8[i]      = ( 2. + 3. * (k+1) * kappa ) * (k+1) * kappa * Psi_estimate;
             
@@ -905,12 +883,8 @@ Float estimate_shelling_quality(
 
                 coefficient_table[i] += C * coefficient_table[j];
             }
-
         }
 
-
-        
-        
     }
 
     // Compute the second estimate 
@@ -925,8 +899,7 @@ Float estimate_shelling_quality(
     }
 
     LOG << "First estimate: " << std::sqrt( estimate1 ) << nl;
-
-
+    
     Float estimate2 = 1.;
 
     // skip the first one
@@ -939,7 +912,6 @@ Float estimate_shelling_quality(
     LOG << "Second estimate: " << estimate2 << nl;
 
     return estimate1;
-
 }
 
 
@@ -954,4 +926,4 @@ Float estimate_shelling_quality(
 
 
 
-#endif // SHELLING_LISTER_HPP
+#endif // INCLUDEGUARD_SHELLING_LISTER_HPP

@@ -1,5 +1,5 @@
-#ifndef SPANNING_TREE_LISTER_HPP
-#define SPANNING_TREE_LISTER_HPP
+#ifndef INCLUDEGUARD_SPANNING_TREE_LISTER_HPP
+#define INCLUDEGUARD_SPANNING_TREE_LISTER_HPP
 
 #include <algorithm>
 #include <vector>
@@ -9,192 +9,17 @@
 #include "../base/include.hpp"
 #include "mesh.hpp"
 
-////////////////////////////////////////
-////////  forward declarations /////////
-////////////////////////////////////////
 
-struct Link{
-    int index;
-    int first;
-    int second;
-};
+
+
+
+
+// ============================================================================================================
+// Auxiliary function to generate all strictly ascending combinations of k elements from 0 to N-1.
+// ============================================================================================================
 
 std::vector<std::vector<int>> generate_combinations( int N, int k );
 
-bool check_spanning_tree( 
-        const std::vector<Link>& nodes_of_links, 
-        const std::vector<int>& tree_candidate 
-);
-
-std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_trees( const Mesh& mesh );
-
-////////////////////////////////////////
-
-
-
-
-
-void interleaveLists(
-    const std::vector<int>& list1,
-    const std::vector<int>& list2,
-    std::vector<int>& current,
-    int index1,
-    int index2,
-    std::vector<std::vector<int>>& results
-);
-
-// Internal function to interleave lists using backtracking
-void interleaveLists(
-    const std::vector<int>& list1,
-    const std::vector<int>& list2,
-    std::vector<int>& current,
-    int index1,
-    int index2,
-    std::vector<std::vector<int>>& results
-){
-
-    // If we've used all elements from both lists, store the result
-    if (index1 == list1.size() && index2 == list2.size()) {
-        results.push_back(current);
-        return;
-    }
-
-    // If there are remaining elements in list1, add the next one
-    if (index1 < list1.size()) {
-        current.push_back(list1[index1]);
-        interleaveLists(list1, list2, current, index1 + 1, index2, results);
-        current.pop_back(); // Backtrack
-    }
-
-    // If there are remaining elements in list2, add the next one
-    if (index2 < list2.size()) {
-        current.push_back(list2[index2]);
-        interleaveLists(list1, list2, current, index1, index2 + 1, results);
-        current.pop_back(); // Backtrack
-    }
-}
-
-
-
-
-
-std::vector<std::vector<int>> interleaveLists( 
-    const std::vector<int>& list1,
-    const std::vector<int>& list2
-);
-
-std::vector<std::vector<int>> interleaveLists( 
-    const std::vector<int>& list1,
-    const std::vector<int>& list2
-){
-    std::vector<std::vector<int>> results;
-    std::vector<int> current;
-    interleaveLists( list1, list2, current, 0, 0, results );
-    return results;
-}
-
-
-
-std::vector<std::vector<int>> interleaveLists( 
-    const std::vector<std::vector<int>>& listlists1,
-    const std::vector<std::vector<int>>& listlists2
-);
-
-std::vector<std::vector<int>> interleaveLists( 
-    const std::vector<std::vector<int>>& listlists1,
-    const std::vector<std::vector<int>>& listlists2
-){
-    std::vector<std::vector<int>> results;
-
-    for( const auto& list1 : listlists1 )
-    for( const auto& list2 : listlists2 )
-    {
-        // LOG << "L1 " << list1.size() << nl;
-        // LOG << "L2 " << list2.size() << nl;
-        const auto temp = interleaveLists( list1, list2 );
-        results.insert( results.end(), temp.begin(), temp.end() );
-    }
-
-    // LOG << "LL1 " << listlists1.size() << nl;
-    // LOG << "LL2 " << listlists2.size() << nl;
-    // LOG << "R  " << results.size() << nl;
-    
-    assert( listlists1.size() + listlists2.size() <= results.size() );
-
-    return results;
-}
-
-
-std::vector<std::vector<int>> interleaveLists( 
-    const std::vector<std::vector<std::vector<int>>>& listlistlists
-);
-
-std::vector<std::vector<int>> interleaveLists( 
-    const std::vector<std::vector<std::vector<int>>>& listlistlists
-){
-    // LOG << "LLL " << listlistlists.size() << nl;
-    if( listlistlists.size() == 0 ) return {};
-
-    std::vector<std::vector<int>> result = listlistlists[0];
-    
-    for( int t = 1; t < listlistlists.size(); t++ )
-    {
-        result = interleaveLists( result, listlistlists[t] );
-    }
-
-    // LOG << "LLL+" << result.size() << nl;
-    
-    return result;
-}
-
-
-
-
-
-
-
-std::vector<Link> get_nodes_of_links( const Mesh& mesh );
-
-std::vector<Link> get_nodes_of_links( const Mesh& mesh )
-{
-    // check that input mesh is reasonable 
-    const int dim = mesh.getinnerdimension();
-    assert( dim >= 1 );
-
-    const int num_volumes = mesh.count_simplices(dim);
-    const int num_faces   = mesh.count_simplices(dim-1);
-
-    assert( num_faces >= num_volumes-1 );
-
-    // enumerate all the links' nodes
-    std::vector<Link> nodes_of_links;
-    nodes_of_links.reserve( num_faces );
-    
-    for( int f = 0; f < num_faces; f++ ) 
-    {
-        const auto parent_volumes = mesh.get_supersimplices( dim, dim-1, f );
-        
-        if( parent_volumes.size() == 1 ) continue; 
-        
-        Link link = { .index = f, .first = parent_volumes[0], .second = parent_volumes[1] };
-        assert( 0 <= link.first  and link.first  < num_volumes );
-        assert( 0 <= link.second and link.second < num_volumes );
-        assert( link.first != link.second );
-        
-        nodes_of_links.push_back( link );
-    }
-    
-    return nodes_of_links;
-}
-
-
-
-
-
-
-
-
-// Function to generate all combinations of k elements from 0 to N-1
 std::vector<std::vector<int>> generate_combinations( int N, int k ){
     
     std::vector<std::vector<int>> result;
@@ -247,15 +72,196 @@ std::vector<std::vector<int>> generate_combinations( int N, int k ){
 
 
 
+// ========================================================================================================================
+// The following is numerous auxiliary functions that address the interleaving of two lists. 
+// 
+// In other words, given two totally ordered sets, list all possible total orders on the union of those two sets
+// that include the original two total orders. 
+// ========================================================================================================================
+
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<int>& list1,
+    const std::vector<int>& list2
+);
+
+void interleaveLists(
+    const std::vector<int>& list1,
+    const std::vector<int>& list2,
+    std::vector<int>& current,
+    int index1,
+    int index2,
+    std::vector<std::vector<int>>& results
+);
+
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<std::vector<int>>& listlists1,
+    const std::vector<std::vector<int>>& listlists2
+);
+
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<std::vector<std::vector<int>>>& listlistlists
+);
+
+// ============================================================================================================
+// Given two lists of integers, list1 and list2, create all possible interleavings of those lists.
+// ============================================================================================================
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<int>& list1,
+    const std::vector<int>& list2
+){
+    std::vector<std::vector<int>> results;
+    std::vector<int> current;
+    interleaveLists( list1, list2, current, 0, 0, results );
+    return results;
+}
+
+// ============================================================================================================
+// Internal auxiliary function function to interleave list1 and list2 using backtracking
+// ============================================================================================================
+void interleaveLists(
+    const std::vector<int>& list1,
+    const std::vector<int>& list2,
+    std::vector<int>& current,
+    int index1,
+    int index2,
+    std::vector<std::vector<int>>& results
+){
+
+    // If we've used all elements from both lists, store the result
+    if (index1 == list1.size() && index2 == list2.size()) {
+        results.push_back(current);
+        return;
+    }
+
+    // If there are remaining elements in list1, add the next one
+    if (index1 < list1.size()) {
+        current.push_back(list1[index1]);
+        interleaveLists(list1, list2, current, index1 + 1, index2, results);
+        current.pop_back(); // Backtrack
+    }
+
+    // If there are remaining elements in list2, add the next one
+    if (index2 < list2.size()) {
+        current.push_back(list2[index2]);
+        interleaveLists(list1, list2, current, index1, index2 + 1, results);
+        current.pop_back(); // Backtrack
+    }
+}
+
+// ============================================================================================================
+// Given two lists of lists of integers, listlist1 and listlist2, create all possible interleavings 
+// of pairs list1 and list2 from those lists of lists.
+// ============================================================================================================
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<std::vector<int>>& listlists1,
+    const std::vector<std::vector<int>>& listlists2
+){
+    std::vector<std::vector<int>> results;
+
+    for( const auto& list1 : listlists1 )
+    for( const auto& list2 : listlists2 )
+    {
+        const auto temp = interleaveLists( list1, list2 );
+        results.insert( results.end(), temp.begin(), temp.end() );
+    }
+
+    return results;
+}
+
+// ============================================================================================================
+// Given a list of S list of lists of integers, listlistlists, 
+// list all the possible interleavings of the lists of lits of integers 
+// listlistlists[0], listlistlists[1], ..., listlistlists[S].
+// ============================================================================================================
+std::vector<std::vector<int>> interleaveLists( 
+    const std::vector<std::vector<std::vector<int>>>& listlistlists
+){
+    if( listlistlists.size() == 0 ) return {};
+
+    std::vector<std::vector<int>> result = listlistlists[0];
+    
+    for( int t = 1; t < listlistlists.size(); t++ )
+    {
+        result = interleaveLists( result, listlistlists[t] );
+    }
+
+    // LOG << "LLL+" << result.size() << nl;
+    
+    return result;
+}
+
+
+
+
+
+// ==========================================================================================================================
+// Functions to create spanning trees.
+// ==========================================================================================================================
+
+struct Link{
+    int index;
+    int first;
+    int second;
+};
+
+std::vector<Link> get_nodes_of_links( const Mesh& mesh );
+
+bool check_spanning_tree( 
+    const std::vector<Link>& nodes_of_links, 
+    const std::vector<int>& tree_candidate 
+);
+
+std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_trees( const Mesh& mesh );
+
+
+// ==========================================================================================================================
+// Given a mesh, return the list of face-links. This provides the basic structure to discuss face-spanning sets.
+// ==========================================================================================================================
+std::vector<Link> get_nodes_of_links( const Mesh& mesh )
+{
+    // check that input mesh is reasonable and gather basic data 
+    const int dim = mesh.getinnerdimension();
+    assert( dim >= 1 );
+
+    const int num_volumes = mesh.count_simplices(dim);
+    const int num_faces   = mesh.count_simplices(dim-1);
+
+    assert( num_faces >= num_volumes-1 );
+
+    // enumerate all the links' nodes
+
+    std::vector<Link> nodes_of_links;
+    nodes_of_links.reserve( num_faces );
+    
+    for( int f = 0; f < num_faces; f++ ) 
+    {
+        const auto parent_volumes = mesh.get_supersimplices( dim, dim-1, f );
+        
+        if( parent_volumes.size() == 1 ) continue; 
+        
+        Link link = { .index = f, .first = parent_volumes[0], .second = parent_volumes[1] };
+        assert( 0 <= link.first  && link.first  < num_volumes );
+        assert( 0 <= link.second && link.second < num_volumes );
+        assert( link.first != link.second );
+        
+        nodes_of_links.push_back( link );
+    }
+    
+    return nodes_of_links;
+}
+
+// ==========================================================================================================================
+// Check whether a given subgraph is a spanning tree.
+// ==========================================================================================================================
 bool check_spanning_tree( 
         const std::vector<Link>& nodes_of_links, 
         const std::vector<int>& tree_candidate 
 )
 {
-    for( const auto& link : nodes_of_links ) assert( link.first >= 0 and link.second >= 0 );
+    for( const auto& link : nodes_of_links ) assert( link.first >= 0 && link.second >= 0 );
     for( const auto& link : nodes_of_links ) assert( link.index >= 0 );
 
-    for( const auto& link : tree_candidate ) assert( 0 <= link and link < nodes_of_links.size() );
+    for( const auto& link : tree_candidate ) assert( 0 <= link && link < nodes_of_links.size() );
 
     int number_of_nodes = 0; 
     for( const auto& link : nodes_of_links ) 
@@ -273,14 +279,12 @@ bool check_spanning_tree(
         const auto& link = nodes_of_links[l];
         int n1 = link.first;
         int n2 = link.second;
-        assert( 0 <= n1 and n1 < number_of_nodes );
-        assert( 0 <= n2 and n2 < number_of_nodes );
+        assert( 0 <= n1 && n1 < number_of_nodes );
+        assert( 0 <= n2 && n2 < number_of_nodes );
         visited[n1] = true;
         visited[n2] = true;
     }
     for( const bool v : visited ) if( not v ) return false;
-
-
 
     // create the adjaceny list for all nodges
     std::vector<std::vector<int>> adjacency_list(number_of_nodes);
@@ -291,9 +295,6 @@ bool check_spanning_tree(
         adjacency_list[u].push_back(v);
         adjacency_list[v].push_back(u);
     }
-
-    
-
 
     // traverse the tree candidate via DFS and check whether all links have been visited
     std::fill( visited.begin(), visited.end(), false );
@@ -321,15 +322,15 @@ bool check_spanning_tree(
 
     // The graph is connected if all nodes have been visited
     return visited_count == number_of_nodes;
-    
 }
 
-
-
-
+// ==========================================================================================================================
+// List all the face spanning trees.
+// ==========================================================================================================================
 std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_trees( const Mesh& mesh )
 {
-    // check that input mesh is reasonable 
+    // Check that input mesh is reasonable.
+    
     const int dim = mesh.getinnerdimension();
     assert( dim >= 1 );
 
@@ -338,12 +339,14 @@ std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_
 
     assert( num_faces >= num_volumes-1 );
 
-    // enumerate all the links' nodes
+    // Enumerate all the links' nodes and generate the possible candidates for spanning trees.
+    // The construction is brute force: we list all subgraphs whose edge-cardinality satisfies 
+    // the necessary criterion for being an spanning tree.
+    
     const std::vector<Link> nodes_of_links = get_nodes_of_links( mesh );
     
     LOG << "generate combinations: " << nodes_of_links.size() << space << num_volumes << nl;
     
-    // generate the spanning tree candidates and filter them out 
     auto spanning_tree_candidates = generate_combinations( nodes_of_links.size(), num_volumes-1 );
 
     // LOG << nodes_of_links.size() << space << binomial_integer( nodes_of_links.size(), num_volumes-1 ) << nl;
@@ -363,28 +366,20 @@ std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_
         is_tree[t] = check_spanning_tree( nodes_of_links, candidate );
     }
 
-    LOG << "list trees: " << spanning_tree_candidates.size() << nl;
-
     std::vector<std::vector<int>> spanning_trees;
     spanning_trees.reserve( spanning_tree_candidates.size() );
 
     for( int t = 0; t < spanning_tree_candidates.size(); t++ )
     {
-        if( not is_tree[t] ) continue;
-
-        spanning_trees.push_back( spanning_tree_candidates[t] );
+        if( is_tree[t] ) 
+            spanning_trees.push_back( spanning_tree_candidates[t] );
     }
     spanning_trees.shrink_to_fit();
-
-    
-
-
 
     std::vector<int> index2face( nodes_of_links.size() );
     for( int i = 0; i < nodes_of_links.size(); i++ ) index2face[i] = nodes_of_links[i].index;
 
     return { index2face, spanning_trees };
-
 }
 
 
@@ -406,13 +401,14 @@ std::pair< std::vector<int>, std::vector<std::vector<int>> > list_face_spanning_
 
 
 
+// ============================================================================================================
+// Functionality to list the topological sortings of a given spanning tree. 
+// ============================================================================================================
 
-
-std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
+std::vector<std::vector<int>> list_ordered_face_spanning_trees( 
     const Mesh& mesh, 
-    const std::vector<std::vector<int>>& adjacency_list, 
-    int forbidden_node,
-    int current_node
+    // const std::vector<int>& index2face, 
+    const std::vector<int>& spanning_tree
 );
 
 std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
@@ -420,16 +416,33 @@ std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
     const std::vector<std::vector<int>>& adjacency_list, 
     int forbidden_node,
     int current_node
+);
+    
+// ============================================================================================================
+// List the topological sortings of a given spanning tree. 
+// Here, the mesh and adjacency list (neighbors of each node) are already known. We start at the `current_node`
+// and build from there. The `forbidden_node` effectively marks the predecessor and blocks some parts of the 
+// tree from re-exploration.
+// ============================================================================================================
+std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
+    const Mesh& mesh, 
+    const std::vector<std::vector<int>>& adjacency_list, 
+    int forbidden_node,
+    int current_node
 ){
-    assert( forbidden_node == Mesh::nullindex or ( 0 <= forbidden_node and forbidden_node < adjacency_list.size() ) );
-    assert( 0 <= current_node and current_node < adjacency_list.size() );
+    // check consitency and gather data 
+
+    assert( forbidden_node == Mesh::nullindex || ( 0 <= forbidden_node && forbidden_node < adjacency_list.size() ) );
+    assert( 0 <= current_node && current_node < adjacency_list.size() );
     assert( adjacency_list.size() == mesh.count_simplices( mesh.getinnerdimension() ) );
-    for( const auto& vs : adjacency_list ) for( const auto& v : vs ) assert( 0 <= v and v < mesh.count_simplices( mesh.getinnerdimension() ) );
+    for( const auto& vs : adjacency_list ) for( const auto& v : vs ) assert( 0 <= v && v < mesh.count_simplices( mesh.getinnerdimension() ) );
     
     const std::vector<int>& start_neighbors = adjacency_list[current_node];
 
     if( forbidden_node != Mesh::nullindex ) 
         assert( std::find( start_neighbors.cbegin(), start_neighbors.cend(), forbidden_node ) != start_neighbors.end() );
+    
+    // special cases that signal the end of the recursion
     
     const int number_of_neighbors = start_neighbors.size();
 
@@ -438,11 +451,11 @@ std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
         return {{current_node}};
     }
 
-    if( number_of_neighbors == 1 and forbidden_node != Mesh::nullindex ){
+    if( number_of_neighbors == 1 && forbidden_node != Mesh::nullindex ){
         return {{current_node}};
     }
 
-    
+    // Recursion: list the topological sortings coming the successors
 
     std::vector<std::vector<std::vector<int>>> top_sorts_of_succs;
     top_sorts_of_succs.reserve( number_of_neighbors );
@@ -462,15 +475,12 @@ std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
 
     assert( top_sorts_of_succs.size() > 0 );
 
-    
+    // Interleave the successors and prepend the current source 
 
-    // TODO(martinlicht) : interleave these. Right now, it's a list of choices
     std::vector<std::vector<int>> results;
     
     results = interleaveLists( top_sorts_of_succs );
 
-    // for( int t = 0; t < number_of_neighbors; t++ ) results.insert( results.end(), top_sorts_of_succs[t].begin(), top_sorts_of_succs[t].end() );
-    
     for( auto& list : results ) list.insert( list.begin(), current_node );
     
     assert( results.size() > 0 );
@@ -479,20 +489,18 @@ std::vector<std::vector<int>> list_topological_node_sortings_of_subtree(
 
 }
 
-
+// =============================================================================
+// Given a face-graph spanning tree for a mesh, 
+// together with an index of the faces, 
+// produce all topological sortings of that spanning tree. 
+// =============================================================================
 std::vector<std::vector<int>> list_ordered_face_spanning_trees( 
     const Mesh& mesh, 
-    const std::vector<int>& index2face, 
-    const std::vector<int>& spanning_tree
-);
-
-std::vector<std::vector<int>> list_ordered_face_spanning_trees( 
-    const Mesh& mesh, 
-    const std::vector<int>& index2face, 
+    // const std::vector<int>& index2face, 
     const std::vector<int>& spanning_tree
 ){
+    // Check that input mesh is reasonable and collect basic data 
 
-    // check that input mesh is reasonable 
     const int dim = mesh.getinnerdimension();
     assert( dim >= 1 );
 
@@ -503,12 +511,14 @@ std::vector<std::vector<int>> list_ordered_face_spanning_trees(
 
     const int number_of_nodes = num_volumes;
 
-    // enumerate all the links' nodes
+    // Enumerate all the links' nodes
+    
     const std::vector<Link> nodes_of_links = get_nodes_of_links( mesh );
     
     std::vector<std::vector<int>> results;
     
-    // create the node adjacency list for the tree subgraph 
+    // Create the node adjacency list for the spanning tree 
+
     std::vector<std::vector<int>> adjacency_list(number_of_nodes);
     for( const auto& l : spanning_tree ) 
     {
@@ -533,8 +543,8 @@ std::vector<std::vector<int>> list_ordered_face_spanning_trees(
     //     adjacency_list[e2].push_back(e1);
     // }
 
+    // For each node, create all rooted enumerations of the tree
     
-    // for each node, create all rooted enumerations of the tree
     for( int v = 0; v < number_of_nodes; v++ )
     {
         const auto& list = list_topological_node_sortings_of_subtree( mesh, adjacency_list, Mesh::nullindex, v );
@@ -543,24 +553,8 @@ std::vector<std::vector<int>> list_ordered_face_spanning_trees(
     }
         
     return results;
-
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif // SPANNING_TREE_LISTER_HPP
+#endif // INCLUDEGUARD_SPANNING_TREE_LISTER_HPP

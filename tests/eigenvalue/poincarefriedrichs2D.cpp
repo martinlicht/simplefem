@@ -68,7 +68,7 @@ int main( int argc, char *argv[] )
     {
         PF_estimate_via_shellings[k] = std::numeric_limits<Float>::infinity();
 
-        auto shellings_found = generate_shellings2( M, k );
+        auto shellings_found = generate_shellings_elaborate( M, k );
 
         LOG << shellings_found.size() << nl;
 
@@ -143,33 +143,72 @@ int main( int argc, char *argv[] )
                     
             LOG << "... assemble mass matrices" << nl;
     
-            SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
-            SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 );
+            auto scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r+1 ) );
+            auto vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   ) );
+            auto volume_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r-1 ) );
 
             LOG << "... assemble shared inclusion matrices" << nl;
     
-            SparseMatrix scalar_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
+            auto scalar_incmatrix   = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 0, r+1 ) );
+            auto scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
-            SparseMatrix vector_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   );
-            SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+            auto vector_incmatrix   = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 1, r   ) );
+            auto vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-            SparseMatrix volume_incmatrix   = FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 );
-            SparseMatrix volume_incmatrix_t = vector_incmatrix.getTranspose();
+            auto volume_incmatrix   = MatrixCSR( FEECSullivanInclusionMatrix( M, M.getinnerdimension(), 2, r-1 ) );
+            auto volume_incmatrix_t = vector_incmatrix.getTranspose();
 
             LOG << "... assemble shared algebraic matrices" << nl;
     
-            SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 );
-            SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
+            auto scalar_diffmatrix   = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r+1 ) );
+            auto scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
-            SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
-            SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
+            auto vector_diffmatrix   = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r ) );
+            auto vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
 
             LOG << "averaging matrix for scalar fields" << nl;
 
-            SparseMatrix scalar_averaging = FEECSullivanAveragingMatrix( M, M.getinnerdimension(), 0, r+1, FEECAveragingMode::weighted_uniformly );
+            auto scalar_averaging = MatrixCSR( FEECSullivanAveragingMatrix( M, M.getinnerdimension(), 0, r+1, FEECAveragingMode::weighted_uniformly ) );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
             if( do_gradient ) {
@@ -183,8 +222,7 @@ int main( int argc, char *argv[] )
                 // PING;
                 // vector_massmatrix & scalar_elevationmatrix;
                 // PING;
-                auto mat_A  = scalar_incmatrix_t & scalar_diffmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix;
-                mat_A.sortandcompressentries();
+                auto mat_A  = Conjugation( vector_massmatrix, scalar_diffmatrix & scalar_incmatrix );
                     
                 LOG << "... compose CSR system matrices (SCALAR)" << nl;
         
@@ -333,31 +371,7 @@ int main( int argc, char *argv[] )
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            
 
 
 
@@ -406,17 +420,14 @@ int main( int argc, char *argv[] )
                 LOG << "... compose system matrices (VECTOR)" << nl;
 
                 auto mat_A  = vector_incmatrix_t & vector_diffmatrix_t & volume_massmatrix & vector_diffmatrix & vector_incmatrix;
-                mat_A.sortandcompressentries();
-
+                
                 PING;
                     
                 auto mat_Bt = vector_incmatrix_t & vector_massmatrix & scalar_diffmatrix & scalar_incmatrix; // upper right
-                mat_Bt.sortandcompressentries();
                 
                 PING;
                     
                 auto mat_B = mat_Bt.getTranspose(); //vector_incmatrix_t & vector_massmatrix & vector_diffmatrix & vector_incmatrix; // lower left
-                mat_B.sortandcompressentries();
                 
                 LOG << "... compose CSR system matrices (VECTOR)" << nl;
         
@@ -559,15 +570,12 @@ int main( int argc, char *argv[] )
                 }
                 
             } // vector eigenvalue 
-
             
         } // poly degree
 
         if( l != max_l ) { LOG << "Refinement..." << nl; M.uniformrefinement(); }
-        
 
     } // levels
-
     
     LOG << "Finished Unit Test: " << ( argc > 0 ? argv[0] : "----" ) << nl;
     

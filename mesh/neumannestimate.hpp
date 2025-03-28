@@ -1,21 +1,6 @@
 #ifndef INCLUDEGUARD_NEUMANNESTIMATE_HPP
 #define INCLUDEGUARD_NEUMANNESTIMATE_HPP
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #include <algorithm>
 #include <limits>
 #include <numeric>
@@ -28,9 +13,12 @@
 
 
 
+// ============================================================================================================
+// estimate the Neumann eigenvalue using one of the recursive estimates 
+// ============================================================================================================
+
 static Float NeumannEstimate( const Mesh& M ) {
 
-    // estimate the Neumann eigenvalue using one of the recursive estimates 
 
     LOG << "Estimate PF constant using recursive construction" << nl;
 
@@ -39,7 +27,9 @@ static Float NeumannEstimate( const Mesh& M ) {
     const int num_cells = M.count_simplices(dim);
     const int num_faces = M.count_simplices(dim-1);
 
+    // ======================================================================================
     // for later use, collect volumes and diameters of all cells, as well as reflection norms 
+    // ======================================================================================
     
     std::vector<Float> diameters( num_cells, notanumber );
     std::vector<Float> volumes( num_cells, notanumber );
@@ -61,44 +51,51 @@ static Float NeumannEstimate( const Mesh& M ) {
         const auto singular_value_inv         = Inverse(reflection_matrix_jacobian).operator_norm_estimate();
         
         reflectionnorms[f] = maximum( singular_value, singular_value_inv );
-
-        assert( std::isfinite( reflectionnorms[f] ) );
     }
     
-    for( auto v : volumes )   assert( std::isfinite( v ) );
-    for( auto d : diameters ) assert( std::isfinite( d ) );
+    for( auto v : volumes         ) assert( std::isfinite( v ) );
+    for( auto d : diameters       ) assert( std::isfinite( d ) );
+    for( auto s : reflectionnorms ) assert( std::isfinite( s ) );
     
     
-    // for later use, fix the coefficients for the recursion 
+    // ======================================================================================
+    // For each root, a tree consists of 
+    // 
+    //      1. array of precursors
+    //      2. array of rank (level from origin)
+    //      3. array of costs 
+    // 
+    // We save the precursors and the costs. The rank will be used in the final computation.
+    // Here, -1 denotes undefined precursor/level, and all costs start with infinity.
+    // 
+    // For each tree, for each node, we save a coefficient vector.
+    // ======================================================================================
     
     LOG << "Constructing the trees. Number of roots: " << num_cells << nl;
-
-    // a tree consists of 1. array of precursors 2. array of rank (level from origin) 3. array of costs 
-    // we save the precursors and the costs. The rank will be used in the final computation.
 
     typedef std::vector<int>   array_prec;
     typedef std::vector<int>   array_rank;
     typedef std::vector<Float> array_cost;
     
-    std::vector<array_prec> arrays_of_prec( num_cells, array_prec( num_cells, -1 )                                    );
-    std::vector<array_rank> arrays_of_rank( num_cells, array_rank( num_cells, -1 )                                    );
+    std::vector<array_prec> arrays_of_prec( num_cells, array_prec( num_cells, -1                                    ) );
+    std::vector<array_rank> arrays_of_rank( num_cells, array_rank( num_cells, -1                                    ) );
     std::vector<array_cost> arrays_of_cost( num_cells, array_cost( num_cells, std::numeric_limits<Float>::infinity()) );
 
     std::vector<std::vector<FloatVector>> coefficients( num_cells, std::vector<FloatVector>(num_cells, FloatVector(num_cells,0.) ) );
 
-    // Each tree has got a cost. Keep track of the minimal cost
+    // Each tree has got a cost, and we keep track fo the minimum cost among the trees found. 
+
     Float minimal_cost_of_tree = std::numeric_limits<Float>::infinity();
     
-    // iterate over all the possible roots 
+    // We iterate over all the possible roots and construct a tree for each.
     for( int curr_root = 0; curr_root < num_cells; curr_root++ )
     {
+        // introduce some abbreviations
         auto& curr_prec = arrays_of_prec[curr_root];
         auto& curr_rank = arrays_of_rank[curr_root];
         auto& curr_cost = arrays_of_cost[curr_root];
 
         auto& curr_coefficients = coefficients[curr_root];
-        
-        // we will construct the tree coming from that root 
         
         // Comparator for the priority queue (min-heap, based on weights). 
         // Use > to prioritize the pair with the smaller weight
@@ -108,28 +105,32 @@ static Float NeumannEstimate( const Mesh& M ) {
             }
         };
 
-        // Priority queue to store {cell, distance} pairs, sorted by distance
+        // Priority queue to store {cell, cost} pairs, sorted by cost
         std::priority_queue<std::pair<int, Float>, std::vector<std::pair<int, Float>>, Compare> pq;
 
-        // Initialize root data: no precursor, rank zero, some initial costs 
+        // ======================================================
+        // Initialize root data: 
+        // - no precursor,
+        // - rank zero, 
         curr_prec[curr_root] = -1;
-        
         curr_rank[curr_root] = 0;
 
-        // we try to be a bit better than the Payne-Weinberger bound whenever feasible
-        Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
+        // - some initial costs, computed like this:
+        // We use the Payne-Weinberger bound, or a slight improvement in dimension 2.
 
-        Float natural_poincare_constant = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
+        Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
+        Float natural_poincare_factor = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
         
-        curr_coefficients[curr_root][curr_root] = natural_poincare_constant * diameters[curr_root]; // PF constant for convex domains
+        curr_coefficients[curr_root][curr_root] = natural_poincare_factor * diameters[curr_root]; // PF constant for convex domains
 
         curr_cost[curr_root] = curr_coefficients[curr_root].norm_sq();
 
-        
+        // Push the root into the PQ.
         pq.push( { curr_root, curr_cost[curr_root] } );
 
-        int security_counter = 0; // check that we count correctly 
-        while( not pq.empty() )  // && security_counter < num_cells+10
+        // ======================================================
+        // Use a Djikstra-type algorithm to compute the queue
+        while( not pq.empty() )
         {
             const auto top_entry = pq.top();
             pq.pop();
@@ -137,22 +138,27 @@ static Float NeumannEstimate( const Mesh& M ) {
             const int   cell = top_entry.first;
             const Float cost = top_entry.second;
             
-            // If this distance is greater than the distance already found, then skip
-            // In this version of Dijkstra, the PQ may have multiple instances of the same node 
+            // In this version of Dijkstra, the PQ may have multiple instances of the same node,
+            // that is, we queue duplicates rather than update the queue.
+            // If this distance is greater than the distance already found, 
+            // then this is an outdated entry that we simply skip.
             
             if( cost > curr_cost[cell] ) continue;
 
-            // We have retrieved this cell at already the minimum cost and the predecessor is real predecessor
-            // the rank of this cell is the rank of the predecessor + 1
+            // We have retrieved this cell at already the minimum cost, and the predecessor is real predecessor.
+            // The rank of this cell is the rank of the predecessor + 1.
+            // The root and only the root has no predecessor.
 
-            LOG << "processing " << cell << " at " << security_counter << " from " << curr_prec[cell] << nl;
+            LOG << "processing " << cell << " from " << curr_prec[cell] << nl;
             
             if( curr_prec[cell] == -1 ) assert( cell == curr_root );
-
+            if( cell == curr_root ) assert( curr_prec[cell] == -1 );
+            
             if( curr_prec[cell] != -1 ) curr_rank[cell] = 1 + curr_rank[ curr_prec[cell] ];
 
             
-            // Collect all the adjacent cells
+            // ============================================================================================================
+            // Collect all the adjacent cells and the corresponding connection faces.
             
             std::vector<int> adjacent_cells;
             std::vector<int> connecting_faces;
@@ -181,7 +187,11 @@ static Float NeumannEstimate( const Mesh& M ) {
             // LOG << "cell " << cell << " has " << adjacent_cells.size() << " other adjacent cells\n";
             assert( adjacent_cells.size() == connecting_faces.size() );
 
-            // Having collected the adjacent cells, iterate over adjacent cells and compute the costs of each
+            
+            // ============================================================================================================
+            // Having collected the adjacent cells, iterate over adjacent cells. For each, we compute
+            // - the cost
+            // - the coefficient vector 
 
             std::vector<Float> adjacent_cells_new_costs( adjacent_cells.size() );
 
@@ -198,6 +208,9 @@ static Float NeumannEstimate( const Mesh& M ) {
                 Float reflectionnorm = reflectionnorms[face];
 
                 {
+                    // While `reflectionnorm` already contains an estimate, we attempt at improvement
+                    // The following is based on estimates in the paper. 
+
                     assert( cell != neighbor );
 
                     int fi_index_cell = M.get_subsimplex_index( dim, dim-1, cell,     face );
@@ -232,38 +245,31 @@ static Float NeumannEstimate( const Mesh& M ) {
 
                 }
 
-                // we try to be a bit better than the Payne-Weinberger bound whenever feasible
-                // TODO(martin): delete // Float Bessel_J11 = 3.83170597020751231561443588630816076656454527428780192876229898991883930951;
+                // We estimate the Poincare constant with boundary conditions on the simplex. 
+                // With that, we build the coefficients in the recursion. 
 
-                // TODO(martin): delete // Float natural_poincare_constant = ( dim==2 ? 1./Bessel_J11 : 1./Constants::pi );
-                
-                Float pf_simplex_with_bc = minimum( natural_poincare_constant, 1./sqrt(2.) ) * diameters[cell];
-                
-                // Float pf_patch           = sqrt( 2 * dim ) * volumeratio * maximum( diameters[cell], diameters[neighbor] ); 
-                
-                // Float  A_via_patch = sqrt( 1. + volumeratio ) * pf_patch;
-                // Float Ap_via_patch = sqrt( 1. + volumeratio ) * pf_patch;
+                Float pf_simplex_with_bc = minimum( natural_poincare_factor, 1./sqrt(2.) ) * diameters[cell];
                 
                 Float  A_via_bc = pf_simplex_with_bc;
                 Float Ap_via_bc = sqrt(volumeratio) * reflectionnorm * pf_simplex_with_bc;
 
-                Float A =  A_via_bc; // coefficient of new 
+                Float A =  A_via_bc; // coefficient of new cell 
 
-                Float B = Ap_via_bc; // coefficient of previous 
+                Float B = Ap_via_bc; // coefficient of previous cell 
 
                 Float C = sqrt( volumeratio ); // this is the recursive coefficient
 
-                // LOGPRINTF( "SCALAR nat=%f diam=%f A=%f B=%f C=%f \n", natural_poincare_constant, diameters[cell],  A, B, C );
+                // LOGPRINTF( "SCALAR nat=%f diam=%f A=%f B=%f C=%f \n", natural_poincare_factor, diameters[cell],  A, B, C );
 
                 FloatVector new_coeffs = C * curr_coefficients[cell];
 
                 new_coeffs[cell] += B;
 
-                // assert( new_coeffs[neighbor] == 0. );
-
                 new_coeffs[neighbor] += A;
 
                 Float new_cost = new_coeffs.norm_sq();
+
+                // Finally, we set the costs and coefficient vectors for this particular cell.
 
                 adjacent_cells_new_costs[i] = new_cost;
 
@@ -284,7 +290,7 @@ static Float NeumannEstimate( const Mesh& M ) {
 
                 // If a shorter path is found
 
-                if( new_cost < curr_cost[neighbor] )
+                if(- new_cost < curr_cost[neighbor] )
                 {
                     // LOG << "update: " << curr_cost[neighbor] << " to " << new_cost << nl;
                     
@@ -297,13 +303,10 @@ static Float NeumannEstimate( const Mesh& M ) {
                     pq.push({neighbor, new_cost});
                 }
             }
-        
-            security_counter++;
         }
         
-        // Assert( security_counter == num_cells, security_counter, num_cells );
-
-        // We have constructed the tree!
+        // =========================================================================================
+        // We have constructed the complete tree!
         
         // DEBUG
         // Check that each cell has been visited (except the root)
@@ -341,11 +344,10 @@ static Float NeumannEstimate( const Mesh& M ) {
             assert(c == curr_root);  // Ensure the cell eventually leads to the root
         }
 
-        // output: total costs of tree
+        // ================================================================================================================
+        // We compute the total costs of the tree. If necessary, we update the minimal cost among all trees found.
         Float total_costs = std::accumulate( curr_cost.begin(), curr_cost.end(), 0.);
-        // Float total_costs = 0.; for( auto& vec : curr_coefficients ) total_costs += vec.norm_sq();
-
-
+        
         LOG << "From root " << curr_root << " the total costs are " << total_costs << " -> " << sqrt(total_costs) << nl;
 
         // DEBUG: output the structure of the tree
@@ -356,12 +358,11 @@ static Float NeumannEstimate( const Mesh& M ) {
             LOG << curr_coefficients[i] << nl;
         }
         
-
         minimal_cost_of_tree = minimum( minimal_cost_of_tree, total_costs );
 
     }
 
-    LOG << "minimal costs, std::sqrt : " << minimal_cost_of_tree << space << std::sqrt(minimal_cost_of_tree) << nl;
+    LOG << "minimal costs, sqrt : " << minimal_cost_of_tree << space << std::sqrt(minimal_cost_of_tree) << nl;
 
     return minimal_cost_of_tree;
 }

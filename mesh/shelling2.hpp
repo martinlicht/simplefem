@@ -1,11 +1,11 @@
-#ifndef SHELLING_LISTER_2_HPP
-#define SHELLING_LISTER_2_HPP
+#ifndef INCLUDEGUARD_SHELLING_LISTER_2_HPP
+#define INCLUDEGUARD_SHELLING_LISTER_2_HPP
 
 #include <algorithm>
 #include <vector>
-#include <queue>
-#include <utility> // For std::pair
-#include <thread>
+// #include <queue>    
+#include <utility>  // For std::pair
+#include <thread>   // multithread the initialization
 
 #include "../base/include.hpp"
 #include "../utility/stl.hpp"
@@ -13,8 +13,21 @@
 
 
 
+// ==========================================================================================
+// Routines to generate shellings of a triangulation in a elaborate way.
+// Recursively constructs shellings, using various heuristics to control 
+// the geometric costs of the shelling.
+// ==========================================================================================
 
 
+
+
+// ==========================================================================================
+// Data structure that conveniently saves various metrics of the mesh,
+// including coefficients that appear in the recursive estimate of the 
+// Poincare-Friedrichs constant. These are computed in the constructor
+// of this struct. 
+// ==========================================================================================
 struct mesh_information_for_shelling
 {
     Float max_diameter_ratio   = notanumber;
@@ -46,7 +59,6 @@ struct mesh_information_for_shelling
 
 mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 {
-        
     // check input consistency
 
     const int dim = mesh.getinnerdimension();
@@ -155,8 +167,7 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
     
     
     
-    // run over all the n-simplices and compare their diameters
-    // Lazy estimate 
+    // Run over all the n-simplices and compare their diameters. Lazy estimate.
     
     max_diameter_ratio = 1.;
     
@@ -179,6 +190,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
     LOG << "Max diameter ratio: " << max_diameter_ratio << nl;
 
+    // Run over all the faces and compare their volumes. Lazy estimate.
+    
     Float max_volume_ratio = 1.;
     for( int face = 0; face < counts[dim-1]; face++ )
     {
@@ -193,6 +206,12 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
         Float v0v1 = v0 / v1;
         max_volume_ratio = maximum( max_volume_ratio, v1v0, v0v1 );
     }
+
+    // We are now in the position to prepare various coefficients as used in the paper. 
+    // The indices here are:
+    // - index i of the volume
+    // - differential form degree 
+    // - level, i.e., dimension of the subsimplex
 
     C5.resize( counts[dim], std::vector<std::vector<std::vector<Float>>>( dim+1, std::vector<std::vector<Float>>( dim, std::vector<Float>() ) ) );
     C6.resize( counts[dim], std::vector<std::vector<std::vector<Float>>>( dim+1, std::vector<std::vector<Float>>( dim, std::vector<Float>() ) ) );
@@ -393,8 +412,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                 singular_max = minimum( singular_max, facebased_singular_max );
 
-                singular_min_inv = singular_max / max_volume_ratio;
                 singular_prod = max_volume_ratio;
+                singular_min_inv = singular_max / max_volume_ratio;
             }
             
             // better improvement in the case of faces 
@@ -449,8 +468,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                     // LOGPRINTF( "facebased singular max = %f vs singular_max = %f\n", facebased_singular_max, singular_max );
 
-                    singular_min_inv = singular_max / a;
                     singular_prod = a;
+                    singular_min_inv = singular_max / a;
 
                 } else {
 
@@ -461,6 +480,8 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
             }
             
+            // Having estimated the singular value data, we compute the coefficients.
+
             assert( singular_max > 0 );
             assert( singular_min_inv > 0 );
             assert( singular_prod > 0 );
@@ -511,7 +532,6 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
     LOG << "Finished collecting information about the mesh." << nl;
     LOGPRINTF("%e %e %e\n", (double)(safedouble)max_volume_ratio, (double)(safedouble)min_height_of_vertex, (double)(safedouble)max_diameter_ratio );
-    
 }
 
 
@@ -522,6 +542,36 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ==========================================================================================
+// The shelling structure extends std::vector<int> and saves two additional cost metrics: 
+// weight_reflection and weight_deformation
+// 
+// NOTE: The class std::vector<int> has a non-virtual destructor, which 
+// means we should not delete a child class object through a pointer to the 
+// base class. If the destructor is non-trivial, we might risk a memory leak.
+// However, this risk seems acceptable here: the struct has only a trivial types as 
+// new members, and the destructor except for the base class destructor is trivial.
+// ==========================================================================================
 struct shelling
 : public std::vector<int>
 {
@@ -533,24 +583,19 @@ struct shelling
     {}
 };
 
+// ==========================================================================================
+// Recursive construction of shellings, with a heuristic that tries to find shellings 
+// with favorable geometric features.
+// 
+// We have a main function and one that does the recursive implementation details. 
+// ==========================================================================================
 
-
-
-
-
-
-
-
-
-
-
-
-std::vector<shelling> generate_shellings2( 
+std::vector<shelling> generate_shellings_elaborate( 
     const Mesh& mesh,
     int form_degree
 );
 
-void generate_shellings2(
+void generate_shellings_elaborate(
     const Mesh& mesh,
     const int form_degree,
     const mesh_information_for_shelling& info,
@@ -560,11 +605,11 @@ void generate_shellings2(
     Float multweight
 );
 
-std::vector<shelling> generate_shellings2( 
+
+std::vector<shelling> generate_shellings_elaborate( 
     const Mesh& mesh,
     const int form_degree
-){
-    
+){    
     const auto info = mesh_information_for_shelling( mesh );
 
     std::vector<shelling> shellings_found;
@@ -577,13 +622,12 @@ std::vector<shelling> generate_shellings2(
 
     current_prefix.reserve( mesh.count_simplices(mesh.getinnerdimension()) );
 
-    generate_shellings2( mesh, form_degree, info, shellings_found, current_prefix, coefficient_table, multweight );
+    generate_shellings_elaborate( mesh, form_degree, info, shellings_found, current_prefix, coefficient_table, multweight );
 
     return shellings_found;
 }
 
-
-void generate_shellings2(
+void generate_shellings_elaborate(
     const Mesh& mesh,
     const int form_degree,
     const mesh_information_for_shelling& info,
@@ -593,17 +637,17 @@ void generate_shellings2(
     Float multweight
 ){
 
-    const unsigned int max_number_of_shellings = 10; 
-    // const unsigned int max_number_of_shellings = std::numeric_limits<unsigned int>::max();
+    const unsigned int max_number_shellings_found = 10; 
+    // const unsigned int max_number_shellings_found = std::numeric_limits<unsigned int>::max();
 
     const bool sort_nodes_by_priority = true;
     // const bool sort_nodes_by_priority = false;
 
-    const bool special_initialization = true;
-    // const bool special_initialization = false;
+    const bool multithreaded_initialization = true;
+    // const bool multithreaded_initialization = false;
+
 
     // check that input mesh is reasonable 
-    
     const int dim = mesh.getinnerdimension();
     assert( dim >= 1 );
 
@@ -613,15 +657,16 @@ void generate_shellings2(
     const auto counts = mesh.count_simplices();
 
 
-    // if enough shellings have been found already, then return 
+    // if enough shellings have been found already, then return. 
+    // In that case, the recursion will quickly finish without further work.
     
-    if( shellings_found.size() >= max_number_of_shellings )
+    if( shellings_found.size() >= max_number_shellings_found )
         return;
 
 
-    // if the current prefix is already containing all volumes, 
-    // then a shelling has been found and can be added to the list
-    // we can return from this place, there is nothing to do here 
+    // If the current prefix is already containing all volumes, 
+    // then a new shelling has been found and can be added to the list.
+    // We can return from this place, there is nothing to do here 
     
     if( current_prefix.size() == counts[dim] )
     {
@@ -640,7 +685,7 @@ void generate_shellings2(
         while( insertion_point != shellings_found.end() && insertion_point->weight_reflection < estimate1 ) insertion_point++;
         shellings_found.insert( insertion_point, shelling( current_prefix, estimate1, multweight ) );
 
-        if(false)
+        if(/*DISABLES CODE*/(false))
         for( int i = 0; i < shellings_found.size(); i++ ) {
             //assert( shellings_found[i-1].weight_reflection <= shellings_found[i].weight_reflection );
             LOG << tab << shellings_found[i].weight_reflection << nl;
@@ -675,7 +720,7 @@ void generate_shellings2(
     
     std::vector<int>               how_many_connected_faces( remaining_nodes.size(), -10                        );
     std::vector<std::vector<bool>> face_is_connected       ( remaining_nodes.size(), std::vector<bool>( dim+1 ) );
-    std::vector<std::vector<int>>  faces_of_node           ( remaining_nodes.size(), std::vector<int>( dim+1 )  );
+    std::vector<std::vector<int>>  faces_of_node           ( remaining_nodes.size(), std::vector<int>( dim+1  ) );
 
     for( int i = 0; i < remaining_nodes.size(); i++ )
     {
@@ -725,13 +770,16 @@ void generate_shellings2(
     // All the candidate nodes have the property that their intersection with the prefix nodes is a collection of faces. 
     // That is the case if and only if all subsimplices shared with a prefix node are contained in one the active faces.
     // Otherwise, there is a subsimplex shared with a prefix node but not within one of the active faces.
-    // We already know that the condition is true for the active faces (by definition) and it remains to check the other ones
-    // These must be checked separately
+    // We already know that active faces are contained in an active face (obviously), and so it remains to separately 
+    // check the other subsimplices.
     
     // LOG << "PREFIX "; for( int j : current_prefix  ) LOG << j << space; LOG << nl;
     // LOG << "REMAIN "; for( int j : remaining_nodes ) LOG << j << space; LOG << nl;
     if( current_prefix.size() > 0 )
     {
+        // since the use many arrays with the same number of indices and delete entries, 
+        // we use an index to keep track.
+        // TODO: manually optimize the deletion process (via sorting) or use an STL algorithm.
         int i = 0;
         while( i < remaining_nodes.size() )
         {
@@ -753,8 +801,8 @@ void generate_shellings2(
                     auto& faces = faces_of_node[i];
 
                     for( int f = 0; f <= dim; f++ ){
-                        int face = faces[f];
                         if( not face_is_connected[i][f] ) continue;
+                        int face = faces[f];
                         shared_with_active_face = shared_with_active_face or mesh.is_subsimplex( dim-1, d, face, d_subsimplex );
                     }
 
@@ -762,7 +810,8 @@ void generate_shellings2(
 
                     if( shared_with_active_face ) continue;
 
-                    // ... otherwise it is not in an active face. We check the containment within the prefix nodes ... 
+                    // ... otherwise it is not in an active face. 
+                    // We now check the containment within the prefix nodes ... 
 
                     bool shared_with_prefix_nodes = false;
 
@@ -770,6 +819,9 @@ void generate_shellings2(
                     {
                         shared_with_prefix_nodes = shared_with_prefix_nodes or mesh.is_subsimplex( dim, d, prefix, d_subsimplex );
                     }
+
+                    // and if not, then it is shared with a prefix node whilst not being shared with an active face.
+                    // Nodes with such subsimplices are tossed. 
 
                     keep_condition_satisfied = not shared_with_prefix_nodes;
                 }
@@ -804,7 +856,7 @@ void generate_shellings2(
     
     
     
-    // we will compute the weight associated with the extension along each possible node 
+    // We will compute the weight associated with the extension along each possible node.
     
     std::vector<int>   shared_subsimplex_dim( remaining_nodes.size(), -17            );
     std::vector<int>   shared_subsimplex    ( remaining_nodes.size(), mesh.nullindex );
@@ -816,9 +868,7 @@ void generate_shellings2(
 
     for( int i = 0; i < remaining_nodes.size(); i++ ) 
         assert( std::isfinite( weight_for_node_reflect[i] ) == std::isfinite( weight_for_node_morphin[i] ) );
-
-
-
+    
     // start computing the relevant data on each node  
     
     for( int i = 0; i < remaining_nodes.size(); i++ ) 
@@ -844,8 +894,6 @@ void generate_shellings2(
 
         Assert( ( m == dim ) == ( current_prefix.size() == 0 ), m, current_node );
         if( m ==  -1 ) Assert( current_prefix.size() == counts[dim]-1, m, current_node );
-        
-
         
         // Determine whether the new simplex can be part of a shelling,
         // and if yes, what is the common subsimplex
@@ -1044,7 +1092,6 @@ void generate_shellings2(
             weight_for_node_reflect[i] = new_coefficients.l2norm();
 
             weight_for_node_morphin[i] = ( m != dim ? info.C7[current_node][form_degree][m][sub_index] * info.C8[current_node][form_degree+1][m][sub_index] : 1. / Constants::pi * info.diameters[current_node] ); 
-            // TODO(martinlicht): which form degree?
 
         }
     
@@ -1052,9 +1099,8 @@ void generate_shellings2(
 
     
     
-    // unless we are at the start:
-    // delete all the nodes that don't give a shelling 
-    // otherwise, there is nothing to discard
+    // unless we are at the start, delete all the nodes that don't give a shelling.
+    // Otherwise, the prefix is empty and every node is a possible start.
     
     if( current_prefix.size() > 0 )
     {
@@ -1098,8 +1144,7 @@ void generate_shellings2(
         assert( std::isfinite( weight_for_node_morphin[j] ) );
     }
 
-
-    if(false)
+    if(/*DISABLES CODE*/(false))
     {
         LOG << "current nodes:   "; for( auto node : current_prefix  ) LOG << node << space; 
         LOG << nl << tab << shellings_found.size();
@@ -1107,14 +1152,11 @@ void generate_shellings2(
         LOG << nl;
         LOG << "remaining nodes: "; for( auto node : remaining_nodes ) LOG << node << space; LOG << nl;
     }
-
-
-
-
+    
     // unless we are at the start:
     // sort nodes by priority
     // simply some lazy bubble sort
-    /////if( current_prefix.size() > 0 )
+    // //if( current_prefix.size() > 0 )
     if( sort_nodes_by_priority )
     for( int i = 0; i < remaining_nodes.size(); i++ )
     for( int j = 1; j < remaining_nodes.size(); j++ )
@@ -1155,10 +1197,10 @@ void generate_shellings2(
 
 
     // When we are at the beginning (empty prefix) and want to use a special initialization,
-    // then multithread the construction of shellings, starting at different nodes
+    // then multithread the construction of shellings, starting at different nodes.
     // otherwise, we build shellings recursively
     
-    if( special_initialization and current_prefix.size() == 0 ) {
+    if( multithreaded_initialization and current_prefix.size() == 0 ) {
 
         std::vector<std::vector<shelling>> shellings_found_from_node( counts[dim] );
 
@@ -1202,7 +1244,7 @@ void generate_shellings2(
 
                     Assert( next_prefix_from_node[s].size() > 0 );
                     
-                    generate_shellings2( mesh, form_degree, info, 
+                    generate_shellings_elaborate( mesh, form_degree, info, 
                                          shellings_found_from_node[s], 
                                          next_prefix_from_node[s], 
                                          next_coefficient_table_from_node[s], 
@@ -1257,7 +1299,7 @@ void generate_shellings2(
 
             Float next_multweight = multweight * weight_for_node_morphin[i];
 
-            generate_shellings2( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table, next_multweight );
+            generate_shellings_elaborate( mesh, form_degree, info, shellings_found, next_prefix, next_coefficient_table, next_multweight );
         }
 
     }
@@ -1269,16 +1311,4 @@ void generate_shellings2(
     
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-#endif // SHELLING_LISTER_2_HPP
+#endif // INCLUDEGUARD_SHELLING_LISTER_2_HPP

@@ -236,7 +236,7 @@ $(context).astyle:
 .PHONY: tidy $(context).tidy
 tidy: $(context).tidy
 $(context).tidy:
-	clang-tidy $(mycontextdir)/*.?pp --config-file=$(projectdir)/.Tools/clang-tidy.yaml --
+	clang-tidy $(mycontextdir)/*.?pp --config-file=$(projectdir)/.tools/clang-tidy.yaml --
 
 ############################################################################################
 # Apply cppcheck to all cpp and hpp files in the directory. Read-only.

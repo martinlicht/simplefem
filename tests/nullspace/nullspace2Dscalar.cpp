@@ -133,7 +133,10 @@ int main( int argc, char *argv[] )
             
             const auto precon = InverseDiagonalPreconditioner(SystemMatrix);
 
-            auto purifier_cpp = [&]( FloatVector& candidate ){
+            /**** introduce routines that produce a nullvector from an input vector ****/
+
+            const auto purifier_cpp UNUSED = [&]( FloatVector& candidate ){
+
                 ConjugateResidualMethod CRM(SystemMatrix);
                 CRM.verbosity = IterativeSolver::VerbosityLevel::startandfinish;
 
@@ -142,9 +145,7 @@ int main( int argc, char *argv[] )
                 candidate -= solution;
             };
             
-            auto purifier_csr = [&]( FloatVector& candidate ){
-                
-                FloatVector solution( candidate.getdimension(), 0. );
+            const auto purifier_csr UNUSED = [&]( FloatVector& candidate ){
                 
                 const FloatVector rhs( SystemMatrix.getdimin(), 0. );
                 FloatVector residual( rhs );
@@ -159,10 +160,9 @@ int main( int argc, char *argv[] )
                     -3
                 );
                 
-                // candidate -= solution;
             };
             
-            auto purifier_csr2 = [&]( FloatVector& candidate ){
+            const auto purifier_csr2 = [&]( FloatVector& candidate ){
                 
                 FloatVector solution( candidate.getdimension(), 0. );
                 
@@ -181,6 +181,8 @@ int main( int argc, char *argv[] )
                 
                 candidate -= solution;
             };
+
+	    /**** algorithmically filter out nullvectors ****/
             
             std::vector<FloatVector> nullvectorgallery = computeNullspace(
                 SystemMatrix,
