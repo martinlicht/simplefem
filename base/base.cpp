@@ -51,7 +51,7 @@ SystemSetup::SystemSetup() noexcept
     #endif
 
     const time_t t = std::time(nullptr);
-    const tm zeit = *std::localtime(&t); // TODO(martin) replace by chrono for thread-safety?
+    const tm zeit = *std::localtime(&t); // DONTFIX: not thread-safe but this function will only be executed once.
     LOGPRINTF("---\t%d-%02d-%02d %02d:%02d:%02d\n", zeit.tm_year + 1900, zeit.tm_mon + 1, zeit.tm_mday, zeit.tm_hour, zeit.tm_min, zeit.tm_sec );
     
     LOGPRINTF("---\tCompiler version: %s\n", __VERSION__);

@@ -164,10 +164,10 @@ Avoid compiler warnings and clean up any redundancies.
 
 - [x] div3D and curl3D are okay
 - [x] `triangle_div_estimate.cpp` and `curlwithtetbc` are okay
-- [x] grad3D recursive Neumann estimate needs debugging or replacement.
+- [x] grad3D recursive Neumann estimate needs debugging or replacement. The other spanning set generators do not produce estimates.
+- [ ] If an input is given, then overwrite the defaults. Terminate if impossible. The input should be an index 
+      for a collection of meshes and boundary conditions.
 - [ ] Move `curlwithtetbc` into curl3DSestimate.cpp 
-- [ ] If an input is given, then overwrite the defaults. Terminate if impossible.
-- [ ] Debug gradient estimator 
 - [ ] Combine all 3D estimators into one file 
 - [ ] Adapt the combined 3D estimator to a 2D estimator
 
@@ -1694,7 +1694,7 @@ rename `base/include.hpp` in the main folder, move to base subfolder, and have a
 - [ ] marathon of sort algorithms: int <, int mod <, int hash <
 - [ ] Why does clog go into stderr?
 - [ ] How to enable DLLs? You can use a .def file...
-
+- [ ] termination, regular and irregular
 
 - [ ] remove transitive includes (once pull request done)
 - [ ] debug macros in LLVM

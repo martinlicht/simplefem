@@ -263,7 +263,7 @@ $(module).astyle:
 .PHONY: tidy $(module).tidy
 tidy: $(module).tidy
 $(module).tidy:
-	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/.tools/clang-tidy.yaml -- 
+	clang-tidy $($(mymodule).sources) --config-file=$(projectdir)/.tools/clang-tidy.yaml --
 
 ##########################################################################################
 # Apply cppcheck to all cpp and hpp files in the directory. Read-only.
@@ -296,9 +296,13 @@ grepissues: $(module).grepissues
 # $(module).grepissues: mymoddir := $(moddir)
 $(module).grepissues:
 	@echo Search trailing whitespace...
-	@-grep --line-number --color '\s+$$' -r $(mymoddir)/*pp
-#	@echo Search non-ASCII characters...
-#	@-grep --line-number --color '[^\x00-\x7F]' -r $(mymoddir)/*pp
+	@-grep --line-number --color '\s+$$' -r $(mymoddir)/*pp; true
+	@echo Search non-ASCII characters...
+# 	@-grep --line-number --color '[^\x00-\x7F]' -r $(mymoddir)/*pp; true
+# 	@echo Search Todo|todo|TODO annotations...
+	@-grep --line-number --color 'Todo' -r $(mymoddir)/*pp; true
+	@-grep --line-number --color 'todo' -r $(mymoddir)/*pp; true
+	@-grep --line-number --color 'TODO' -r $(mymoddir)/*pp; true
 #	@echo Find consecutive spaces...
 #	@-grep --line-number --color '\b\s{2,}' -r $(mymoddir)/*pp
 #	@echo Find standard asserts...

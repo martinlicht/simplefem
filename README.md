@@ -64,14 +64,21 @@ Planned finite element features:
 
 Moreover, the code is regularly tested against various compiler warnings, linters, sanitizers, and memory checkers.
 
-
-### Project Scope  
+### Project Scope and Roadmap
 
 The key objective of this finite element software is to enable proof-of-concept implementations of finite element methods that go beyond what is usually found in standard textbooks.
 
 This software prioritizes minimal dependencies and portability across different operating systems and hardware capabilities. It is supposed to remain operational even on a budget laptop whilst being able to leverage any additional hardware.
 
 At its current stage, the project does not target massively distributed-memory parallelism or peak high-performance computing. These features may be considered once key milestones have been achieved.
+
+### Installation and Usage
+
+Simply clone the repository and run `make` within the source directory. 
+
+The tests will be executable, you just run any `.out` file within the directory `tests`. 
+
+Proper installation will be available as a feature once the project is further down the roadmap.
 
 ### Contact
 

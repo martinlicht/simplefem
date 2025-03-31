@@ -41,12 +41,12 @@ int main( int argc, char *argv[] )
     const bool do_gradient   = true;
     const bool do_divergence = true;
     
-    // MeshSimplicial2D M = UnitSquare2D_simple();              // ok
-    // MeshSimplicial2D M = LShapedDomain2D();                     // 2.381225711 vs 1.421249625
-    // MeshSimplicial2D M = LShapedDomain2D_centered();            // ok 
-    // MeshSimplicial2D M = SlitDomain2D(); // centered           // ok 
-    // MeshSimplicial2D M = SlitDomain2D_noncentered();        // ok
-    // MeshSimplicial2D M = SlitDomain2D_fivetriangles();      // unclear 
+    // MeshSimplicial2D M = UnitSquare2D_simple();          // ok
+    // MeshSimplicial2D M = LShapedDomain2D();              // 2.381225711 vs 1.421249625
+    // MeshSimplicial2D M = LShapedDomain2D_centered();     // ok 
+    // MeshSimplicial2D M = SlitDomain2D(); // centered     // ok 
+    // MeshSimplicial2D M = SlitDomain2D_noncentered();     // ok
+    // MeshSimplicial2D M = SlitDomain2D_fivetriangles();   // unclear 
     
     MeshSimplicial2D M = UnitSquare2D_strange14();
     M.check();

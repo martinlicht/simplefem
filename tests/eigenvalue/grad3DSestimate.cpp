@@ -50,13 +50,21 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D Ms[5] = 
+    // TODO: Make this a standard vector of meshes. 
+    // Push meshes as you go and keep track of the numbers.
+    // Included all the relevant meshes here.
+
+    MeshSimplicial3D Ms[9] = 
     {
-        UnitSimplex3D(),    // 0 Unit simplex 
-        UnitSimplex3D(),    // 1 Distorted simplex 
-        UnitCube3D(),       // 2 Unit cube 
-        FicheraCorner3D(),  // 3 Fichera corner
-        CrossedBricks3D()   // 4 Crossed bricks 
+        UnitSimplex3D(),    // 0 Unit simplex Dirichlet from 0
+        UnitSimplex3D(),    // 1 Unit simplex Dirichlet from 1 
+        UnitSimplex3D(),    // 2 Unit simplex Dirichlet from 2
+        UnitSimplex3D(),    // 3 Unit simplex Dirichlet from 3
+        UnitSimplex3D(),    // 4 Unit simplex Neumann
+        UnitSimplex3D(),    // 5 Distorted simplex 
+        UnitCube3D(),       // 6 Unit cube 
+        FicheraCorner3D(),  // 7 Fichera corner
+        CrossedBricks3D()   // 8 Crossed bricks 
     };
 
     int choice_of_mesh = 0;
@@ -67,9 +75,17 @@ int main( int argc, char *argv[] )
     MeshSimplicial3D& M = Ms[0]; 
     
     M.check();
+
+    // TODO: <algorithmic detection of Neumann boundary conditions along faces>
+    // We run over all the faces: if they are boundary faces, we verify that they are Neumann.
+    // Lower-dimensional faces are not checked, but that can be combined with a consistency check.
+    // That allows us to set the `do_neumann` variable automatically.
     
     bool do_neumann = true;
     
+    // TODO: Instead of selecting the boundary conditions, 
+    // we select the index of the mesh from here.
+
     if( choice_of_mesh == 0 || choice_of_mesh == 1 ) // If we use a simplex 
     {
         LOG << "Fine-tuned boundary conditions for the simplex" << nl;
@@ -115,8 +131,8 @@ int main( int argc, char *argv[] )
     
     }
 
+    // TODO: Print out which faces carry flags... DONE
     LOG << "Flags used:" << nl;
-
     for( int f = 0; f < M.count_faces(); f++ )
     {
         LOG << f << ": ";
@@ -126,10 +142,7 @@ int main( int argc, char *argv[] )
     
     // TODO: Prepare a system to keep track of the exact eigenvalues, if known. 
     
-            
-    
-    
-    // estimate the Neumann eigenvalue using one of the recursive estimates 
+    // TODO: Replace this with the estimate the Neumann eigenvalue using one of the recursive estimates 
     if( do_neumann )
     {
     

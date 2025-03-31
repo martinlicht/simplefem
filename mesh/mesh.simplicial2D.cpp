@@ -1891,21 +1891,21 @@ int MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
     
 //     /* 1. create stack for the edges to be bisected, and fill in first batch */
     
-//     std::stack<int> todostack;
+//     std::stack<int> stack_to_bisect;
     
 //     for( int& e : edges )
-//         todostack.push( e );
+//         stack_to_bisect.push( e );
     
 // //     { /* remove duplicates */
-// //         std::sort( todostack.begin(), todostack.end() );
-// //         auto last = std::unique( todostack.begin(), todostack.end() );
-// //         todostack.erase( last, todostack.end() );
+// //         std::sort( stack_to_bisect.begin(), stack_to_bisect.end() );
+// //         auto last = std::unique( stack_to_bisect.begin(), stack_to_bisect.end() );
+// //         stack_to_bisect.erase( last, stack_to_bisect.end() );
 // //     }
         
     
 //     /* 2. conduct the main loop of the refinement algorithm */
     
-//     while( ! todostack.empty() )
+//     while( ! stack_to_bisect.empty() )
 //     {
         
 //         // as long the stack is not empty,
@@ -1914,14 +1914,14 @@ int MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
 //         // b) if the top edge is bisection edge to all its neighbors, bisect and pop
 //         // c) else, push the necessary edge of each parent simplex
         
-//         int e = todostack.top();
+//         int e = stack_to_bisect.top();
         
 //         // to check whether e belongs to an edge that has already been bisected,
 //         // we check whether one of the vertices belongs to the new vertices 
         
 //         if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
             
-//             todostack.pop();
+//             stack_to_bisect.pop();
         
 //         } else {
             
@@ -1943,15 +1943,15 @@ int MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
 //                 assert( ne != nullindex );
                 
 //                 if( ne != e )
-//                     todostack.push( ne );
+//                     stack_to_bisect.push( ne );
                 
 //             }
             
 //             // if top edge is still the same, bisect
             
-//             if( e == todostack.top() )
+//             if( e == stack_to_bisect.top() )
 //             {
-//                 todostack.pop();
+//                 stack_to_bisect.pop();
 //                 bisect_edge( e );
 //             }
             
@@ -1961,17 +1961,17 @@ int MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
     
     
 //     /*
-//     while( ! todostack.empty() )
+//     while( ! stack_to_bisect.empty() )
 //     {
         
-//         LOG << todostack.back() << space << todostack.size();
+//         LOG << stack_to_bisect.back() << space << stack_to_bisect.size();
         
 //         // as long the stack is not empty,
 //         // pick the top edge and make the following case distinction
 //         // a) if the top edge is longer than its neighbors, bisect and pop
 //         // b) else, push the longest edge of each parent simplex
         
-//         int e = todostack.back();
+//         int e = stack_to_bisect.back();
     
 //         Float length_e = get_edge_length( e );
             
@@ -1986,7 +1986,7 @@ int MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
             
 //             if( e != other_e && get_edge_length( other_e ) > length_e ) {
 //                 compatibly_divisible = false;
-//                 todostack.push_back( other_e );
+//                 stack_to_bisect.push_back( other_e );
 //             }
 //         }
             
@@ -1995,12 +1995,12 @@ int MeshSimplicial2D::longest_edge_bisection_recursive( const int e )
     
 //         if( compatibly_divisible )
 //         {
-//             assert( e == todostack.back() );
-//             todostack.remove( e );
+//             assert( e == stack_to_bisect.back() );
+//             stack_to_bisect.remove( e );
 //             bisect_edge( e );
-//             assert( std::find( todostack.begin(), todostack.end(), e ) == todostack.end() );
+//             assert( std::find( stack_to_bisect.begin(), stack_to_bisect.end(), e ) == stack_to_bisect.end() );
 //         } else 
-//             assert( e != todostack.back() );
+//             assert( e != stack_to_bisect.back() );
         
     
 //     }
@@ -2112,15 +2112,15 @@ int MeshSimplicial2D::newest_vertex_bisection_recursive( const int e )
     
 //     /* 1. create stack for the edges to be bisected, and fill in first batch */
     
-//     std::stack<int> todostack;
+//     std::stack<int> stack_to_bisect;
     
 //     for( int& e : edges )
-//         todostack.push( e ); // put e on top either by inserting or pulling it up!
+//         stack_to_bisect.push( e ); // put e on top either by inserting or pulling it up!
         
     
 //     /* 2. conduct the main loop of the refinement algorithm */
     
-//     while( ! todostack.empty() )
+//     while( ! stack_to_bisect.empty() )
 //     {
         
 //         // as long the stack is not empty,
@@ -2129,14 +2129,14 @@ int MeshSimplicial2D::newest_vertex_bisection_recursive( const int e )
 //         // b) if the top edge is bisection edge to all its neighbors, bisect and pop
 //         // c) else, push the necessary edge of each parent simplex
         
-//         int e = todostack.top();
+//         int e = stack_to_bisect.top();
         
 //         // to check whether e belongs to an edge that has already been bisected,
 //         // we check whether one of the vertices belongs to the new vertices 
         
 //         if( get_edge_vertex( e, 0 ) >= old_vertex_count || get_edge_vertex(e,1) >= old_vertex_count ) {
             
-//             todostack.pop();
+//             stack_to_bisect.pop();
         
 //         } else {
             
@@ -2164,15 +2164,15 @@ int MeshSimplicial2D::newest_vertex_bisection_recursive( const int e )
 //                 assert( ne != nullindex );
                 
 //                 if( ne != e )
-//                     todostack.push( ne );
+//                     stack_to_bisect.push( ne );
                 
 //             }
             
 //             // if top edge is still the same, bisect
             
-//             if( e == todostack.top() )
+//             if( e == stack_to_bisect.top() )
 //             {
-//                 todostack.pop();
+//                 stack_to_bisect.pop();
 //                 bisect_edge( e );
 //             }
             

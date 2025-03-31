@@ -279,7 +279,7 @@ inline std::string Concat2String( const T& t, const Params&... params )
 #define unimplemented() { UNREACHABLE_SIGNAL();  }
 #define Assert(...)     { (static_cast<void>(0));}
 
-// Note: replaced `exit( EXIT_FAILURE ))` with `abort()` // TODO(martin): How to abort a C program? Pros and cons?
+// Note: replaced `exit( EXIT_FAILURE ))` with `abort()`. The latter function is best for irregular termination.
 
 #else // NDEBUG
 
