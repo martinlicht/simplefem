@@ -180,55 +180,52 @@ int main( int argc, char *argv[] )
                 LOG << "... assemble matrices" << nl;
                 
                 
-                SparseMatrix scalar_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r );
-                SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r );
-                SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r );
+                auto scalar_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 0, r ) );
+                auto vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r ) );
+                auto volume_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r ) );
 
-                SparseMatrix scalar_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r );
-                SparseMatrix scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
+                auto scalar_diffmatrix   = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 0, r ) );
+                auto scalar_diffmatrix_t = scalar_diffmatrix.getTranspose();
 
-                SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
-                SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
+                auto vector_diffmatrix   = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r ) );
+                auto vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
-                SparseMatrix scalar_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r );
-                SparseMatrix scalar_incmatrix_t = scalar_incmatrix.getTranspose();
+                auto scalar_incmatrix   = MatrixCSR( FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 0, r ) );
+                auto scalar_incmatrix_t = scalar_incmatrix.getTranspose();
 
-                SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r );
-                SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+                auto vector_incmatrix   = MatrixCSR( FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r ) );
+                auto vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-                SparseMatrix vector_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r-1, 1 );
-                SparseMatrix vector_elevationmatrix_t = vector_elevationmatrix.getTranspose();
+                auto vector_elevationmatrix = MatrixCSR( FEECBrokenElevationMatrix( M, M.getinnerdimension(), 1, r-1, 1 ) );
+                auto vector_elevationmatrix_t = vector_elevationmatrix.getTranspose();
 
-                SparseMatrix volume_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r );
-                SparseMatrix volume_incmatrix_t = volume_incmatrix.getTranspose();
+                auto volume_incmatrix   = MatrixCSR( FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r ) );
+                auto volume_incmatrix_t = volume_incmatrix.getTranspose();
                 
-                SparseMatrix volume_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
-                SparseMatrix volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
+                auto volume_elevationmatrix = MatrixCSR( FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 ) );
+                auto volume_elevationmatrix_t = volume_elevationmatrix.getTranspose();
 
             
 
-                auto mass = vector_incmatrix_t * vector_massmatrix * vector_incmatrix;
+                auto mass = Conjugation( vector_massmatrix, vector_incmatrix );
 
-                auto mat_A  = scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix;
-                mat_A.sortandcompressentries();
+                auto mat_A  = Conjugation( scalar_massmatrix, scalar_incmatrix );
                 
                 auto mat_Bt = scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_incmatrix; // upper right
-                mat_Bt.sortandcompressentries();
                 
                 auto mat_B = mat_Bt.getTranspose(); //volume_incmatrix_t & volume_massmatrix & vector_elevationmatrix & diffmatrix & vector_incmatrix; // lower left
-                mat_B.sortandcompressentries();
                 
-                auto mat_C  = vector_incmatrix_t & vector_diffmatrix_t & volume_elevationmatrix_t & volume_massmatrix & volume_elevationmatrix & vector_diffmatrix & vector_incmatrix;
-                mat_C.sortandcompressentries();
+                auto mat_C  = Conjugation( volume_massmatrix, volume_elevationmatrix & vector_diffmatrix & vector_incmatrix );
+                
                 
                 LOG << "share zero A = " << mat_A.getnumberofzeroentries() << "/" <<  mat_A.getnumberofentries() << nl;
                 LOG << "share zero B = " << mat_B.getnumberofzeroentries() << "/" <<  mat_B.getnumberofentries() << nl;
                 LOG << "share zero C = " << mat_C.getnumberofzeroentries() << "/" <<  mat_C.getnumberofentries() << nl;
                 
-                auto A  = MatrixCSR( mat_A  );
-                auto Bt = MatrixCSR( mat_Bt );
-                auto B  = MatrixCSR( mat_B  );
-                auto C  = MatrixCSR( mat_C  );
+                auto& A  = mat_A;
+                auto& Bt = mat_Bt;
+                auto& B  = mat_B;
+                auto& C  = mat_C;
 
                 // auto negA  = A;  negA.scale(-1);
                 // auto negB  = B;  negB.scale(-1);
@@ -263,10 +260,13 @@ int main( int argc, char *argv[] )
 
                         LOG << "... iterative solver" << nl;
                         
-                        auto PA = MatrixCSR( scalar_incmatrix_t & scalar_massmatrix & scalar_incmatrix )
-                                    + MatrixCSR( scalar_incmatrix_t & scalar_diffmatrix_t & vector_elevationmatrix_t & vector_massmatrix & vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix );
-                        auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
-                                    + MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & vector_elevationmatrix_t & volume_massmatrix & vector_elevationmatrix & vector_diffmatrix & vector_incmatrix );
+                        auto PA = Conjugation( scalar_massmatrix, scalar_incmatrix )
+                                  + 
+                                  Conjugation( vector_massmatrix, vector_elevationmatrix & scalar_diffmatrix & scalar_incmatrix );
+                        
+                        auto PC = Conjugation( vector_massmatrix, vector_incmatrix )
+                                  +
+                                  Conjugation( volume_massmatrix, vector_elevationmatrix & vector_diffmatrix & vector_incmatrix );
                         
                         LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
                         LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;

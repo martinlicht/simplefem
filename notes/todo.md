@@ -98,6 +98,8 @@ __attribute__((unused))
 - [ ] Warnings in eigenvalue tests to be neutralized 
 - [ ] Disabled code should be removed or marked accordingly, same for trivially true conditions
 - [ ] Understand GCC options: `-ffold-simple-inlines -fimplicit-constexpr -fno-implement-inlines ? -fvisibility-inlines-hidden` ?
+- [ ] Speed up sullivan2D matrix construction using Conjugation...
+
 
 
 
@@ -120,6 +122,17 @@ Combine the primal and mixed formulation for the Poisson Problem in the AFEM tes
 
 - [ ] Summarize files: indexfunctions, polynomialmassmatrix, utilities -> utilities
 - [ ] Summarize: global functions
+
+Main files 
+
+- [ ] Inclusion and averaging 
+- [ ] Diff, Elev, Interpol, unphysical
+- [ ] Mass (with coeffs), veewedgehodge
+- [ ] Trace + (Ext)
+- [ ] flags 
+- [ ] Cech
+
+- [ ] Extract local mass matrix computation 
 
 ## (HIGH) Algebraic Preconditioners for 3D **READING** (10h)
 

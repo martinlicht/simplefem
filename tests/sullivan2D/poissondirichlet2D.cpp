@@ -211,13 +211,13 @@ int main( int argc, char *argv[] )
                         vtk.write_vertex_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
                         vtk.write_vertex_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
 
-                        vtk.write_cell_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
-                        vtk.write_cell_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
-
                         if( r == 1 ) { 
                             vtk.write_vertex_scalar_data( sol, "iterativesolution_scalar_data" , 1.0 );
                         } 
                         
+                        vtk.write_cell_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_sol(vec)[0]; }, "interpolated_sol" );
+                        vtk.write_cell_scalar_data( [&]( const FloatVector& vec) -> Float{ return function_rhs(vec)[0]; }, "interpolated_rhs" );
+
                         {
                             const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
                             const auto printable_sol = interpol_matrix * incmatrix * sol; 
