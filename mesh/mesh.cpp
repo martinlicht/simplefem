@@ -484,6 +484,28 @@ void Mesh::check_dirichlet_flags( bool check_for_full_dirichlet ) const
 
 
 
+Float Mesh::getMeshDiameter() const 
+{
+    
+    Float diameter = 0.;
+
+    const int num_vertices = count_simplices(0);
+
+    for( int i = 0; i < num_vertices; i++ )
+    {
+        auto A = getCoordinates().getdata_by_vertex(i);
+
+        for( int j = i+1; j < num_vertices; j++ )
+        {
+            auto B = getCoordinates().getdata_by_vertex(j);
+
+            diameter = maximum( diameter, (A-B).norm() );
+        }
+    }
+    
+    return diameter;
+}
+
 
 
 Float Mesh::getDiameter( int dim, int index ) const 

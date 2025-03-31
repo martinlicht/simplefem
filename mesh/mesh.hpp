@@ -207,6 +207,7 @@ class Mesh
          * 
          */
         
+        Float getMeshDiameter() const;
         Float getDiameter( int dim, int index ) const;
         
         Float getMaximumDiameter() const;

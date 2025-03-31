@@ -30,72 +30,124 @@ int main( int argc, char *argv[] )
     
     LOG << "Initial mesh..." << nl;
     
-    MeshSimplicial3D M = UnitSimplex3D(); 
-    // MeshSimplicial3D M = UnitCube3D(); M.getCoordinates().scale( Constants::pi );
-    M.getCoordinates().scale( 3. );
-    M.getCoordinates().setdata(3, 2, 1./3. );
+    
+    
+    
+    
+    
+    // ================================================================================
+    // We have different choices of meshes 
+    // ================================================================================
+    
+    std::vector<MeshSimplicial3D> Ms = 
+    {
+        UnitSimplex3D(),    // 0 Unit simplex Dirichlet from 0
+        UnitSimplex3D(),    // 1 Unit simplex Dirichlet from 1 
+        UnitSimplex3D(),    // 2 Unit simplex Dirichlet from 2
+        UnitSimplex3D(),    // 3 Unit simplex Dirichlet from 3
+        UnitSimplex3D(),    // 4 Unit simplex Neumann
+        UnitSimplex3D(),    // 5 Distorted simplex 
+        UnitCube3D(),       // 6 Unit cube 
+        UnitCube3D(),       // 7 Unit cube (Dirichlet)
+        FicheraCorner3D(),  // 8 Fichera corner
+        CrossedBricks3D()   // 9 Crossed bricks 
+    };
+
+    for( int f = 0; f <= 3; f++ ) { Ms[0].set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet ); }
+    for( int f = 1; f <= 3; f++ ) { Ms[1].set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet ); }
+    for( int f = 2; f <= 3; f++ ) { Ms[2].set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet ); }
+    for( int f = 3; f <= 3; f++ ) { Ms[3].set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet ); }
+    // Nothing for #4, which has Neumann boundary conditions
+    for( int i = 0; i <= 4; i++ ) { Ms[i].complete_dirichlet_flags_from_facets(); Ms[i].check_dirichlet_flags(false); }
+
+    Ms[5].getCoordinates().scale( 3. );
+    Ms[5].getCoordinates().setdata(3, 2, 1./3. );
+
+    Ms[7].automatic_dirichlet_flags();
+    
+    struct ReferencePair { Float eigenvalue; Float PF_estimate; };
+
+    // TODO(martin): fill in the correct values here 
+    
+    const Float PF_factor = 2. / Constants::pi;
+
+    std::vector<ReferencePair> curl_reference_values = 
+    {
+        { notanumber, PF_factor * Ms[0].getMeshDiameter() },    // 0 Unit simplex Dirichlet from 0
+        { notanumber, PF_factor * Ms[1].getMeshDiameter() },    // 1 Unit simplex Dirichlet from 1 
+        { notanumber, PF_factor * Ms[2].getMeshDiameter() },    // 2 Unit simplex Dirichlet from 2
+        { notanumber, PF_factor * Ms[3].getMeshDiameter() },    // 3 Unit simplex Dirichlet from 3
+        { notanumber, PF_factor * Ms[4].getMeshDiameter() },    // 4 Unit simplex Neumann
+        { notanumber, PF_factor * Ms[5].getMeshDiameter() },    // 5 Distorted simplex 
+        { notanumber, PF_factor * Ms[6].getMeshDiameter() },    // 6 Unit cube 
+        { notanumber, PF_factor * Ms[7].getMeshDiameter() },    // 7 Unit cube (Dirichlet)
+        { notanumber,                          notanumber },    // 8 Fichera corner
+        { notanumber,                          notanumber }     // 9 Crossed bricks 
+    };
+
+    // ================================================================================
+    // Select the mesh based on the input 
+    // ================================================================================
+    
+    assert( Ms.size() == curl_reference_values.size() );
+    
+    unsigned int choice_of_mesh = 0;
+    
+    if( argc > 1 )
+    {
+        const char* end = nullptr;
+        bool has_overflown;
+        int value = string_to_integer( argv[1], &end, 10, has_overflown );
+        assert( end != nullptr );
+
+        // Check if the entire argument was parsed and within int range
+        if( *end != '\0' ) {
+
+            LOG << "Error: The provided argument is not a valid integer:" << argv[1] << "\n";
+
+        } else if( value != static_cast<int>(value) ) {
+
+            LOG << "Error: The provided argument is out of 'int' range.\n";
+
+        } else if( value < 0 || value >= Ms.size() ) {
+
+            LOG << "Error: The provided argument is not a mesh index: " << value << "\n";
+
+        } else {
+            
+            choice_of_mesh = static_cast<int>(value);
+            LOG << "Select mesh based on input: " << choice_of_mesh << nl;
+
+        }
+    } else {
+        LOG << "Default mesh selected: " << choice_of_mesh << nl;
+    }
+
+    assert( choice_of_mesh < Ms.size() );
+
+    // ================================================================================
+    // Finally, we select a mesh
+    // ================================================================================
+    
+    MeshSimplicial3D& M = Ms[ choice_of_mesh ]; 
     
     M.check();
+    M.check_dirichlet_flags(false);
+
     
-    // M.automatic_dirichlet_flags();
-    // M.check_dirichlet_flags();
-
-    {
-        LOG << "Fine-tuned boundary conditions" << nl;
-
-        int first_bc_face = 0;
-        
-        if( argc > 1 )
-        {
-            const char* end = nullptr;
-            bool has_overflown;
-            int value = string_to_integer( argv[1], &end, 10, has_overflown );
-
-            // Check if the entire argument was parsed and within int range
-            if( *end != '\0' ) {
-
-                LOG << "Error: The provided argument is not a valid integer:" << argv[1] << "\n";
-
-            } else if( value != static_cast<int>(value) ) {
-
-                LOG << "Error: The provided argument is out of 'int' range.\n";
-
-            } else {
-                
-                int number = static_cast<int>(value);
-                LOG << "Command-line argument provided: " << number << nl;
-
-                first_bc_face = number;
-
-            }
-        } else {
-            LOG << "Dirichlet faces start, per default, at " << first_bc_face << nl;
-        }
-
-        for( int f = first_bc_face; f <= 3; f++ ) {
-            M.set_flag( 2, f, SimplexFlag::SimplexFlagDirichlet );
-        }
-        M.complete_dirichlet_flags_from_facets();
-        M.check_dirichlet_flags(false);
     
-    }
-
-    for( int f = 0; f < M.count_faces(); f++ )
-    {
-        LOG << f << ": ";
-        for( int i = 0; i <= 2; i++ ) LOG << M.get_subsimplex( 2, 0, f, i ) << space;
-        LOG << " > " << (int)M.get_flag( 2, f ) << nl;
-    }
     
     
     
 
+    // ================================================================================
+    // Main loop
+    // ================================================================================
     
-
     LOG << "Estimating Poincare-Friedrichs constant of curl operator (Sullivan)" << nl;
 
-    const int min_l = 4; 
-    const int max_l = 4;
+    const int min_l = 2; 
+    const int max_l = 2;
     
     const int min_r = 1;
     const int max_r = 1;
@@ -104,7 +156,7 @@ int main( int argc, char *argv[] )
     std::vector<ConvergenceTable> contables(max_r-min_r+1); //();
     for( int r = min_r; r <= max_r; r++ ){
         contables[r-min_r].table_name = "Mass error and numerical residuals r=" + std::to_string(r);
-        contables[r-min_r] << "eigenvalue" << "ratio" << "log_2(ratio)" << "diff" << "log_2(diff)" << "u_mass" << "du_mass" << "time" << nl;
+        contables[r-min_r] << "PF" << "computed" << "ratioE" << "log_2(ratioE)" << "ratioP" << "log_2(ratioP)" << "u_mass" << "du_mass" << "time" << nl;
     } 
 
     
@@ -278,13 +330,20 @@ int main( int argc, char *argv[] )
                 
                 LOG << "PF constant estimates: " << 1./std::sqrt(curratio) << space  << 1./std::sqrt(newratio) << nl;
                 
-                const Float true_eigenvalue = 2.; // 3.0 is the true value 
+                // const Float true_eigenvalue = 2.; // 3.0 is the true value 
 
+                const Float reference_eigenvalue = curl_reference_values[choice_of_mesh].eigenvalue;
+
+                const Float reference_pf = curl_reference_values[choice_of_mesh].PF_estimate;
+
+                // contables[r-min_r] << "PF" << "computed" << "ratioE" << "log_2(ratioE)" << "ratioP" << "log_2(ratioP)" << "u_mass" << "du_mass" << "time" << nl;
+                
+                contables[r-min_r] << std::sqrt(newratio);
                 contables[r-min_r] << newratio;
-                contables[r-min_r] << newratio / true_eigenvalue - 1.;
-                contables[r-min_r] << - std::log2( newratio / true_eigenvalue - 1. ); 
-                contables[r-min_r] << newratio - true_eigenvalue;
-                contables[r-min_r] << std::log2( newratio - true_eigenvalue );
+                contables[r-min_r] << newratio / reference_eigenvalue;
+                contables[r-min_r] << std::log2( newratio / reference_eigenvalue ); 
+                contables[r-min_r] << std::sqrt(newratio) / reference_pf;
+                contables[r-min_r] << std::log2( std::sqrt(newratio) / reference_pf ); 
                 contables[r-min_r] << u_massnorm;
                 contables[r-min_r] << ucurl_massnorm;
                 contables[r-min_r] << Float( end - start );

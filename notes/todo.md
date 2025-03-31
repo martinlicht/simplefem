@@ -165,11 +165,15 @@ Avoid compiler warnings and clean up any redundancies.
 - [x] div3D and curl3D are okay
 - [x] `triangle_div_estimate.cpp` and `curlwithtetbc` are okay
 - [x] grad3D recursive Neumann estimate needs debugging or replacement. The other spanning set generators do not produce estimates.
-- [ ] If an input is given, then overwrite the defaults. Terminate if impossible. The input should be an index 
-      for a collection of meshes and boundary conditions.
-- [ ] Move `curlwithtetbc` into curl3DSestimate.cpp 
-- [ ] Combine all 3D estimators into one file 
-- [ ] Adapt the combined 3D estimator to a 2D estimator
+- [x] If an input is given, then overwrite the defaults. Terminate if impossible. The input should be an index for a collection of meshes and boundary conditions.
+- [x] Copy the selection from grad3DS into curl3DSestimate.cpp but keep only the convex domains, for which an estimate is known.
+- [x] For each mesh selection, save both the true eigenvalue, if available, and a simple estimate, if convex.
+- [x] Extend the modifications from the curl3DS to div3DS.
+- [x] Move/obviate `curlwithtetbc` into curl3DSestimate.cpp.
+- [ ] Move the Whitney examples into the Sullivan examples. Use boolean flags.
+- [ ] Collect a few reference eigenvalue estimates
+- [ ] Combine all 3D estimators into one file
+- [ ] Adapt the combined 3D estimator to a 2D estimator. This will obviate `triangle_div_estimate`. Collect reference values.
 
 ## (HIGH) Smoothed particles 
 
