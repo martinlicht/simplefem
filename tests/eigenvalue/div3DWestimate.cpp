@@ -137,58 +137,63 @@ int main( int argc, char *argv[] )
                     
             LOG << "... assemble mass matrices" << nl;
     
-            SparseMatrix vector_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   );
-            SparseMatrix pseudo_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r   );
-            SparseMatrix volume_massmatrix = FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r-1 );
+            auto vector_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 1, r   ) );
+            auto pseudo_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 2, r   ) );
+            auto volume_massmatrix = MatrixCSR( FEECBrokenMassMatrix( M, M.getinnerdimension(), 3, r-1 ) );
             
             LOG << "... assemble inclusion matrices" << nl;
     
-            SparseMatrix vector_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r   );
-            SparseMatrix vector_incmatrix_t = vector_incmatrix.getTranspose();
+            auto vector_incmatrix   = MatrixCSR( FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 1, r   ) );
+            auto vector_incmatrix_t = vector_incmatrix.getTranspose();
 
-            SparseMatrix pseudo_incmatrix   = FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r   );
-            SparseMatrix pseudo_incmatrix_t = pseudo_incmatrix.getTranspose();
+            auto pseudo_incmatrix   = MatrixCSR( FEECWhitneyInclusionMatrix( M, M.getinnerdimension(), 2, r   ) );
+            auto pseudo_incmatrix_t = pseudo_incmatrix.getTranspose();
 
             LOG << "... assemble algebraic matrices" << nl;
     
-            SparseMatrix vector_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r );
-            SparseMatrix vector_diffmatrix_t = vector_diffmatrix.getTranspose();
+            auto vector_diffmatrix   = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 1, r ) );
+            auto vector_diffmatrix_t = vector_diffmatrix.getTranspose();
 
-            SparseMatrix pseudo_diffmatrix   = FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r );
-            SparseMatrix pseudo_diffmatrix_t = pseudo_diffmatrix.getTranspose();
+            auto pseudo_diffmatrix   = MatrixCSR( FEECBrokenDiffMatrix( M, M.getinnerdimension(), 2, r ) );
+            auto pseudo_diffmatrix_t = pseudo_diffmatrix.getTranspose();
 
-            SparseMatrix pseudo_elevationmatrix = FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 );
-            SparseMatrix pseudo_elevationmatrix_t = pseudo_elevationmatrix.getTranspose();
+            auto pseudo_elevationmatrix = MatrixCSR( FEECBrokenElevationMatrix( M, M.getinnerdimension(), 2, r-1, 1 ) );
+            auto pseudo_elevationmatrix_t = pseudo_elevationmatrix.getTranspose();
 
 
             LOG << "... compose system matrices" << nl;
     
-            auto mat_A  = pseudo_incmatrix_t & pseudo_diffmatrix_t & volume_massmatrix & pseudo_diffmatrix & pseudo_incmatrix;
-            mat_A.sortandcompressentries();
+            auto mat_A  = Conjugation( volume_massmatrix, pseudo_diffmatrix & pseudo_incmatrix );
+            // mat_A.sortandcompressentries();
                 
-            auto mat_Bt = pseudo_incmatrix_t & pseudo_massmatrix & pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix; // upper right
-            mat_Bt.sortandcompressentries();
+            auto mat_Bt = pseudo_incmatrix_t & pseudo_massmatrix & ( pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix ); // upper right
+            // mat_Bt.sortandcompressentries();
             
             auto mat_B = mat_Bt.getTranspose(); //pseudo_incmatrix_t & pseudo_massmatrix & vector_diffmatrix & vector_incmatrix; // lower left
-            mat_B.sortandcompressentries();
+            // mat_B.sortandcompressentries();
             
             LOG << "... compose CSR system matrices" << nl;
     
-            auto A  = MatrixCSR( mat_A  );
-            auto Bt = MatrixCSR( mat_Bt );
-            auto B  = MatrixCSR( mat_B  );
+            // auto A  = MatrixCSR( mat_A  );
+            // auto Bt = MatrixCSR( mat_Bt );
+            // auto B  = MatrixCSR( mat_B  );
+            auto& A  = mat_A;
+            auto& Bt = mat_Bt;
+            auto& B  = mat_B;
             
             auto C  = MatrixCSR( mat_B.getdimout(), mat_B.getdimout() ); // zero matrix
             
             // auto PA = IdentityMatrix( A.getdimin() );
             // auto PC = IdentityMatrix( C.getdimin() );
 
-            auto PA = MatrixCSR( pseudo_incmatrix_t & pseudo_massmatrix & pseudo_incmatrix )
+            auto PA = Conjugation( pseudo_massmatrix, pseudo_incmatrix )
                       +
-                      MatrixCSR( pseudo_incmatrix_t & pseudo_diffmatrix_t & volume_massmatrix & pseudo_diffmatrix & pseudo_incmatrix );
-            auto PC = MatrixCSR( vector_incmatrix_t & vector_massmatrix & vector_incmatrix )
+                      Conjugation( volume_massmatrix, pseudo_diffmatrix & pseudo_incmatrix );
+            
+            auto PC = Conjugation( vector_massmatrix, vector_incmatrix )
                       +
-                      MatrixCSR( vector_incmatrix_t & vector_diffmatrix_t & pseudo_elevationmatrix_t & pseudo_massmatrix & pseudo_elevationmatrix & vector_diffmatrix & vector_incmatrix );
+                      Conjugation( pseudo_massmatrix, pseudo_elevationmatrix & ( vector_diffmatrix & vector_incmatrix ) );
+            
             // LOG << "share zero PA = " << PA.getnumberofzeroentries() << "/" <<  PA.getnumberofentries() << nl;
             // LOG << "share zero PC = " << PC.getnumberofzeroentries() << "/" <<  PC.getnumberofentries() << nl;
                         

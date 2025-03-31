@@ -98,6 +98,8 @@ __attribute__((unused))
 - [ ] Warnings in eigenvalue tests to be neutralized 
 - [ ] Disabled code should be removed or marked accordingly, same for trivially true conditions
 - [ ] Understand GCC options: `-ffold-simple-inlines -fimplicit-constexpr -fno-implement-inlines ? -fvisibility-inlines-hidden` ?
+- [ ] Speed up sullivan2D matrix construction using Conjugation...
+
 
 
 
@@ -120,6 +122,17 @@ Combine the primal and mixed formulation for the Poisson Problem in the AFEM tes
 
 - [ ] Summarize files: indexfunctions, polynomialmassmatrix, utilities -> utilities
 - [ ] Summarize: global functions
+
+Main files 
+
+- [ ] Inclusion and averaging 
+- [ ] Diff, Elev, Interpol, unphysical
+- [ ] Mass (with coeffs), veewedgehodge
+- [ ] Trace + (Ext)
+- [ ] flags 
+- [ ] Cech
+
+- [ ] Extract local mass matrix computation 
 
 ## (HIGH) Algebraic Preconditioners for 3D **READING** (10h)
 
@@ -161,6 +174,15 @@ They are possible alternatives to Gauss-Seidel with Eisenstadt and graph colorin
 
 Polish the names of all functions and classes, even if there are several implementations of the same idea. 
 Avoid compiler warnings and clean up any redundancies. 
+
+- [x] div3D and curl3D are okay
+- [x] `triangle_div_estimate.cpp` and `curlwithtetbc` are okay
+- [x] grad3D recursive Neumann estimate needs debugging or replacement. The other spanning set generators do not produce estimates.
+- [ ] If an input is given, then overwrite the defaults. Terminate if impossible. The input should be an index 
+      for a collection of meshes and boundary conditions.
+- [ ] Move `curlwithtetbc` into curl3DSestimate.cpp 
+- [ ] Combine all 3D estimators into one file 
+- [ ] Adapt the combined 3D estimator to a 2D estimator
 
 ## (HIGH) Smoothed particles 
 
@@ -1685,7 +1707,7 @@ rename `base/include.hpp` in the main folder, move to base subfolder, and have a
 - [ ] marathon of sort algorithms: int <, int mod <, int hash <
 - [ ] Why does clog go into stderr?
 - [ ] How to enable DLLs? You can use a .def file...
-
+- [ ] termination, regular and irregular
 
 - [ ] remove transitive includes (once pull request done)
 - [ ] debug macros in LLVM

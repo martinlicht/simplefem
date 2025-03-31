@@ -41,14 +41,14 @@ int main( int argc, char *argv[] )
     const bool do_gradient   = true;
     const bool do_divergence = true;
     
-    // MeshSimplicial2D M = UnitSquare2D_simple();              // ok
-    MeshSimplicial2D M = LShapedDomain2D();                     // 2.381225711 vs 1.421249625
-    // MeshSimplicial2D M = LShapedDomain2D_centered();            // ok 
-    // MeshSimplicial2D M = SlitDomain2D(); // centered           // ok 
-    // MeshSimplicial2D M = SlitDomain2D_noncentered();        // ok
-    // MeshSimplicial2D M = SlitDomain2D_fivetriangles();      // unclear 
+    // MeshSimplicial2D M = UnitSquare2D_simple();          // ok
+    // MeshSimplicial2D M = LShapedDomain2D();              // 2.381225711 vs 1.421249625
+    // MeshSimplicial2D M = LShapedDomain2D_centered();     // ok 
+    // MeshSimplicial2D M = SlitDomain2D(); // centered     // ok 
+    // MeshSimplicial2D M = SlitDomain2D_noncentered();     // ok
+    // MeshSimplicial2D M = SlitDomain2D_fivetriangles();   // unclear 
     
-    // MeshSimplicial2D M = UnitSquare2D_strange14();
+    MeshSimplicial2D M = UnitSquare2D_strange14();
     M.check();
     
     LOG << M.getCoordinates().text() << nl;
@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
 
     Float PF_estimate_via_shellings[2] = { notanumber, notanumber };
 
-    //if(false)
+    if(false)
     for( int k = 0; k < 2; k++ )
     {
         PF_estimate_via_shellings[k] = std::numeric_limits<Float>::infinity();
@@ -71,8 +71,6 @@ int main( int argc, char *argv[] )
         auto shellings_found = generate_shellings_elaborate( M, k );
 
         LOG << shellings_found.size() << nl;
-
-        // typedef decltype(shellings_found[0]) shelling;
 
         std::sort( shellings_found.begin(), shellings_found.end(), 
                     []( const shelling& s1, const shelling& s2 ) -> bool{ return s1.weight_reflection < s2.weight_reflection; } 
@@ -92,7 +90,7 @@ int main( int argc, char *argv[] )
 
             
     
-    return 0;
+    // return 0;
     
             
     
@@ -102,11 +100,11 @@ int main( int argc, char *argv[] )
 
     LOG << "Estimating Poincare-Friedrichs constants" << nl;
 
-    const int min_l = 4; 
-    const int max_l = 4;
+    const int min_l = 2; 
+    const int max_l = 2;
     
-    const int min_r = 1;
-    const int max_r = 1;
+    const int min_r = 2;
+    const int max_r = 2;
     
     
     std::vector<ConvergenceTable> contables_scalar(max_r-min_r+1); //();
@@ -215,21 +213,12 @@ int main( int argc, char *argv[] )
                 
                 LOG << "... compose system matrices (SCALAR)" << nl;
 
-                // PING;
-                // scalar_diffmatrix & scalar_incmatrix;
-                // PING;
-                // vector_elevationmatrix & scalar_diffmatrix;
-                // PING;
-                // vector_massmatrix & scalar_elevationmatrix;
-                // PING;
                 auto mat_A  = Conjugation( vector_massmatrix, scalar_diffmatrix & scalar_incmatrix );
                     
                 LOG << "... compose CSR system matrices (SCALAR)" << nl;
         
                 auto A  = MatrixCSR( mat_A  );
                 
-                            
-
                 LOG << "... begin inverse iteration" << nl;
                 
                 const int max_attempts = 1;
@@ -247,7 +236,7 @@ int main( int argc, char *argv[] )
                     Float newratio = -1;
                     
                     FloatVector interpol_one  = Interpolation( M, M.getinnerdimension(), 0, r+1, 
-                    [](const FloatVector& vec) -> FloatVector { return FloatVector({ 1. }); }
+                        [](const FloatVector& vec) -> FloatVector { return FloatVector({ 1. }); }
                     );
 
                     FloatVector conforming_one = scalar_averaging * interpol_one;
@@ -258,8 +247,6 @@ int main( int argc, char *argv[] )
                     
                     for( int t = 0; t <= max_inverseiterations; t++ )
                     {
-                        
-                        
                         // find the next candidate
 
                         {
@@ -279,7 +266,9 @@ int main( int argc, char *argv[] )
                         auto residual = sol;
                         
                         {
-                            DenseMatrix Bt( A.getdimout(), 1, 1. ); // TODO(martinlicht): should be embedding of interpolation of constant function, not the unit vector 
+                            DenseMatrix Bt( A.getdimout(), 1, 1. );
+                            Bt.setcolumn(0, conforming_one );
+                            
                             DenseMatrix B = Transpose(Bt);
                             DenseMatrix C(1,1,0.);
                             
@@ -296,7 +285,6 @@ int main( int argc, char *argv[] )
                                 -1,
                                 IdentityMatrix( A.getdimin() ), IdentityMatrix( C.getdimin() ) 
                             );
-
                         }
 
                         {

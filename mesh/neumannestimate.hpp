@@ -2,10 +2,10 @@
 #define INCLUDEGUARD_NEUMANNESTIMATE_HPP
 
 #include <algorithm>
-#include <limits>
-#include <numeric>
+#include <limits>       // numeric_limits
+#include <numeric>      // accumulate
 #include <queue>
-#include <utility>
+#include <utility>      // For std::pair
 #include <vector>
 
 #include "../base/include.hpp"
@@ -13,9 +13,9 @@
 
 
 
-// ============================================================================================================
+// ==================================================================================================================
 // estimate the Neumann eigenvalue using one of the recursive estimates 
-// ============================================================================================================
+// ==================================================================================================================
 
 static Float NeumannEstimate( const Mesh& M ) {
 
@@ -27,9 +27,9 @@ static Float NeumannEstimate( const Mesh& M ) {
     const int num_cells = M.count_simplices(dim);
     const int num_faces = M.count_simplices(dim-1);
 
-    // ======================================================================================
+    // ============================================================================================
     // for later use, collect volumes and diameters of all cells, as well as reflection norms 
-    // ======================================================================================
+    // ============================================================================================
     
     std::vector<Float> diameters( num_cells, notanumber );
     std::vector<Float> volumes( num_cells, notanumber );
@@ -49,16 +49,17 @@ static Float NeumannEstimate( const Mesh& M ) {
         const auto reflection_matrix_jacobian = M.get_reflection_Jacobian_along_face(f);
         const auto singular_value             = reflection_matrix_jacobian.operator_norm_estimate();
         const auto singular_value_inv         = Inverse(reflection_matrix_jacobian).operator_norm_estimate();
-        
+
         reflectionnorms[f] = maximum( singular_value, singular_value_inv );
+
+        assert( std::isfinite( reflectionnorms[f] ) && reflectionnorms[f] > 0. );
     }
     
-    for( auto v : volumes         ) assert( std::isfinite( v ) );
-    for( auto d : diameters       ) assert( std::isfinite( d ) );
-    for( auto s : reflectionnorms ) assert( std::isfinite( s ) );
+    for( auto v : volumes         ) assert( std::isfinite( v ) && v > 0. );
+    for( auto d : diameters       ) assert( std::isfinite( d ) && d > 0. );
     
     
-    // ======================================================================================
+    // ============================================================================================
     // For each root, a tree consists of 
     // 
     //      1. array of precursors
@@ -69,7 +70,7 @@ static Float NeumannEstimate( const Mesh& M ) {
     // Here, -1 denotes undefined precursor/level, and all costs start with infinity.
     // 
     // For each tree, for each node, we save a coefficient vector.
-    // ======================================================================================
+    // ============================================================================================
     
     LOG << "Constructing the trees. Number of roots: " << num_cells << nl;
 
@@ -77,9 +78,9 @@ static Float NeumannEstimate( const Mesh& M ) {
     typedef std::vector<int>   array_rank;
     typedef std::vector<Float> array_cost;
     
-    std::vector<array_prec> arrays_of_prec( num_cells, array_prec( num_cells, -1                                    ) );
-    std::vector<array_rank> arrays_of_rank( num_cells, array_rank( num_cells, -1                                    ) );
-    std::vector<array_cost> arrays_of_cost( num_cells, array_cost( num_cells, std::numeric_limits<Float>::infinity()) );
+    std::vector<array_prec> arrays_of_precs( num_cells, array_prec( num_cells, -1                                     ) );
+    std::vector<array_rank> arrays_of_ranks( num_cells, array_rank( num_cells, -1                                     ) );
+    std::vector<array_cost> arrays_of_costs( num_cells, array_cost( num_cells, std::numeric_limits<Float>::infinity() ) );
 
     std::vector<std::vector<FloatVector>> coefficients( num_cells, std::vector<FloatVector>(num_cells, FloatVector(num_cells,0.) ) );
 
@@ -90,30 +91,42 @@ static Float NeumannEstimate( const Mesh& M ) {
     // We iterate over all the possible roots and construct a tree for each.
     for( int curr_root = 0; curr_root < num_cells; curr_root++ )
     {
+        LOG << "----- " << curr_root << " -----" << nl;
+
         // introduce some abbreviations
-        auto& curr_prec = arrays_of_prec[curr_root];
-        auto& curr_rank = arrays_of_rank[curr_root];
-        auto& curr_cost = arrays_of_cost[curr_root];
+        
+        auto& curr_precs = arrays_of_precs[curr_root];
+        auto& curr_ranks = arrays_of_ranks[curr_root];
+        auto& curr_costs = arrays_of_costs[curr_root];
 
         auto& curr_coefficients = coefficients[curr_root];
         
+        // Priority queue to store {cell, cost} pairs, sorted by cost
         // Comparator for the priority queue (min-heap, based on weights). 
         // Use > to prioritize the pair with the smaller weight
-        struct Compare {
-            bool operator()(const std::pair<int, Float>& p1, const std::pair<int, Float>& p2) {
-                return p1.second > p2.second;
-            }
+
+        struct QueueEntry
+        {
+            int cell;
+            Float cost;
+            
+            bool operator<( const QueueEntry& other ) const {
+                return this->cost < other.cost;
+            };
+            
+            bool operator>( const QueueEntry& other ) const {
+                return this->cost > other.cost;
+            };
         };
+        
+        std::priority_queue<QueueEntry, std::vector<QueueEntry>, std::greater<QueueEntry> > pq;
 
-        // Priority queue to store {cell, cost} pairs, sorted by cost
-        std::priority_queue<std::pair<int, Float>, std::vector<std::pair<int, Float>>, Compare> pq;
-
-        // ======================================================
+        // ========================================================================
         // Initialize root data: 
         // - no precursor,
         // - rank zero, 
-        curr_prec[curr_root] = -1;
-        curr_rank[curr_root] = 0;
+        curr_precs[curr_root] = -1;
+        curr_ranks[curr_root] = 0;
 
         // - some initial costs, computed like this:
         // We use the Payne-Weinberger bound, or a slight improvement in dimension 2.
@@ -123,41 +136,58 @@ static Float NeumannEstimate( const Mesh& M ) {
         
         curr_coefficients[curr_root][curr_root] = natural_poincare_factor * diameters[curr_root]; // PF constant for convex domains
 
-        curr_cost[curr_root] = curr_coefficients[curr_root].norm_sq();
-
+        curr_costs[curr_root] = curr_coefficients[curr_root].norm_sq();
+        
         // Push the root into the PQ.
-        pq.push( { curr_root, curr_cost[curr_root] } );
+        
+        Float initial_costs = curr_costs[curr_root];
 
-        // ======================================================
-        // Use a Djikstra-type algorithm to compute the queue
+        pq.push( { curr_root, initial_costs } );
+
+        // ========================================================================
+        // Use a Djikstra-type algorithm to compute the shortest path tree.
+        // By the time an element is popped from the front the priority queue, 
+        // its optimal costs are already known, and its precursor is final.
+        // 
+        // NB: The costs in this variant of Dijkstra are not necessarily 
+        // descending along the paths from the root cell, since the costs 
+        // are not simply additive along edges but also involve multiplicative
+        // factors from the previous weights.
         while( not pq.empty() )
         {
             const auto top_entry = pq.top();
             pq.pop();
             
-            const int   cell = top_entry.first;
-            const Float cost = top_entry.second;
+            const int   cell = top_entry.cell;
+            const Float cost = top_entry.cost;
             
-            // In this version of Dijkstra, the PQ may have multiple instances of the same node,
             // that is, we queue duplicates rather than update the queue.
             // If this distance is greater than the distance already found, 
             // then this is an outdated entry that we simply skip.
+            // Equality can only occur at the very beginning, with the root node.
             
-            if( cost > curr_cost[cell] ) continue;
+            if( cost > curr_costs[cell] ) continue;
+
+            assert( cost == curr_costs[cell] );
 
             // We have retrieved this cell at already the minimum cost, and the predecessor is real predecessor.
             // The rank of this cell is the rank of the predecessor + 1.
             // The root and only the root has no predecessor.
 
-            LOG << "processing " << cell << " from " << curr_prec[cell] << nl;
+            LOG << cell << ": from " << curr_precs[cell] << " with cost/rank " << cost << '/' << curr_ranks[cell] << nl;
             
-            if( curr_prec[cell] == -1 ) assert( cell == curr_root );
-            if( cell == curr_root ) assert( curr_prec[cell] == -1 );
+            if( cell == curr_root ) assert( curr_precs[cell] == -1 ); 
             
-            if( curr_prec[cell] != -1 ) curr_rank[cell] = 1 + curr_rank[ curr_prec[cell] ];
-
+            if( curr_precs[cell] == -1 ) {
+                assert( cell == curr_root );
+            } else {
+                assert( cell != curr_root );
+                assert( 0 <= curr_precs[cell] && curr_precs[cell] < num_cells );
+                assert( curr_ranks[cell] == 1 + curr_ranks[curr_precs[cell]] );
+                // We do not check descending costs because that does not make sense in this problem setting
+            } 
             
-            // ============================================================================================================
+            // =============================================================================
             // Collect all the adjacent cells and the corresponding connection faces.
             
             std::vector<int> adjacent_cells;
@@ -184,11 +214,11 @@ static Float NeumannEstimate( const Mesh& M ) {
                 connecting_faces.push_back(face);
             }
 
-            // LOG << "cell " << cell << " has " << adjacent_cells.size() << " other adjacent cells\n";
+            LOG << cell << ": has " << adjacent_cells.size() << " other adjacent cells\n";
             assert( adjacent_cells.size() == connecting_faces.size() );
 
             
-            // ============================================================================================================
+            // =================================================================================================
             // Having collected the adjacent cells, iterate over adjacent cells. For each, we compute
             // - the cost
             // - the coefficient vector 
@@ -239,7 +269,7 @@ static Float NeumannEstimate( const Mesh& M ) {
 
                     Float facebased_singular_max = 0.5 * std::sqrt( square( a + 1. ) + c ) + 0.5 * std::sqrt( square( a - 1. ) + c );
 
-                    LOG << "Reflection estimates " << reflectionnorm << space << facebased_singular_max << nl;
+                    // LOG << "Reflection estimates " << reflectionnorm << space << facebased_singular_max << nl;
 
                     reflectionnorm = minimum( reflectionnorm, facebased_singular_max );
 
@@ -269,6 +299,8 @@ static Float NeumannEstimate( const Mesh& M ) {
 
                 Float new_cost = new_coeffs.norm_sq();
 
+                assert( new_cost > 0. );
+
                 // Finally, we set the costs and coefficient vectors for this particular cell.
 
                 adjacent_cells_new_costs[i] = new_cost;
@@ -286,17 +318,21 @@ static Float NeumannEstimate( const Mesh& M ) {
 
                 Float new_cost = adjacent_cells_new_costs[i];
 
-                auto new_coeffs = adjacent_cells_new_coeffs[i];
+                const auto& new_coeffs = adjacent_cells_new_coeffs[i];
 
                 // If a shorter path is found
 
-                if(- new_cost < curr_cost[neighbor] )
+                if( new_cost < curr_costs[neighbor] )
                 {
-                    // LOG << "update: " << curr_cost[neighbor] << " to " << new_cost << nl;
+                    LOG << cell << ": update node " << neighbor << " cost from " << curr_costs[neighbor] << " to " << new_cost << "/" << nl;
                     
-                    curr_cost[neighbor] = new_cost;
+                    assert( neighbor != curr_root );
+
+                    curr_costs[neighbor] = new_cost;
                 
-                    curr_prec[neighbor] = cell;  
+                    curr_precs[neighbor] = cell;  
+
+                    curr_ranks[neighbor] = curr_ranks[cell] + 1;  
 
                     curr_coefficients[neighbor] = new_coeffs;
 
@@ -305,7 +341,7 @@ static Float NeumannEstimate( const Mesh& M ) {
             }
         }
         
-        // =========================================================================================
+        // ===========================================================================================================
         // We have constructed the complete tree!
         
         // DEBUG
@@ -314,48 +350,52 @@ static Float NeumannEstimate( const Mesh& M ) {
         // Additionally, check that the rank makes sense
         for( int i = 0; i < num_cells; i++ ) {
             
-            if( i == curr_root ) 
-            {
-                assert( curr_prec[i] == -1 );
-                assert( curr_rank[i] == 0 );
-                continue;
-            };
+            if( i == curr_root ) {
+
+                assert( curr_precs[i] == -1 );
+                assert( curr_ranks[i] == 0 );
+                
+            } else {
+                
+                assert( curr_precs[i] != -1 );
+                assert( 0 <= curr_precs[i] && curr_precs[i] < num_cells );
+                
+                assert( curr_ranks[i] == 1 + curr_ranks[curr_precs[i]] );
+
+                // We do not check descending costs because that does not make sense in this problem setting
+            }
             
-            assert( curr_prec[i] != -1 );
-            assert( 0 <= curr_prec[i] && curr_prec[i] < num_cells );
-            assert( curr_rank[i] == 1 + curr_rank[curr_prec[i]] );
         }
 
         // DEBUG
         // Check that each cell has costs corresponding to the coefficient vectors l2 norm squared
         for( int i = 0; i < num_cells; i++ ) {
             Float norm = curr_coefficients[i].norm_sq();
-            Assert( curr_cost[i] == norm, curr_cost[i], norm );
+            Assert( curr_costs[i] == norm, curr_costs[i], norm );
         }
 
         // DEBUG
-        // Check that each cell leads to the root and distance is descending along that path to the root
+        // Check that each cell leads to the root 
         for( int i = 0; i < num_cells; i++ ) {
             int c = i;
             for( int j = 0; j < num_cells && c != curr_root; j++ ) {
-                // Assert( curr_cost[c] >= curr_cost[curr_prec[c]], curr_cost[c], curr_cost[curr_prec[c]], c, curr_prec[c] ); // Ensure non-increasing distances
-                c = curr_prec[c];  // Follow the path to the root
+                c = curr_precs[c];  // Follow the path to the root
             }
             assert(c == curr_root);  // Ensure the cell eventually leads to the root
         }
 
         // ================================================================================================================
         // We compute the total costs of the tree. If necessary, we update the minimal cost among all trees found.
-        Float total_costs = std::accumulate( curr_cost.begin(), curr_cost.end(), 0.);
+        Float total_costs = std::accumulate( curr_costs.begin(), curr_costs.end(), 0.);
         
-        LOG << "From root " << curr_root << " the total costs are " << total_costs << " -> " << sqrt(total_costs) << nl;
+        // LOG << "From root " << curr_root << " the total costs are " << total_costs << " -> " << sqrt(total_costs) << nl;
 
         // DEBUG: output the structure of the tree
         for( int i = 0; i < num_cells; i++ ) {
-            LOG << " At " << i << " prec " << curr_prec[i] << " rank " << curr_rank[i] << " cost " << curr_cost[i] << nl;
+            // LOG << " At " << i << " prec " << curr_precs[i] << " rank " << curr_ranks[i] << " cost " << curr_costs[i] << nl;
         }
         for( int i = 0; i < num_cells; i++ ) {
-            LOG << curr_coefficients[i] << nl;
+            // LOG << curr_coefficients[i] << nl;
         }
         
         minimal_cost_of_tree = minimum( minimal_cost_of_tree, total_costs );

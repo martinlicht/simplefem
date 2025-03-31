@@ -277,12 +277,6 @@ int main( int argc, char *argv[] )
                         }
                         
                         {
-                            const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
-                            const auto printable_sol = interpol_matrix * incmatrix_s * sol_s; 
-                            vtk.write_cell_scalar_data( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
-                        }
-                        
-                        {
                             auto rhs = FloatVector( M.count_simplices(0) );
                             
                             for( int c = 0; c < M.count_simplices(0); c++ ) { 
@@ -293,6 +287,12 @@ int main( int argc, char *argv[] )
                             }
                                 
                             vtk.write_vertex_scalar_data( rhs, "reference_scalar_data" , 1.0 );
+                        }
+                        
+                        {
+                            const auto interpol_matrix = FEECBrokenInterpolationMatrix( M, M.getinnerdimension(), 0, 0, r );
+                            const auto printable_sol = interpol_matrix * incmatrix_s * sol_s; 
+                            vtk.write_cell_scalar_data( printable_sol, "iterativesolution_scalar_data_cellwise" , 1.0 );
                         }
                         
                         {

@@ -332,9 +332,9 @@ mesh_information_for_shelling::mesh_information_for_shelling( const Mesh& mesh )
 
                     Assert( ( z - h - b ).is_numerically_small(), z, "\n\n", h, "\n\n", b );
                     
-                    Float proposed_improved_singular_max 
-                    = 
-                    0.5 * std::sqrt( square( 1. + rho ) + square( ( 1. + rho ) * tanbeta ) ) 
+                    Float proposed_improved_singular_max
+                    =
+                    0.5 * std::sqrt( square( 1. + rho ) + square( ( 1. + rho ) * tanbeta ) )
                     +
                     0.5 * std::sqrt( square( 1. - rho ) + square( ( 1. + rho ) * tanbeta ) );
 
