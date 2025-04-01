@@ -13,7 +13,7 @@
 #include "../dense/functions.hpp"
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
-#include "../fem/polynomialmassmatrix.hpp"
+#include "../fem/utilities.hpp"
 
 #include "../fem/global.veewedgehodge.hpp"
 

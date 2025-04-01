@@ -10,8 +10,6 @@
 #include "../mesh/mesh.hpp"
 #include "../fem/utilities.hpp"
 
-#include "../fem/polynomialmassmatrix.hpp"
-
 #include "../fem/global.coefficientmassmatrix.hpp"
 
 

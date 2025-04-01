@@ -9,8 +9,6 @@
 #include "../sparse/sparsematrix.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "../fem/polynomialmassmatrix.hpp"
-
 #include "../fem/global.massmatrix.hpp"
 
 
