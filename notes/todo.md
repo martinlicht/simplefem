@@ -122,17 +122,6 @@ __attribute__((unused))
 
 Combine the primal and mixed formulation for the Poisson Problem in the AFEM test, together with the Hodge star, and compute a posteriori error estimates. 
 
-## (HIGH) FEM rewrite (1h)
-
-- [x] Inclusion and averaging
-- [x] Diff, Elev, Interpol, unphysical
-- [x] Mass (with coeffs), veewedgehodge
-- [x] Trace + (Ext)
-- [x] flags
-- [x] Cech
-- [x] Summarize files: indexfunctions, polynomialmassmatrix, utilities -> utilities
-
-
 ## (HIGH) Algebraic Preconditioners for 3D **READING** (10h)
 
 These preconditioners are intended for the basis blocks such as stiffness and mass matrices. 
@@ -1141,6 +1130,20 @@ mdl todo.md -r ~MD009,~MD012,~MD013,~MD026,~MD032,~MD034
 
 
 # DONE!
+
+## (DONE) Python script for display + examples (3h)
+
+Extend the VTK output examples and provide a Python script.
+
+## (DONE) FEM rewrite (2h)
+
+- [x] Inclusion and averaging
+- [x] Diff, Elev, Interpol, unphysical
+- [x] Mass (with coeffs), veewedgehodge
+- [x] Trace + (Ext)
+- [x] flags
+- [x] Cech
+- [x] Summarize files: indexfunctions, polynomialmassmatrix, utilities -> utilities
 
 ## (DONE) Debug midpoint refinement (10h)
 
