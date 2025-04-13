@@ -170,10 +170,15 @@ Avoid compiler warnings and clean up any redundancies.
 - [x] For each mesh selection, save both the true eigenvalue, if available, and a simple estimate, if convex.
 - [x] Extend the modifications from the curl3DS to div3DS.
 - [x] Move/obviate `curlwithtetbc` into curl3DSestimate.cpp.
+- [ ] Introduce: `scalar_conforming_massmatrix`, `vector_conforming_massmatrix`, `pseudo_conforming_massmatrix`, `volume_conforming_massmatrix`, to simplify computations
 - [ ] Move the Whitney examples into the Sullivan examples. Use boolean flags.
 - [ ] Collect a few reference eigenvalue estimates
 - [ ] Combine all 3D estimators into one file
+        none all grad curls curlw divs divw
 - [ ] Adapt the combined 3D estimator to a 2D estimator. This will obviate `triangle_div_estimate`. Collect reference values.
+- [ ] Include the shelling estimator
+        shell
+- [ ] Clean up the Cech Estimator.
 
 ## (HIGH) Smoothed particles 
 
