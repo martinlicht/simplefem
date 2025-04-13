@@ -11,13 +11,13 @@
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "indexfunctions.hpp"
+#include "utilities.hpp"
 
-#include "../fem/global.inclsullivan.hpp"
+#include "../fem/global.avgsullivan.hpp"
 
 
 
-SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r )
+SparseMatrix FEECSullivanAveragingMatrix( const Mesh& mesh, int n, int k, int r, FEECAveragingMode mode )
 {
     
     // check whether the parameters are right 
@@ -60,7 +60,7 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
     
     // create that matrix 
     
-    SparseMatrix ret( dim_broken, dim_continuous, num_entries );
+    SparseMatrix ret( dim_continuous, dim_broken, num_entries );
     
     
     // for auxiliary purposes, create the index inclusion maps 
@@ -93,6 +93,7 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
     {
         
         // Find indices of things and prepare auxiliary variables 
+        
         const auto& alphasigma = lists_of_sullivan_indices[d][index_alphasigma];
 
         const MultiIndex& alpha = alphasigma.first;
@@ -161,7 +162,33 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
                        index_alphasigma
                        ;
 
-        Float value  = 1.;
+        
+        const auto list_of_supersimplices = mesh.get_supersimplices( n, d, index_fi );
+
+        Float value = notanumber; 
+
+        if( mode == FEECAveragingMode::weighted_uniformly ){
+        
+            value = 1. / list_of_supersimplices.size();
+
+        } else if ( mode == FEECAveragingMode::weighted_by_volume ) {
+
+            Float sum_of_volumes = 0.;
+
+            for( int i = 0; i < list_of_supersimplices.size(); i++ )
+            {
+                sum_of_volumes += mesh.getMeasure( n, list_of_supersimplices[i] );
+            }
+
+            value = mesh.getMeasure(n,s) / sum_of_volumes;
+
+        } else if( mode == FEECAveragingMode::arbitrary_choice ) {
+            
+            value = ( s == list_of_supersimplices[0] ) ? 1. : 0.;
+
+        } else {
+            impossible();
+        }
 
         int index_of_entry = entries_offset[d] // sum_int( d-1, [ &lists_of_sullivan_indices, n ](int c) -> int { return binomial_integer(n+1,c+1) * lists_of_sullivan_indices[c].size(); } ) * num_volumes
                              +
@@ -180,8 +207,8 @@ SparseMatrix FEECSullivanInclusionMatrix( const Mesh& mesh, int n, int k, int r 
         
         SparseMatrix::MatrixEntry entry;
         
-        entry.row    = broken_index;
-        entry.column = continuous_index;
+        entry.row    = continuous_index;
+        entry.column = broken_index;
         entry.value  = value;
         
         if( mesh.get_flag( d, index_fi ) == SimplexFlag::SimplexFlagDirichlet )

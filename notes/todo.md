@@ -22,10 +22,6 @@ None of the above can be done in a day, so it most likely requires regular grind
 
 # HOT FIXES / TINY FIXES
 
-- [ ] https://clang.llvm.org/extra/clang-tidy/#suppressing-undesired-diagnostics
-- [ ] MatrixEntry initialization
-- [ ] disable: cppcoreguidelines-pro-type-member-init,hicpp-member-init
-
 - [x] ensure that self-assignment is handled _explicitly_ whenever assignment operators are defined
 - [x] all destructors noexcept 
       <https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-destructor.html>
@@ -95,9 +91,19 @@ None of the above can be done in a day, so it most likely requires regular grind
 __attribute__((unused))
 ```
 
-- [ ] Warnings in eigenvalue tests to be neutralized 
-- [ ] Disabled code should be removed or marked accordingly, same for trivially true conditions
-- [ ] Understand GCC options: `-ffold-simple-inlines -fimplicit-constexpr -fno-implement-inlines ? -fvisibility-inlines-hidden` ?
+- [x] Speed up sullivan2D matrix construction using Conjugation...
+- [ ] Understand GCC options: `-ffold-simple-inlines` 
+- [ ] Understand GCC options: `-fimplicit-constexpr` ?
+- [ ] Understand GCC options: `-fno-implement-inlines` ?
+- [ ] Understand GCC options: `-fvisibility-inlines-hidden` ?
+- [ ] Disabled code should be removed or marked accordingly, same for trivially true conditions.
+- [ ] Simplify the file structure in the FEM component, extract the mass matrix.
+- [ ] Complete the inner product between differential forms, write unit tests.
+- [ ] Warnings in eigenvalue tests to be neutralized.
+- [ ] https://clang.llvm.org/extra/clang-tidy/#suppressing-undesired-diagnostics
+- [ ] `MatrixEntry` initialization
+- [ ] disable: `cppcoreguidelines-pro-type-member-init`, `hicpp-member-init`
+
 
 
 
@@ -115,11 +121,6 @@ __attribute__((unused))
 ## (HIGH) Adaptive solution of the Poisson problem (5h)
 
 Combine the primal and mixed formulation for the Poisson Problem in the AFEM test, together with the Hodge star, and compute a posteriori error estimates. 
-
-## (HIGH) Minor FEM rewrite (1h)
-
-- [ ] Summarize files: indexfunctions, polynomialmassmatrix, utilities -> utilities
-- [ ] Summarize: global functions
 
 ## (HIGH) Algebraic Preconditioners for 3D **READING** (10h)
 
@@ -1138,6 +1139,20 @@ mdl todo.md -r ~MD009,~MD012,~MD013,~MD026,~MD032,~MD034
 
 
 # DONE!
+
+## (DONE) Python script for display + examples (3h)
+
+Extend the VTK output examples and provide a Python script.
+
+## (DONE) FEM rewrite (2h)
+
+- [x] Inclusion and averaging
+- [x] Diff, Elev, Interpol, unphysical
+- [x] Mass (with coeffs), veewedgehodge
+- [x] Trace + (Ext)
+- [x] flags
+- [x] Cech
+- [x] Summarize files: indexfunctions, polynomialmassmatrix, utilities -> utilities
 
 ## (DONE) Debug midpoint refinement (10h)
 

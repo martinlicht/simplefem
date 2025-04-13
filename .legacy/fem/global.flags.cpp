@@ -9,7 +9,7 @@
 #include "../operators/simpleoperators.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "indexfunctions.hpp"
+#include "utilities.hpp"
 
 #include "../fem/global.flags.hpp"
 

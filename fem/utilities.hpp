@@ -2,9 +2,34 @@
 #define INCLUDEGUARD_FEM_UTILITIES_HPP
 
 
+#include <utility>
+#include <vector>
+
 #include "../base/include.hpp"
+#include "../combinatorics/indexmap.hpp"
+#include "../combinatorics/multiindex.hpp"
 #include "../dense/densematrix.hpp"
 #include "../mesh/mesh.hpp"
+
+
+
+
+
+
+
+
+
+
+DenseMatrix polynomialmassmatrix( int n, int r );
+
+DenseMatrix polynomialmassmatrix( int n, int r, const MultiIndex& base );
+
+std::vector<DenseMatrix> polynomialmassmatrices_per_multiindex( int n, int r, int s );
+
+std::vector<DenseMatrix> polynomialmassmatrices_per_lagrangepoint( int n, int r, int s );
+
+
+
 
 
 
@@ -18,6 +43,44 @@ inline int SullivanSpanSize( int n, int k, int r )
     assert( k <= n );
     return binomial_integer( n + r, r ) * binomial_integer( n+1, k );
 }
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////
+//                                                  //
+//  List of Sullivan Indices                        //
+//                                                  //
+//  Constructs the basis for the Sullivan space     //
+//                                                  //
+//  alpha is a multiindex                           //
+//  sigma 1:k -> 0:n                                //
+//  min[alpha] notin [sigma]                        //
+//  [alpha] u [sigma] = [0..n]                      //
+//                                                  //
+//                                                  //
+//////////////////////////////////////////////////////
+
+std::vector< std::pair<MultiIndex,IndexMap> > ListOfSullivanIndices( int n, int k, int r );
+
+//////////////////////////////////////////////////////
+//                                                  //
+//  List of Sullivan Indices                        //
+//                                                  //
+//  Constructs the basis for the Whitney space      //
+//                                                  //
+//  alpha is a multiindex                           //
+//  rho   0:k -> 0:n                                //
+//  0 in [rho]                                      //
+//  [alpha] u [rho] = [0..n]                        //
+//                                                  //
+//                                                  //
+//////////////////////////////////////////////////////
+
+std::vector< std::pair<MultiIndex,IndexMap> > ListOfWhitneyIndices( int n, int k, int r );
 
 
 

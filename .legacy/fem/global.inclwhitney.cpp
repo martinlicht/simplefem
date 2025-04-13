@@ -11,7 +11,7 @@
 #include "../combinatorics/generatemultiindices.hpp"
 #include "../mesh/mesh.hpp"
 
-#include "indexfunctions.hpp"
+#include "utilities.hpp"
 
 #include "../fem/global.inclwhitney.hpp"
 

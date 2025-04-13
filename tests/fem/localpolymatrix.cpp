@@ -8,7 +8,7 @@
 #include "../../dense/densematrix.hpp"
 #include "../../dense/factorization.hpp"
 #include "../../dense/functions.hpp"
-#include "../../fem/polynomialmassmatrix.hpp"
+#include "../../fem/utilities.hpp"
 
 
 // using namespace std;
